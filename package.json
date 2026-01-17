@@ -1,0 +1,14 @@
+{
+  "name": "maparea",
+  "version": "0.1.0",
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "preversion": "npm run shape",
+    "shape": "npx codeshape --minify",
+    "start": "npx @t8/serve test --spa -b --watch"
+  },
+  "author": "axtk"
+}

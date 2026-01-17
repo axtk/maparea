@@ -1,0 +1,13 @@
+{
+  "include": ["./src", "./test", "./index.ts"],
+  "compilerOptions": {
+    "noEmit": true,
+    "outDir": "dist",
+    "lib": ["ESNext", "DOM", "DOM.Iterable"],
+    "target": "esnext",
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
+    "allowImportingTsExtensions": true,
+    "strict": true
+  }
+}
