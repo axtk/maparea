@@ -12,10 +12,6 @@ body {
 form {
   margin: 0 0 0.75em 0;
 }
-form label span {
-  display: inline-block;
-  text-align: end;
-}
 form input {
   font-family: monospace;
   border: none;
@@ -46,6 +42,7 @@ form label + button {
   fill: none;
 }
 #map .tiles.layer .attribution {
+  font-size: 0;
   z-index: 5000;
 }
 #map .shape-editor.layer path {
