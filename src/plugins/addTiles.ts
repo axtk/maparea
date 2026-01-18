@@ -226,8 +226,7 @@ export function addTiles(map: MapArea, options: MapAreaTileOptions = {}) {
     if (map.zoom === prevZoom) {
       layer.style.opacity = "";
       renderTiles();
-    }
-    else {
+    } else {
       layer.style.opacity = "0";
       // Wait for all quick zoom changes to get through before
       // requesting new tiles
