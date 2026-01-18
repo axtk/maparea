@@ -126,10 +126,18 @@ function getTile(layer: HTMLElement, id: string) {
 }
 
 export function addTiles(map: MapArea, options: MapAreaTileOptions = {}) {
-  let { id = getId(), attribution, attributionInset = "auto 0 0 auto" } = options;
+  let {
+    id = getId(),
+    attribution,
+    attributionInset = "auto 0 0 auto",
+  } = options;
 
   let layer = getLayer(map, { id, className: "tiles", ...options });
-  let attributionLayer = getLayer(map, { id, className: "tiles-attribution", inset: attributionInset });
+  let attributionLayer = getLayer(map, {
+    id,
+    className: "tiles-attribution",
+    inset: attributionInset,
+  });
 
   let renderTiles = () => {
     let {
@@ -188,7 +196,7 @@ export function addTiles(map: MapArea, options: MapAreaTileOptions = {}) {
     let attributionContent = resolveString(map, attribution);
 
     attributionLayer.toggleAttribute("hidden", !attributionContent);
-    
+
     if (attributionLayer.innerHTML !== attributionContent)
       attributionLayer.innerHTML = attributionContent;
   };

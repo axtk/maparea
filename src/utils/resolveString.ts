@@ -5,5 +5,5 @@ export function resolveString(
   map: MapArea,
   x: DynamicString | undefined,
 ): string {
-  return typeof x === "function" ? x(map) : x ?? "";
+  return typeof x === "function" ? x(map) : (x ?? "");
 }
