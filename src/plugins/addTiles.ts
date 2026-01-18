@@ -6,7 +6,7 @@ import { getLayer } from "../utils/getLayer.ts";
 import { resolveString } from "../utils/resolveString.ts";
 import { toPrecision } from "../utils/toPrecision.ts";
 
-const { floor, ceil } = Math;
+const { floor, ceil, random } = Math;
 
 const defaultTileSize = 256;
 
@@ -17,6 +17,8 @@ export type MapAreaTileOptions = LayerOptions & {
    * or a function of `(map, x, y) => string` returning a fixed string URL.
    */
   url?: string | ((map: MapArea, xIndex: number, yIndex: number) => string);
+  /** Values of the `{s}` placeholder of the tile URLs. */
+  subdomains?: string[];
   /** Maximum retry count per tile. */
   retries?: number;
   /** URL to be used instead of a tile that failed to load. */
@@ -42,7 +44,7 @@ function createTile(
   map: MapArea,
   xIndex: number,
   yIndex: number,
-  { size = defaultTileSize, url, retries = 0, error }: MapAreaTileOptions,
+  { size = defaultTileSize, url, subdomains, retries = 0, error }: MapAreaTileOptions,
 ): HTMLElement {
   let tile = new Image();
   let errorCount = 0;
@@ -52,11 +54,19 @@ function createTile(
 
     if (typeof url === "function") return url(map, xIndex, yIndex);
 
-    return url
+    let resolvedURL = url
       .replaceAll("{x}", String(x))
       .replaceAll("{y}", String(y))
       .replaceAll("{z}", String(map.zoom))
       .replaceAll("{lang}", map.lang);
+
+    if (subdomains)
+      resolvedURL = resolvedURL.replaceAll(
+        "{s}",
+        subdomains[floor(subdomains.length * random())],
+      );
+
+    return resolvedURL;
   };
 
   tile.width = size;
