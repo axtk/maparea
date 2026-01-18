@@ -34,16 +34,10 @@ let map = new MapArea({
 if (formState.apikey)
   addTiles(map, {
     url: `https://tiles.api-maps.yandex.ru/v1/tiles/?x={x}&y={y}&z={z}&lang={lang}&l=map&scale=${window.devicePixelRatio ?? 1}&maptype=future_map&apikey=${formState.apikey}`,
-    attribution: ({ center: [lat, lon], lang, zoom }) => {
-      let searchParams = new URLSearchParams({
-        ll: `${toPrecision(lon, 8)},${toPrecision(lat, 8)}`,
-        z: String(zoom),
-      });
-
-      if (lang.split("_")[0] === "ru")
-        return `<a href="https://yandex.ru/maps?${searchParams}" target="_blank"><img src="/assets/yx_ru.svg" alt="Яндекс Карты"></a>`;
-
-      return `<a href="https://yandex.com/maps?${searchParams}" target="_blank"><img src="/assets/yx_en.svg" alt="Yandex Maps"></a>`;
+    attribution: ({ lang }) => {
+      return lang.split("_")[0] === "ru"
+        ? `<a href="https://yandex.ru/maps" target="_blank"><img src="/assets/yx_ru.svg" alt="Яндекс Карты"></a>`
+        : `<a href="https://yandex.com/maps" target="_blank"><img src="/assets/yx_en.svg" alt="Yandex Maps"></a>`;
     },
     error: "/assets/blank.png",
     retries: 2,
