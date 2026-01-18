@@ -9,17 +9,12 @@ export function addShape(
   coords: GeoCoords[],
   layerOptions?: LayerOptions,
 ) {
-  let defaultLayerOptions: LayerOptions = {
-    id: `shape-${getId()}`,
-    className: "shape",
-  };
-
   let shape = coords.map((point) => ({
     id: getId(),
     coords: point,
   }));
 
   map.onRender(() => {
-    renderShapeLayer(map, shape, { ...defaultLayerOptions, ...layerOptions });
+    renderShapeLayer(map, shape, { className: "shape", ...layerOptions });
   });
 }

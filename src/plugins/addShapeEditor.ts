@@ -16,7 +16,6 @@ export function addShapeEditor(map: MapArea, options?: ShapeEditorOptions) {
   let clickTimeout: ReturnType<typeof setTimeout> | null = null;
 
   let layerOptions: ShapeLayerOptions = {
-    id: `shape-editor-${getId()}`,
     className: "shape-editor",
     markers: true,
   };
