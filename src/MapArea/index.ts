@@ -23,6 +23,7 @@ export type MapAreaOptions = {
   maxZoom?: number;
   /** Minimal and maximal latitudes and longitudes */
   bounds?: GeoBounds;
+  /** Map projection (default: `"spherical"`) */
   projection?: Projection;
   lang?: string;
 };
@@ -148,7 +149,7 @@ export class MapArea {
     if (this.zoom > this.maxZoom) this.zoom = this.maxZoom;
   }
   get projection() {
-    return this._p.projection ?? "ellipsoidal";
+    return this._p.projection ?? "spherical";
   }
   set projection(value: Projection) {
     this._p.projection = value;

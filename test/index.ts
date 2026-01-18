@@ -25,6 +25,7 @@ let map = new MapArea({
   zoom: 13,
   minZoom: 1,
   maxZoom: 19,
+  projection: "ellipsoidal",
   lang: "en_US",
 });
 
