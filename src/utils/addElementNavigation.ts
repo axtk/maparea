@@ -107,10 +107,10 @@ export function addElementNavigation(
 
     if (touchHandler) return;
 
-    start(event.touches[0]?.pageX, event.touches[0]?.pageY);
+    start(event.touches[0]?.clientX, event.touches[0]?.clientY);
     touchHandler = (event) => {
       event.preventDefault();
-      moveTo(event.touches[0]?.pageX, event.touches[0]?.pageY);
+      moveTo(event.touches[0]?.clientX, event.touches[0]?.clientY);
     };
     element.addEventListener("touchmove", touchHandler);
   });
@@ -120,7 +120,7 @@ export function addElementNavigation(
 
     if (!touchHandler) return;
 
-    end(event.touches[0]?.pageX, event.touches[0]?.pageY);
+    end(event.touches[0]?.clientX, event.touches[0]?.clientY);
     element.removeEventListener("touchmove", touchHandler);
     touchHandler = null;
   });
@@ -130,7 +130,7 @@ export function addElementNavigation(
 
     if (!touchHandler) return;
 
-    end(event.touches[0]?.pageX, event.touches[0]?.pageY);
+    end(event.touches[0]?.clientX, event.touches[0]?.clientY);
     element.removeEventListener("touchmove", touchHandler);
     touchHandler = null;
   });

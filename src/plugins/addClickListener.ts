@@ -1,5 +1,6 @@
 import type { MapArea } from "../MapArea/index.ts";
 import type { IgnoredElement } from "../types/IgnoredElement.ts";
+import { getPointerPosition } from "../utils/getPointerPosition.ts";
 import { shouldIgnore } from "../utils/shouldIgnore.ts";
 
 export type MapAreaClickEvent = {
@@ -22,13 +23,15 @@ export function addClickListener(
   ignored?: IgnoredElement,
 ) {
   let t0 = Date.now();
+  let pointerPosition: [number, number] | null = null;
 
-  let start = () => {
+  let start = (event: MouseEvent | TouchEvent) => {
     t0 = Date.now();
+    pointerPosition = getPointerPosition(event);
   };
 
-  let end = (event: MouseEvent) => {
-    if (shouldIgnore(event.target, ignored)) return;
+  let end = (event: MouseEvent | TouchEvent) => {
+    if (shouldIgnore(event.target, ignored) || !pointerPosition) return;
 
     // Skip the click handler if the pointer was dragged
     if (Date.now() - t0 > 150) return;
@@ -38,8 +41,8 @@ export function addClickListener(
       centerCoords: [cx, cy],
     } = map;
 
-    let x = event.clientX - box.x;
-    let y = event.clientY - box.y;
+    let x = pointerPosition[0] - box.x;
+    let y = pointerPosition[1] - box.y;
 
     let [lat, lon] = map.toGeoCoords(
       x - 0.5 * box.w + cx,
@@ -47,13 +50,20 @@ export function addClickListener(
     );
 
     callback({ x, y, lat, lon, originalEvent: event });
+    pointerPosition = null;
   };
 
   map.container.addEventListener("mousedown", start);
   map.container.addEventListener("mouseup", end);
 
+  map.container.addEventListener("touchstart", start);
+  map.container.addEventListener("touchend", end);
+
   return () => {
     map.container.removeEventListener("mousedown", start);
     map.container.removeEventListener("mouseup", end);
+
+    map.container.removeEventListener("touchstart", start);
+    map.container.removeEventListener("touchend", end);
   };
 }

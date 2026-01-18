@@ -1,5 +1,6 @@
 import type { MapArea } from "../MapArea/index.ts";
 import { getLayer } from "../utils/getLayer.ts";
+import { addClickListener } from "./addClickListener.ts";
 
 export type ZoomControlOptions = {
   /** Minimal zoom value */
@@ -42,7 +43,7 @@ export function addZoomControls(
       minus.toggleAttribute("disabled", map.zoom - 1 < min);
   };
 
-  layer.addEventListener("click", (event) => {
+  addClickListener(map, ({ originalEvent: event }) => {
     let button = (event.target as HTMLElement | null)?.closest("button");
 
     if (button) {
