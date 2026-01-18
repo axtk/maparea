@@ -3,10 +3,6 @@ import { getLayer } from "../utils/getLayer.ts";
 import { addClickListener } from "./addClickListener.ts";
 
 export type ZoomControlOptions = {
-  /** Minimal zoom value */
-  min?: number;
-  /** Maximal zoom value */
-  max?: number;
   /** HTML content of the zoom-in button */
   plus?: string;
   /** HTML content of the zoom-out button */
@@ -23,8 +19,6 @@ export function addZoomControls(
   });
 
   let {
-    min,
-    max,
     plus: plusContent = "➕",
     minus: minusContent = "➖",
   } = options;
@@ -38,9 +32,8 @@ export function addZoomControls(
   minus.innerHTML = minusContent;
 
   let applyLimits = () => {
-    if (max !== undefined) plus.toggleAttribute("disabled", map.zoom + 1 > max);
-    if (min !== undefined)
-      minus.toggleAttribute("disabled", map.zoom - 1 < min);
+    plus.toggleAttribute("disabled", map.zoom + 1 > map.maxZoom);
+    minus.toggleAttribute("disabled", map.zoom - 1 < map.minZoom);
   };
 
   addClickListener(map, ({ originalEvent: event }) => {

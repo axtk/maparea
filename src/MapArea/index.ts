@@ -19,6 +19,8 @@ export type MapAreaOptions = {
   container: string;
   center?: GeoCoords;
   zoom?: number;
+  minZoom?: number;
+  maxZoom?: number;
   /** Minimal and maximal latitudes and longitudes */
   bounds?: GeoBounds;
   projection?: Projection;
@@ -120,10 +122,16 @@ export class MapArea {
     return this._cc;
   }
   get zoom() {
-    return this._p.zoom ?? 15;
+    return this._p.zoom ?? this._p.minZoom ?? 0;
   }
   set zoom(value: number) {
-    this._p.zoom = value;
+    let { minZoom, maxZoom } = this;
+    let effectiveValue = value;
+
+    if (value < minZoom) effectiveValue = minZoom;
+    if (value > maxZoom) effectiveValue = maxZoom;
+
+    this._p.zoom = effectiveValue;
 
     if (this._t) {
       clearTimeout(this._t);
@@ -135,6 +143,18 @@ export class MapArea {
       delete this._cc;
       this.render();
     }, 150);
+  }
+  get minZoom() {
+    return this._p.minZoom ?? -Infinity;
+  }
+  set minZoom(value: number) {
+    this._p.minZoom = value;
+  }
+  get maxZoom() {
+    return this._p.maxZoom ?? Infinity;
+  }
+  set maxZoom(value: number) {
+    this._p.maxZoom = value;
   }
   get projection() {
     return this._p.projection ?? "WGS84";

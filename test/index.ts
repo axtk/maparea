@@ -23,6 +23,8 @@ let map = new MapArea({
   center: getCenter(shape),
   // bounds: getVicinity(shape),
   zoom: 13,
+  minZoom: 1,
+  maxZoom: 19,
   lang: "en_US",
 });
 
@@ -75,7 +77,7 @@ addShapeEditor(map, {
   ignoreClicks: "a, button",
 });
 
-addZoomControls(map, { min: 1, max: 19 });
+addZoomControls(map);
 addPersistence(map);
 
 map.lang = formState.lang || "en_US";
