@@ -18,10 +18,7 @@ export function addZoomControls(
     inset: "0 0 auto auto",
   });
 
-  let {
-    plus: plusContent = "➕",
-    minus: minusContent = "➖",
-  } = options;
+  let { plus: plusContent = "➕", minus: minusContent = "➖" } = options;
 
   let plus = document.createElement("button");
   plus.dataset.id = "plus";
