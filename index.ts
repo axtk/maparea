@@ -18,7 +18,7 @@ export * from "./src/types/PixelCoords.ts";
 export * from "./src/types/PixelVertex.ts";
 export * from "./src/types/Projection.ts";
 export * from "./src/types/ShapeLayerOptions.ts";
-export * from "./src/utils/getBounds.ts";
+export * from "./src/utils/getGeoBounds.ts";
 export * from "./src/utils/getCenter.ts";
 export * from "./src/utils/getId.ts";
 export * from "./src/utils/getLayer.ts";
