@@ -1,7 +1,7 @@
 import type { GeoBounds } from "../types/GeoBounds.ts";
 import type { GeoCoords } from "../types/GeoCoords.ts";
 
-export function getBounds(coords: GeoCoords[]): GeoBounds {
+export function getGeoBounds(coords: GeoCoords[]): GeoBounds {
   if (coords.length === 0) return {};
 
   let minLat = coords[0][0];

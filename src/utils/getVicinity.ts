@@ -1,6 +1,6 @@
 import type { GeoBounds } from "../types/GeoBounds.ts";
 import type { GeoCoords } from "../types/GeoCoords.ts";
-import { getBounds } from "./getBounds.ts";
+import { getGeoBounds } from "./getGeoBounds.ts";
 import { isGeoCoords } from "./isGeoCoords.ts";
 
 const defaultPadding: GeoCoords = [0.005, 0.018];
@@ -9,7 +9,7 @@ function toGeoBounds(x: GeoCoords | GeoCoords[] | GeoBounds): GeoBounds {
   if (Array.isArray(x)) {
     if (isGeoCoords(x))
       return { minLat: x[0], maxLat: x[0], minLon: x[1], maxLon: x[1] };
-    else return getBounds(x);
+    else return getGeoBounds(x);
   }
   return x;
 }
