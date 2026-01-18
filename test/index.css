@@ -9,24 +9,6 @@ body {
   padding: 0.5em;
   margin: 0;
 }
-form {
-  margin: 0 0 0.75em 0;
-}
-form input {
-  font-family: monospace;
-  border: none;
-  border-bottom: 0.05em solid;
-}
-form input[name="apikey"] {
-  width: 21em;
-}
-form input[name="lang"] {
-  width: 4em;
-}
-form label + label,
-form label + button {
-  margin-left: 0.75em;
-}
 #map {
   width: 1000px;
   height: 500px;
@@ -84,18 +66,43 @@ form label + button {
   opacity: 0.35;
   cursor: not-allowed;
 }
-/* #map .tiles.layer {
-  filter: saturate(3) sepia(0.3) hue-rotate(-10deg);
-} */
-/* #map::before {
-  content: "";
-  width: 2px;
-  height: 2px;
-  background: red;
-  border-radius: 50%;
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  z-index: 1000;
-} */
+form {
+  display: flex;
+  align-items: center;
+  gap: 1em;
+  margin: 0 0 0.75em 0;
+}
+form > label,
+form > span {
+  flex: none;
+}
+form input {
+  font-family: monospace;
+  border: none;
+  border-bottom: 0.05em solid;
+  box-sizing: border-box;
+}
+form input[name="apikey"] {
+  width: 21em;
+}
+form input[name="lang"] {
+  width: 4em;
+}
+@media (max-width: 600px) {
+  form {
+    flex-direction: column;
+    align-items: start;
+  }
+  form label > span {
+    display: block;
+    min-width: 380px;
+  }
+  form input[name="apikey"],
+  form input[name="lang"] {
+    width: 100%;
+  }
+  #map {
+    width: 380px;
+    height: 300px;
+  }
+}

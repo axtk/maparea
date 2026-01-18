@@ -1,4 +1,4 @@
-type FormState = Record<string, string | undefined>;
+type FormState = Record<string, string>;
 
 let formStorageKey = "maparea-form";
 let form = document.querySelector("form")!;
@@ -12,14 +12,22 @@ function reset() {
   } catch {}
 }
 
-function getFormState() {
-  let state = Object.fromEntries(new FormData(form)) as FormState;
+function toFormState(x: FormData | URLSearchParams) {
+  let value = Object.fromEntries(x) as FormState;
 
-  for (let [k, v] of Object.entries(state)) {
-    if (v === "") delete state[k];
+  for (let [k, v] of Object.entries(value)) {
+    if (v === "") delete value[k];
   }
 
-  return state;
+  return value;
+}
+
+function getURLState() {
+  return toFormState(new URL(window.location.href).searchParams);
+}
+
+function getFormState() {
+  return toFormState(new FormData(form));
 }
 
 function getStoredState() {
@@ -37,6 +45,10 @@ function setState(state: FormState) {
   try {
     localStorage.setItem(formStorageKey, JSON.stringify(state));
   } catch {}
+
+  let search = new URLSearchParams(state).toString();
+
+  if (search && window.history) window.history.pushState({}, "", `/?${search}`);
 }
 
 export function initTestForm() {
@@ -55,7 +67,7 @@ export function initTestForm() {
     apikeyInput.value = "";
     langInput.value = "";
 
-    window.location.reload();
+    window.location.assign("/");
   });
 
   form.querySelector(".reset")?.addEventListener("click", () => {
@@ -65,7 +77,7 @@ export function initTestForm() {
 
   let formState = {
     ...getStoredState(),
-    ...getFormState(),
+    ...getURLState(),
   };
 
   setState(formState);

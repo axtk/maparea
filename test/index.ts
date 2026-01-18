@@ -26,7 +26,6 @@ let map = new MapArea({
   lang: "en_US",
 });
 
-// Reassigning map properties after the initialization
 // map.center = getCenter(shape);
 // map.bounds = getVicinity(shape);
 
