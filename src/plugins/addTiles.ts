@@ -136,10 +136,11 @@ function getTile(layer: HTMLElement, id: string) {
 
 export function addTiles(map: MapArea, options: MapAreaTileOptions = {}) {
   let { id = `tiles-${getId()}`, className = "tiles" } = options;
+
   let layerOptions: LayerOptions = { id, className };
   let layer = getLayer(map, layerOptions);
 
-  map.onRender(() => {
+  let renderTiles = () => {
     let attribution = setAttributionElement(map, layer, options);
 
     let {
@@ -196,6 +197,30 @@ export function addTiles(map: MapArea, options: MapAreaTileOptions = {}) {
 
       if (id && !nextIds.has(id)) tile.remove();
     }
+  };
+
+  let prevZoom = map.zoom;
+  let renderTimeout: ReturnType<typeof setTimeout> | null = null;
+
+  map.onRender(() => {
+    if (renderTimeout !== null) {
+      clearTimeout(renderTimeout);
+      renderTimeout = null;
+    }
+
+    if (map.zoom === prevZoom) renderTiles();
+    else {
+      layer.style.opacity = "0";
+      // Wait for all quick zoom changes to get through before
+      // requesting new tiles
+      renderTimeout = setTimeout(() => {
+        renderTimeout = null;
+        layer.style.opacity = "";
+        renderTiles();
+      }, 300);
+    }
+
+    prevZoom = map.zoom;
   });
 
   return layer;

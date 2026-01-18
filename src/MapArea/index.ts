@@ -38,8 +38,6 @@ export class MapArea {
   _cc: PixelCoords | undefined;
   /** Render callbacks */
   _r = new Set<RenderCallback>();
-  /** Render timeout */
-  _t: ReturnType<typeof setTimeout> | null = null;
   constructor(options: MapAreaOptions) {
     this._p = options;
     this.container.style = "position: relative; overflow: hidden;";
@@ -132,17 +130,8 @@ export class MapArea {
     if (value > maxZoom) effectiveValue = maxZoom;
 
     this._p.zoom = effectiveValue;
-
-    if (this._t) {
-      clearTimeout(this._t);
-      this._t = null;
-    }
-
-    this._t = setTimeout(() => {
-      this._t = null;
-      delete this._cc;
-      this.render();
-    }, 150);
+    delete this._cc;
+    this.render();
   }
   get minZoom() {
     return this._p.minZoom ?? -Infinity;
