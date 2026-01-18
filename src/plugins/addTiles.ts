@@ -66,7 +66,7 @@ function createTile(
       .replaceAll("{z}", String(map.zoom))
       .replaceAll("{lang}", map.lang);
 
-    if (subdomains)
+    if (subdomains && resolvedURL.includes("{s}"))
       resolvedURL = resolvedURL.replaceAll(
         "{s}",
         subdomains[floor(subdomains.length * random())],
@@ -91,6 +91,7 @@ function createTile(
 
       if (errorSrc) {
         tile.onerror = () => {};
+        tile.dataset.src = src;
         tile.src = errorSrc;
       }
 
