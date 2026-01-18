@@ -6,13 +6,13 @@ export function getLayer(
   map: MapArea,
   { id, className, inset = "0" }: LayerOptions = {},
 ): HTMLElement {
-  let selector = `${className ? `.${className}` : ""}${id ? `#${id}` : ""}`;
+  let selector = `${className ? `.${className}` : ""}${id ? `[data-id="${id}"]` : ""}`;
   let layer = document.querySelector<HTMLElement>(selector);
 
   if (!layer) {
     layer = document.createElement("div");
     layer.className = `${className ? `${className} ` : ""}layer`;
-    layer.id = id ?? `layer-${getId()}`;
+    layer.dataset.id = id ?? getId();
     layer.style = `position: absolute; inset: ${inset};`;
     map.container.append(layer);
   }

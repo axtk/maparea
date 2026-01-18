@@ -23,7 +23,7 @@ body {
   stroke-opacity: 0.65;
   fill: none;
 }
-#map .tiles.layer .attribution {
+#map .tiles-attribution.layer {
   font-size: 0;
   z-index: 5000;
 }

@@ -117,32 +117,6 @@ function createTile(
   return tile;
 }
 
-function setAttributionElement(
-  map: MapArea,
-  layer: HTMLElement,
-  { attribution, attributionInset = "auto 0 0 auto" }: MapAreaTileOptions,
-): HTMLElement | null {
-  let element = layer.querySelector<HTMLElement>(".attribution");
-  let content = resolveString(map, attribution);
-
-  if (!content) {
-    if (element) element.remove();
-
-    return null;
-  }
-
-  if (!element) {
-    element = document.createElement("div");
-    element.className = "attribution";
-    element.style = `position: absolute; inset: ${attributionInset};`;
-    layer.append(element);
-  }
-
-  if (element.innerHTML !== content) element.innerHTML = content;
-
-  return element;
-}
-
 function getTiles(layer: HTMLElement) {
   return layer.querySelectorAll<HTMLElement>("img[data-id]");
 }
@@ -152,14 +126,12 @@ function getTile(layer: HTMLElement, id: string) {
 }
 
 export function addTiles(map: MapArea, options: MapAreaTileOptions = {}) {
-  let { id = `tiles-${getId()}`, className = "tiles" } = options;
+  let { id = getId(), attribution, attributionInset = "auto 0 0 auto" } = options;
 
-  let layerOptions: LayerOptions = { id, className };
-  let layer = getLayer(map, layerOptions);
+  let layer = getLayer(map, { id, className: "tiles", ...options });
+  let attributionLayer = getLayer(map, { id, className: "tiles-attribution", inset: attributionInset });
 
   let renderTiles = () => {
-    let attribution = setAttributionElement(map, layer, options);
-
     let {
       box: { w, h },
       centerCoords: [cx, cy],
@@ -195,7 +167,7 @@ export function addTiles(map: MapArea, options: MapAreaTileOptions = {}) {
 
         if (!tile) {
           tile = createTile(map, xi, yi, options);
-          layer.insertBefore(tile, attribution);
+          layer.append(tile);
         }
 
         let x = toPrecision(0.5 * w + xi * size - cx, 2);
@@ -212,6 +184,13 @@ export function addTiles(map: MapArea, options: MapAreaTileOptions = {}) {
 
       if (id && !nextIds.has(id)) tile.remove();
     }
+
+    let attributionContent = resolveString(map, attribution);
+
+    attributionLayer.toggleAttribute("hidden", !attributionContent);
+    
+    if (attributionLayer.innerHTML !== attributionContent)
+      attributionLayer.innerHTML = attributionContent;
   };
 
   let prevZoom = map.zoom;
