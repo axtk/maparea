@@ -148,7 +148,7 @@ export class MapArea {
     if (this.zoom > this.maxZoom) this.zoom = this.maxZoom;
   }
   get projection() {
-    return this._p.projection ?? "WGS84";
+    return this._p.projection ?? "ellipsoidal";
   }
   set projection(value: Projection) {
     this._p.projection = value;

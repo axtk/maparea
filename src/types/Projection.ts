@@ -1,3 +1,3 @@
 export type Projection =
-  | "sphM" // spherical Mercator projection
-  | "WGS84"; // ellipsoidal Mercator projection
+  | "spherical" // spherical Mercator projection (WGS 84)
+  | "ellipsoidal"; // ellipsoidal Mercator projection (WGS 84)

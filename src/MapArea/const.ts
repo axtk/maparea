@@ -6,8 +6,8 @@ export const RAD = PI / 180;
 export const DEG = 180 / PI;
 
 export const eccentricityMap: Record<Projection, number> = {
-  sphM: 0,
-  WGS84: 0.0818191908426,
+  spherical: 0,
+  ellipsoidal: 0.0818191908426,
 };
 
 export const MIN_LAT = -85.05;
