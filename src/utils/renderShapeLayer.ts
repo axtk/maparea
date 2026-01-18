@@ -52,7 +52,7 @@ export function renderShapeLayer(
     svg.setAttribute("viewBox", `0 0 ${w} ${h}`);
     svg.setAttribute("width", w);
     svg.setAttribute("height", h);
-    svg.setAttribute("style", `position: absolute; left: ${x}px; top: ${y}px;`);
+    svg.setAttribute("style", `position: absolute; transform: translate3d(${x}px, ${y}px, 0);`);
   }
 
   return layer;

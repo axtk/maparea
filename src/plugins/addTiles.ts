@@ -191,12 +191,10 @@ export function addTiles(map: MapArea, options: MapAreaTileOptions = {}) {
           layer.insertBefore(tile, attribution);
         }
 
-        let x = 0.5 * w + xi * size - cx;
-        let y = 0.5 * h + yi * size - cy;
+        let x = toPrecision(0.5 * w + xi * size - cx, 2);
+        let y = toPrecision(0.5 * h + yi * size - cy, 2);
 
-        tile.style.left = `${toPrecision(x, 2)}px`;
-        tile.style.top = `${toPrecision(y, 2)}px`;
-
+        tile.style.transform = `translate3d(${x}px, ${y}px, 0)`;
         nextIds.add(id);
       }
     }
