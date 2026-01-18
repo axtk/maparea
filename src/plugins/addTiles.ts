@@ -44,7 +44,13 @@ function createTile(
   map: MapArea,
   xIndex: number,
   yIndex: number,
-  { size = defaultTileSize, url, subdomains, retries = 0, error }: MapAreaTileOptions,
+  {
+    size = defaultTileSize,
+    url,
+    subdomains,
+    retries = 0,
+    error,
+  }: MapAreaTileOptions,
 ): HTMLElement {
   let tile = new Image();
   let errorCount = 0;
