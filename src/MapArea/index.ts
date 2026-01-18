@@ -138,12 +138,14 @@ export class MapArea {
   }
   set minZoom(value: number) {
     this._p.minZoom = value;
+    if (this.zoom < this.minZoom) this.zoom = this.minZoom;
   }
   get maxZoom() {
     return this._p.maxZoom ?? Infinity;
   }
   set maxZoom(value: number) {
     this._p.maxZoom = value;
+    if (this.zoom > this.maxZoom) this.zoom = this.maxZoom;
   }
   get projection() {
     return this._p.projection ?? "WGS84";
