@@ -12,7 +12,7 @@ export function addElementNavigation(
   let x0: number | null = null;
   let y0: number | null = null;
   let t0 = Date.now();
-  let moving = false;
+  let started = false;
 
   let nextMove: ReturnType<typeof requestAnimationFrame> | null = null;
   let wheelTimeout: ReturnType<typeof setTimeout> | null = null;
@@ -36,6 +36,8 @@ export function addElementNavigation(
     if (y0 !== null) y0 -= dy;
     t0 = t;
 
+    if (!element.dataset.dragged) element.dataset.dragged = "true";
+
     nextMove = requestAnimationFrame(() => {
       nextMove = null;
       if (dx !== 0 || dy !== 0) onMove?.(dx, dy);
@@ -47,19 +49,17 @@ export function addElementNavigation(
   }
 
   function start(x?: number, y?: number) {
-    moving = true;
+    started = true;
     onStart?.();
 
     if (x !== undefined) x0 = x;
     if (y !== undefined) y0 = y;
 
-    if (x !== undefined && y !== undefined) element.dataset.dragged = "true";
-
     t0 = Date.now();
   }
 
   function end(x?: number, y?: number) {
-    moving = false;
+    started = false;
     wheelTimeout = null;
 
     if (x !== undefined && y !== undefined) moveTo(x, y);
@@ -141,7 +141,7 @@ export function addElementNavigation(
     element.addEventListener("wheel", (event) => {
       event.preventDefault();
 
-      if (!moving) start();
+      if (!started) start();
 
       if (event.shiftKey) moveBy(event.deltaY, event.deltaX, dt);
       else moveBy(event.deltaX, event.deltaY, dt);
