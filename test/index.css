@@ -33,8 +33,9 @@ body {
   fill: none;
 }
 #map .shape-editor.layer .marker {
-  stroke: black;
-  stroke-width: 0.5;
+  stroke: var(--shape-color);
+  stroke-width: 10;
+  stroke-opacity: 0.3;
   fill: var(--shape-color);
   cursor: pointer;
 }
