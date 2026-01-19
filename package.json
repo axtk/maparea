@@ -10,6 +10,10 @@
     "shape": "npx codeshape --minify",
     "start": "npx @t8/serve test --spa -b --watch"
   },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/axtk/maparea.git"
+  },
   "author": "axtk",
   "license": "MIT"
 }
