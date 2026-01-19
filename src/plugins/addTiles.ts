@@ -32,7 +32,7 @@ export type MapAreaTileOptions = LayerOptions & {
   margin?: number | [number, number];
   /** Attribution HTML content. */
   attribution?: DynamicString;
-  /** Attribution's CSS [`inset`](https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/inset). */
+  /** Attribution's CSS `inset`. */
   attributionInset?: string;
 };
 
