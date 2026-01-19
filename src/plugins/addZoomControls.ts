@@ -7,18 +7,20 @@ export type ZoomControlOptions = {
   plus?: string;
   /** HTML content of the zoom-out button */
   minus?: string;
+  /** CSS `inset` */
+  inset?: string;
 };
 
 export function addZoomControls(
   map: MapArea,
   options: ZoomControlOptions = {},
 ) {
+  let { plus: plusContent = "➕", minus: minusContent = "➖", inset = "0 0 auto auto" } = options;
+
   let layer = getLayer(map, {
     className: "zoom-controls",
-    inset: "0 0 auto auto",
+    inset,
   });
-
-  let { plus: plusContent = "➕", minus: minusContent = "➖" } = options;
 
   let plus = document.createElement("button");
   plus.dataset.id = "plus";
