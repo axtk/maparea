@@ -17,6 +17,30 @@ body {
 #map[data-dragged] {
   cursor: grabbing;
 }
+#map .elements.layer .marker {
+  --r: .3em;
+  display: inline-block;
+  font-size: .75rem;
+  font-style: italic;
+  color: white;
+  background: #c71585a0;
+  border-top: 0.1em solid #c71585;
+  padding: 0 0.5em 0 1.25em;
+  position: relative;
+  box-sizing: border-box;
+}
+#map .elements.layer .marker::before {
+  content: "";
+  display: block;
+  width: calc(2 * var(--r));
+  height: calc(2 * var(--r));
+  background: var(--shape-color);
+  border-radius: 50%;
+  position: absolute;
+  left: 0;
+  top: 0;
+  transform: translate(-50%, -50%);
+}
 #map .shape.layer path {
   stroke: var(--shape-color);
   stroke-width: 4;
