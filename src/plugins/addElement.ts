@@ -19,7 +19,7 @@ export type MapAreaElementOptions = {
 
 /**
  * Adds an HTML or SVG element to the map.
- * 
+ *
  * The element is added onto a dedicated map layer. To add multiple elements
  * with `addElement()`, consider creating a layer with `getLayer()` beforehand,
  * which can be passed to `addElement()` as `options.layer`.
