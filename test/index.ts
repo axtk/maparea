@@ -58,7 +58,8 @@ addShape(map, shape);
 addElement(map, document.createElement("div"), {
   className: "marker",
   coords: [59.94589, 30.33479],
-  content: ({ lang }) => lang.split("_")[0] === "ru" ? "Летний сад" : "Letní sad",
+  content: ({ lang }) =>
+    lang.split("_")[0] === "ru" ? "Летний сад" : "Letní sad",
 });
 
 let shapeOutput = document.querySelector("pre")!;

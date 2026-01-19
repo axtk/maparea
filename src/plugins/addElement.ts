@@ -1,6 +1,6 @@
-import { MapArea } from "../MapArea/index.ts";
-import { DynamicString } from "../types/DynamicString.ts";
-import { GeoCoords } from "../types/GeoCoords.ts";
+import type { MapArea } from "../MapArea/index.ts";
+import type { DynamicString } from "../types/DynamicString.ts";
+import type { GeoCoords } from "../types/GeoCoords.ts";
 import { getLayer } from "../utils/getLayer.ts";
 import { resolveString } from "../utils/resolveString.ts";
 import { toPrecision } from "../utils/toPrecision.ts";
@@ -17,7 +17,11 @@ export type MapAreaElementOptions = {
   content?: DynamicString;
 };
 
-export function addElement(map: MapArea, element: HTMLElement | SVGSVGElement, { className, coords, inset, layer, content }: MapAreaElementOptions) {
+export function addElement(
+  map: MapArea,
+  element: HTMLElement | SVGSVGElement,
+  { className, coords, inset, layer, content }: MapAreaElementOptions,
+) {
   let effectiveLayer = layer ?? getLayer(map, { className: "elements" });
 
   // SVGs require `setAttribute()`
@@ -36,8 +40,8 @@ export function addElement(map: MapArea, element: HTMLElement | SVGSVGElement, {
 
       let [px, py] = map.toPixelCoords(...coords);
 
-      let x = toPrecision(px - cx + w/2, 2);
-      let y = toPrecision(py - cy + h/2, 2);
+      let x = toPrecision(px - cx + w / 2, 2);
+      let y = toPrecision(py - cy + h / 2, 2);
 
       element.style.transform = `translate3d(${x}px, ${y}px, 0)`;
     }

@@ -15,7 +15,11 @@ export function addZoomControls(
   map: MapArea,
   options: ZoomControlOptions = {},
 ) {
-  let { plus: plusContent = "➕", minus: minusContent = "➖", inset = "0 0 auto auto" } = options;
+  let {
+    plus: plusContent = "➕",
+    minus: minusContent = "➖",
+    inset = "0 0 auto auto",
+  } = options;
 
   let layer = getLayer(map, {
     className: "zoom-controls",

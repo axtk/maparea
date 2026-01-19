@@ -18,9 +18,9 @@ body {
   cursor: grabbing;
 }
 #map .elements.layer .marker {
-  --r: .3em;
+  --r: 0.3em;
   display: inline-block;
-  font-size: .75rem;
+  font-size: 0.75rem;
   font-style: italic;
   color: white;
   background: #c71585a0;
