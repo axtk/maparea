@@ -9,9 +9,10 @@ import {
   addShapeEditor,
   addTiles,
   addZoomControls,
+  fitBounds,
   getCenter,
+  getVicinity,
   MapArea,
-  // getVicinity,
   toPrecision,
 } from "../index.ts";
 import { initTestForm } from "./form.ts";
@@ -23,12 +24,14 @@ let map = new MapArea({
   container: "#map",
   center: getCenter(shape),
   // bounds: getVicinity(shape),
-  zoom: 13,
+  zoom: 10,
   minZoom: 1,
   maxZoom: 19,
   projection: "ellipsoidal",
   lang: "en_US",
 });
+
+fitBounds(map, getVicinity(shape));
 
 // map.center = getCenter(shape);
 // map.bounds = getVicinity(shape);
