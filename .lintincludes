@@ -1,6 +1,1 @@
-src/**/*
-test/**/*
-index.ts
-package.json
-tsconfig.json
 !**/dist/**/*
