@@ -10,5 +10,6 @@
     "shape": "npx codeshape --minify",
     "start": "npx @t8/serve test --spa -b --watch"
   },
-  "author": "axtk"
+  "author": "axtk",
+  "license": "MIT"
 }
