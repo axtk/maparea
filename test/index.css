@@ -79,6 +79,7 @@ body {
   padding: 0.65em;
   margin: 0;
   cursor: pointer;
+  z-index: 5000;
 }
 #map .zoom-controls.layer button[data-id="plus"] {
   border-radius: var(--border-radius) var(--border-radius) 0 0;

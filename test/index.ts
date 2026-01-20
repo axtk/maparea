@@ -29,7 +29,7 @@ let map = new MapArea({
   zoom: 10,
   minZoom: 1,
   maxZoom: 19,
-  lang: "en_US",
+  lang: formState.lang || "en_US",
 });
 
 if (formState.apikey) {
@@ -41,6 +41,7 @@ if (formState.apikey) {
         : `<a href="https://yandex.com/maps" target="_blank"><img src="/assets/yx_en.svg" alt="Yandex Maps"></a>`;
     },
     error: "/assets/blank.png",
+    retries: 1,
     margin: 500,
   });
 }
