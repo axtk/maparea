@@ -6,7 +6,7 @@ const { abs, log2, min, floor } = Math;
 /**
  * Fits the map to the given geographic bounds.
  */
-export function fitBounds(map: MapArea, bounds: GeoBounds) {
+export function fitGeoBounds(map: MapArea, bounds: GeoBounds) {
   let {
     box: { w, h },
     center: [lat, lon],

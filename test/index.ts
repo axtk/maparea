@@ -9,7 +9,7 @@ import {
   addShapeEditor,
   addTiles,
   addZoomControls,
-  fitBounds,
+  fitGeoBounds,
   getCenter,
   getVicinity,
   MapArea,
@@ -31,7 +31,7 @@ let map = new MapArea({
   lang: "en_US",
 });
 
-fitBounds(map, getVicinity(shape));
+fitGeoBounds(map, getVicinity(shape));
 
 // map.center = getCenter(shape);
 // map.bounds = getVicinity(shape);
