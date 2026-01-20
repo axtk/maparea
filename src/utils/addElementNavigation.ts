@@ -12,10 +12,12 @@ export function addElementNavigation(
   let x0: number | null = null;
   let y0: number | null = null;
   let t0 = Date.now();
-  let started = false;
 
   let nextMove: ReturnType<typeof requestAnimationFrame> | null = null;
   let wheelTimeout: ReturnType<typeof setTimeout> | null = null;
+
+  let started = false;
+  let wheelActive = false;
 
   function moveBy(dx: number, dy: number, dt = 100) {
     if (wheelTimeout !== null) {
@@ -36,7 +38,8 @@ export function addElementNavigation(
     if (y0 !== null) y0 -= dy;
     t0 = t;
 
-    if (!element.dataset.dragged) element.dataset.dragged = "true";
+    if (!wheelActive && !element.dataset.dragged)
+      element.dataset.dragged = "true";
 
     nextMove = requestAnimationFrame(() => {
       nextMove = null;
@@ -141,13 +144,17 @@ export function addElementNavigation(
     element.addEventListener("wheel", (event) => {
       event.preventDefault();
 
-      if (!started) start();
+      if (!started) {
+        wheelActive = true;
+        start();
+      }
 
       if (event.shiftKey) moveBy(event.deltaY, event.deltaX, dt);
       else moveBy(event.deltaX, event.deltaY, dt);
 
       wheelTimeout = setTimeout(() => {
         end();
+        wheelActive = false;
       }, 200);
     });
   }
