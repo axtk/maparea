@@ -2,7 +2,7 @@ export * from "./src/MapArea/const.ts";
 export * from "./src/MapArea/index.ts";
 export * from "./src/plugins/addClickListener.ts";
 export * from "./src/plugins/addElement.ts";
-export * from "./src/plugins/addNavigation.ts";
+export * from "./src/plugins/addMovableViewport.ts";
 export * from "./src/plugins/addPersistence.ts";
 export * from "./src/plugins/addResizeObserver.ts";
 export * from "./src/plugins/addShape.ts";

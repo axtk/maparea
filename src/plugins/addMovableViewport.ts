@@ -10,7 +10,7 @@ export type MapAreaNavigationOptions = {
  * or a scroll wheel (the latter can be disabled by setting `options.wheel`
  * to `false`).
  */
-export function addNavigation(map: MapArea, options?: MapAreaNavigationOptions) {
+export function addMovableViewport(map: MapArea, options?: MapAreaNavigationOptions) {
   let x0 = 0;
   let y0 = 0;
 

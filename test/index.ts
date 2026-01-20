@@ -2,7 +2,7 @@ import "./index.css";
 import {
   addClickListener,
   addElement,
-  addNavigation,
+  addMovableViewport,
   addPersistence,
   addResizeObserver,
   addShape,
@@ -54,7 +54,7 @@ addClickListener(map, ({ x, y, lat, lon }) => {
 
 addResizeObserver(map, console.log);
 
-addNavigation(map);
+addMovableViewport(map);
 addShape(map, shape);
 
 addElement(map, document.createElement("div"), {
