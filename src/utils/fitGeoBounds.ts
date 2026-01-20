@@ -1,5 +1,6 @@
-import type { MapArea } from "../MapArea/index.ts";
+import type { MapArea, MapAreaOptions } from "../MapArea/index.ts";
 import type { GeoBounds } from "../types/GeoBounds.ts";
+import { getCenter } from "./getCenter.ts";
 
 const { abs, log2, min, floor } = Math;
 
@@ -35,5 +36,11 @@ export function fitGeoBounds(map: MapArea, bounds: GeoBounds) {
 
   let nextZoom = floor(min(zoom + dzx, zoom + dzy));
 
-  if (nextZoom !== zoom) map.zoom = nextZoom;
+  let nextMapOptions: Partial<MapAreaOptions> = {
+    center: getCenter(bounds),
+  };
+
+  if (nextZoom !== zoom) nextMapOptions.zoom = nextZoom;
+
+  map.setOptions(nextMapOptions);
 }

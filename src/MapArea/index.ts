@@ -33,9 +33,9 @@ export type RenderCallback = (map: MapArea) => void;
 export class MapArea {
   /** Map parameters */
   _p: MapAreaOptions;
-  /** Container */
+  /** Map container */
   _c: HTMLElement | undefined;
-  /** Pixel coordinates of the center */
+  /** Pixel coordinates of the map center */
   _cc: PixelCoords | undefined;
   /** Render callbacks */
   _r = new Set<RenderCallback>();
@@ -63,11 +63,11 @@ export class MapArea {
       bounds: this.bounds,
     };
   }
-  setOptions(options: MapAreaOptions) {
+  setOptions(options: Partial<MapAreaOptions>) {
     this._p = { ...this._p, ...options };
 
     // Flush cache
-    delete this._c;
+    if ("container" in options) delete this._c;
     delete this._cc;
 
     this.render();
