@@ -1,9 +1,9 @@
 import type { MapArea } from "../MapArea/index.ts";
-import type { DynamicString } from "../types/DynamicString.ts";
+import type { Dynamic } from "../types/Dynamic.ts";
 import type { LayerOptions } from "../types/LayerOptions.ts";
 import { getId } from "../utils/getId.ts";
 import { getLayer } from "../utils/getLayer.ts";
-import { resolveString } from "../utils/resolveString.ts";
+import { resolveDynamic } from "../utils/resolveDynamic.ts";
 import { toPrecision } from "../utils/toPrecision.ts";
 
 const { floor, ceil, random } = Math;
@@ -22,7 +22,7 @@ export type MapAreaTileOptions = LayerOptions & {
   /** Maximum retry count per tile. */
   retries?: number;
   /** URL to be used instead of a tile that failed to load. */
-  error?: DynamicString;
+  error?: Dynamic<string>;
   /** Tile size. */
   size?: number;
   /**
@@ -31,7 +31,7 @@ export type MapAreaTileOptions = LayerOptions & {
    */
   margin?: number | [number, number];
   /** Attribution HTML content. */
-  attribution?: DynamicString;
+  attribution?: Dynamic<string>;
   /** Attribution's CSS `inset`. */
   attributionInset?: string;
 };
@@ -87,7 +87,7 @@ function createTile(
     let { src } = tile;
 
     if (!src || errorCount > retries) {
-      let errorSrc = resolveString(map, error);
+      let errorSrc = resolveDynamic(map, error);
 
       if (errorSrc) {
         tile.onerror = () => {};
@@ -198,7 +198,7 @@ export function addTiles(map: MapArea, options: MapAreaTileOptions = {}) {
       if (id && !nextIds.has(id)) tile.remove();
     }
 
-    let attributionContent = resolveString(map, attribution);
+    let attributionContent = resolveDynamic(map, attribution) ?? "";
 
     attributionLayer.toggleAttribute("hidden", !attributionContent);
 

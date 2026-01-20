@@ -1,8 +1,8 @@
 import type { MapArea } from "../MapArea/index.ts";
-import type { DynamicString } from "../types/DynamicString.ts";
+import type { Dynamic } from "../types/Dynamic.ts";
 import type { GeoCoords } from "../types/GeoCoords.ts";
 import { getLayer } from "../utils/getLayer.ts";
-import { resolveString } from "../utils/resolveString.ts";
+import { resolveDynamic } from "../utils/resolveDynamic.ts";
 import { toPrecision } from "../utils/toPrecision.ts";
 
 export type MapAreaElementOptions = {
@@ -10,11 +10,11 @@ export type MapAreaElementOptions = {
   /** Geographical position (`[lat, lon]`) of the element's top left corner. */
   coords?: GeoCoords;
   /** CSS `inset` (disregarding `coords`). */
-  inset?: DynamicString;
+  inset?: Dynamic<string>;
   /** Target layer. */
   layer?: Element;
   /** HTML content of the element. */
-  content?: DynamicString;
+  content?: Dynamic<string>;
 };
 
 /**
@@ -38,7 +38,7 @@ export function addElement(
   effectiveLayer.append(element);
 
   map.onRender(() => {
-    if (inset) element.style.inset = resolveString(map, inset);
+    if (inset) element.style.inset = resolveDynamic(map, inset) ?? "";
     else if (coords) {
       let {
         centerCoords: [cx, cy],
@@ -54,7 +54,7 @@ export function addElement(
     }
 
     if (content) {
-      let resolvedContent = resolveString(map, content);
+      let resolvedContent = resolveDynamic(map, content) ?? "";
 
       if (element.innerHTML !== resolvedContent)
         element.innerHTML = resolvedContent;
