@@ -10,7 +10,7 @@ import {
   addTiles,
   addZoomControls,
   fitGeoBounds,
-  getCenter,
+  // getCenter,
   getVicinity,
   MapArea,
   toPrecision,
@@ -22,21 +22,17 @@ let formState = initTestForm();
 
 let map = new MapArea({
   container: "#map",
-  center: getCenter(shape),
+  center: [59.94607, 30.33476],
+  // center: getCenter(shape),
   // bounds: getVicinity(shape),
+  projection: "ellipsoidal",
   zoom: 10,
   minZoom: 1,
   maxZoom: 19,
-  projection: "ellipsoidal",
   lang: "en_US",
 });
 
-fitGeoBounds(map, getVicinity(shape));
-
-// map.center = getCenter(shape);
-// map.bounds = getVicinity(shape);
-
-if (formState.apikey)
+if (formState.apikey) {
   addTiles(map, {
     url: `https://tiles.api-maps.yandex.ru/v1/tiles/?x={x}&y={y}&z={z}&lang={lang}&l=map&scale=${window.devicePixelRatio ?? 1}&maptype=future_map&apikey=${formState.apikey}`,
     attribution: ({ lang }) => {
@@ -47,15 +43,15 @@ if (formState.apikey)
     error: "/assets/blank.png",
     margin: 500,
   });
-
-addClickListener(map, ({ x, y, lat, lon }) => {
-  console.log({ x, y, lat, lon });
-});
-
-addResizeObserver(map, console.log);
+}
 
 addMovableViewport(map);
-addShape(map, shape);
+addZoomControls(map);
+
+// map.center = getCenter(shape);
+// map.bounds = getVicinity(shape);
+
+fitGeoBounds(map, getVicinity(shape));
 
 addElement(map, document.createElement("div"), {
   className: "marker",
@@ -63,6 +59,8 @@ addElement(map, document.createElement("div"), {
   content: ({ lang }) =>
     lang.split("_")[0] === "ru" ? "Летний сад" : "Letní sad",
 });
+
+addShape(map, shape);
 
 let shapeOutput = document.querySelector("pre")!;
 
@@ -82,7 +80,12 @@ addShapeEditor(map, {
   ignoreClicks: "a, button",
 });
 
-addZoomControls(map);
+addClickListener(map, ({ x, y, lat, lon }) => {
+  console.log({ x, y, lat, lon });
+});
+
+addResizeObserver(map, console.log);
+
 addPersistence(map);
 
 map.lang = formState.lang || "en_US";
