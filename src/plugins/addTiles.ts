@@ -42,12 +42,7 @@ function createTile(
   map: MapArea,
   xIndex: number,
   yIndex: number,
-  {
-    size,
-    url,
-    subdomains,
-    error,
-  }: MapAreaTileOptions,
+  { size, url, subdomains, error }: MapAreaTileOptions,
 ): HTMLElement {
   let tile = new Image();
   let resolvedSize = resolveDynamic(map, size) ?? defaultTileSize;
