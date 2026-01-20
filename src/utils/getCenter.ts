@@ -1,4 +1,4 @@
-import { GeoBounds } from "../types/GeoBounds.ts";
+import type { GeoBounds } from "../types/GeoBounds.ts";
 import type { GeoCoords } from "../types/GeoCoords.ts";
 import { toGeoBounds } from "./toGeoBounds.ts";
 
