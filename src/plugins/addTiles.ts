@@ -17,6 +17,8 @@ export type MapAreaTileOptions = LayerOptions & {
    * or a function of `(map, x, y) => string` returning a fixed string URL.
    */
   url?: string | ((map: MapArea, xIndex: number, yIndex: number) => string);
+  /** Maximum retry count per tile. */
+  retries?: number;
   /** Values of the `{s}` placeholder of the tile URLs. */
   subdomains?: string[];
   /** URL to be used instead of a tile that failed to load. */
@@ -42,10 +44,11 @@ function createTile(
   map: MapArea,
   xIndex: number,
   yIndex: number,
-  { size, url, subdomains, error }: MapAreaTileOptions,
+  { size, url, subdomains, retries = 0, error }: MapAreaTileOptions,
 ): HTMLElement {
   let tile = new Image();
   let resolvedSize = resolveDynamic(map, size) ?? defaultTileSize;
+  let errorCount = 0;
 
   let getURL = (x: number, y: number) => {
     if (!url) return "";
@@ -67,24 +70,36 @@ function createTile(
     return resolvedURL;
   };
 
+  let handleError = (event: ErrorEvent) => {
+    let failedTile = event.target;
+
+    if (failedTile instanceof HTMLImageElement) {
+      if (errorCount++ < retries) {
+        let srcURL = new URL(failedTile.src);
+
+        srcURL.searchParams.set("_t", String(Date.now()));
+        failedTile.src = srcURL.href;
+
+        return;
+      }
+
+      let errorSrc = resolveDynamic(map, error);
+
+      if (errorSrc) {
+        failedTile.dataset.src = failedTile.src;
+        failedTile.src = errorSrc;
+      }
+
+      tile.removeEventListener("error", handleError);
+    }
+  };
+
   tile.width = resolvedSize;
   tile.height = resolvedSize;
   tile.src = getURL(xIndex, yIndex);
   tile.dataset.id = getTileId(map, xIndex, yIndex);
   tile.style = "position: absolute;";
-
-  tile.addEventListener("error", (event) => {
-    let failedTile = event.target;
-
-    if (failedTile instanceof HTMLImageElement) {
-      let errorSrc = resolveDynamic(map, error);
-
-      if (errorSrc) {
-        failedTile.dataset.src = tile.src;
-        failedTile.src = errorSrc;
-      }
-    }
-  });
+  tile.addEventListener("error", handleError);
 
   return tile;
 }
