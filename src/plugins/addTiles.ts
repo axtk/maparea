@@ -24,7 +24,7 @@ export type MapAreaTileOptions = LayerOptions & {
   /** URL to be used instead of a tile that failed to load. */
   error?: Dynamic<string>;
   /** Tile size. */
-  size?: number;
+  size?: Dynamic<number>;
   /**
    * Margin in pixels, or a tuple of an x- and y-margin, to be tiled
    * outside the viewport.
@@ -45,7 +45,7 @@ function createTile(
   xIndex: number,
   yIndex: number,
   {
-    size = defaultTileSize,
+    size,
     url,
     subdomains,
     retries = 0,
@@ -53,6 +53,7 @@ function createTile(
   }: MapAreaTileOptions,
 ): HTMLElement {
   let tile = new Image();
+  let resolvedSize = resolveDynamic(map, size) ?? defaultTileSize;
   let errorCount = 0;
 
   let getURL = (x: number, y: number) => {
@@ -75,8 +76,8 @@ function createTile(
     return resolvedURL;
   };
 
-  tile.width = size;
-  tile.height = size;
+  tile.width = resolvedSize;
+  tile.height = resolvedSize;
   tile.src = getURL(xIndex, yIndex);
   tile.dataset.id = getTileId(map, xIndex, yIndex);
   tile.style = "position: absolute;";
@@ -98,12 +99,12 @@ function createTile(
       return;
     }
 
-    let x = xIndex * size;
-    let y = yIndex * size;
+    let x = xIndex * resolvedSize;
+    let y = yIndex * resolvedSize;
 
     // Check whether the tile is from the repeated part of the map
     let xNorm = map.toPixelCoords(...map.toGeoCoords(x, y))[0];
-    let xIndexNorm = floor(xNorm / size);
+    let xIndexNorm = floor(xNorm / resolvedSize);
 
     if (xIndex !== xIndexNorm) tile.src = getURL(xIndexNorm, yIndex);
     else {
@@ -150,19 +151,20 @@ export function addTiles(map: MapArea, options: MapAreaTileOptions = {}) {
       centerCoords: [cx, cy],
     } = map;
 
-    let { size = defaultTileSize, margin = 0 } = options;
+    let { size, margin = 0 } = options;
+    let resolvedSize = resolveDynamic(map, size) ?? defaultTileSize;
 
     // Viewport margins
     let dx = Array.isArray(margin) ? margin[0] : margin;
     let dy = Array.isArray(margin) ? margin[1] : margin;
 
     // Number of tiles along the axes
-    let nx = ceil((w + 2 * dx) / size);
-    let ny = ceil((h + 2 * dy) / size);
+    let nx = ceil((w + 2 * dx) / resolvedSize);
+    let ny = ceil((h + 2 * dy) / resolvedSize);
 
     // Center tile indices
-    let xi0 = floor(cx / size);
-    let yi0 = floor(cy / size);
+    let xi0 = floor(cx / resolvedSize);
+    let yi0 = floor(cy / resolvedSize);
 
     let tile: HTMLElement | null = null;
     let nextIds = new Set<string>();
@@ -183,8 +185,8 @@ export function addTiles(map: MapArea, options: MapAreaTileOptions = {}) {
           layer.append(tile);
         }
 
-        let x = toPrecision(0.5 * w + xi * size - cx, 2);
-        let y = toPrecision(0.5 * h + yi * size - cy, 2);
+        let x = toPrecision(0.5 * w + xi * resolvedSize - cx, 2);
+        let y = toPrecision(0.5 * h + yi * resolvedSize - cy, 2);
 
         tile.style.transform = `translate3d(${x}px, ${y}px, 0)`;
         nextIds.add(id);
