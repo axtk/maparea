@@ -19,8 +19,6 @@ export type MapAreaTileOptions = LayerOptions & {
   url?: string | ((map: MapArea, xIndex: number, yIndex: number) => string);
   /** Values of the `{s}` placeholder of the tile URLs. */
   subdomains?: string[];
-  /** Maximum retry count per tile. */
-  retries?: number;
   /** URL to be used instead of a tile that failed to load. */
   error?: Dynamic<string>;
   /** Tile size. */
@@ -48,13 +46,11 @@ function createTile(
     size,
     url,
     subdomains,
-    retries = 0,
     error,
   }: MapAreaTileOptions,
 ): HTMLElement {
   let tile = new Image();
   let resolvedSize = resolveDynamic(map, size) ?? defaultTileSize;
-  let errorCount = 0;
 
   let getURL = (x: number, y: number) => {
     if (!url) return "";
@@ -82,38 +78,18 @@ function createTile(
   tile.dataset.id = getTileId(map, xIndex, yIndex);
   tile.style = "position: absolute;";
 
-  tile.onerror = () => {
-    errorCount++;
+  tile.addEventListener("error", (event) => {
+    let failedTile = event.target;
 
-    let { src } = tile;
-
-    if (!src || errorCount > retries) {
+    if (failedTile instanceof HTMLImageElement) {
       let errorSrc = resolveDynamic(map, error);
 
       if (errorSrc) {
-        tile.onerror = () => {};
-        tile.dataset.src = src;
-        tile.src = errorSrc;
+        failedTile.dataset.src = tile.src;
+        failedTile.src = errorSrc;
       }
-
-      return;
     }
-
-    let x = xIndex * resolvedSize;
-    let y = yIndex * resolvedSize;
-
-    // Check whether the tile is from the repeated part of the map
-    let xNorm = map.toPixelCoords(...map.toGeoCoords(x, y))[0];
-    let xIndexNorm = floor(xNorm / resolvedSize);
-
-    if (xIndex !== xIndexNorm) tile.src = getURL(xIndexNorm, yIndex);
-    else {
-      let tileURL = new URL(src);
-
-      tileURL.searchParams.set("_t", String(Date.now()));
-      tile.src = tileURL.href;
-    }
-  };
+  });
 
   return tile;
 }
