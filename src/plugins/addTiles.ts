@@ -125,6 +125,11 @@ function getTile(layer: HTMLElement, id: string) {
   return layer.querySelector<HTMLElement>(`img[data-id="${id}"]`);
 }
 
+/**
+ * Adds image tiles to the given map container based on `options.url`,
+ * which is a string URL with placeholders or a function of
+ * `(map, xIndex, yIndex) => string`.
+ */
 export function addTiles(map: MapArea, options: MapAreaTileOptions = {}) {
   let {
     id = getId(),

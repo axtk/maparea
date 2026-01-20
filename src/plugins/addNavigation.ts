@@ -1,7 +1,16 @@
 import type { MapArea } from "../MapArea/index.ts";
 import { addElementNavigation } from "../utils/addElementNavigation.ts";
 
-export function addNavigation(map: MapArea) {
+export type MapAreaNavigationOptions = {
+  wheel?: boolean;
+};
+
+/**
+ * Enables navigation over the given map container with a mouse or touches
+ * or a scroll wheel (the latter can be disabled by setting `options.wheel`
+ * to `false`).
+ */
+export function addNavigation(map: MapArea, options?: MapAreaNavigationOptions) {
   let x0 = 0;
   let y0 = 0;
 
@@ -20,6 +29,6 @@ export function addNavigation(map: MapArea) {
         y0 = y;
       }
     },
-    wheel: true,
+    wheel: options?.wheel ?? true,
   });
 }

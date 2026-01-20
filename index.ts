@@ -27,6 +27,7 @@ export * from "./src/utils/getId.ts";
 export * from "./src/utils/getLayer.ts";
 export * from "./src/utils/getPointerPosition.ts";
 export * from "./src/utils/getVicinity.ts";
-export * from "./src/utils/isGeoCoords.ts";
+export * from "./src/utils/isCoordsArray.ts";
 export * from "./src/utils/resolveString.ts";
+export * from "./src/utils/toGeoBounds.ts";
 export * from "./src/utils/toPrecision.ts";

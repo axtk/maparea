@@ -1,3 +1,7 @@
+/**
+ * Returns the pointer pixel position `[x, y]` of the given mouse or
+ * touch event.
+ */
 export function getPointerPosition(
   event: MouseEvent | TouchEvent,
 ): [number, number] | null {

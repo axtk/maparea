@@ -1,6 +1,10 @@
 import type { GeoBounds } from "../types/GeoBounds.ts";
 import type { GeoCoords } from "../types/GeoCoords.ts";
 
+/**
+ * Returns the minimal and maximal latitudes and longitudes of
+ * an array of geographic coordinates.
+ */
 export function getGeoBounds(coords: GeoCoords[]): GeoBounds {
   if (coords.length === 0) return {};
 

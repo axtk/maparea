@@ -9,6 +9,9 @@ export type MapAreaResizeEvent = {
 
 export type MapAreaResizeCallback = (event: MapAreaResizeEvent) => void;
 
+/**
+ * Adds a resize observer to the map and returns a function turning it off.
+ */
 export function addResizeObserver(
   map: MapArea,
   callback?: MapAreaResizeCallback,

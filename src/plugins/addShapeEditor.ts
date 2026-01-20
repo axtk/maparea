@@ -11,6 +11,9 @@ export type ShapeEditorOptions = {
   ignoreClicks?: IgnoredElement;
 };
 
+/**
+ * Adds a shape editor to the given map container.
+ */
 export function addShapeEditor(map: MapArea, options?: ShapeEditorOptions) {
   let shape: GeoVertex[] = [];
   let clickTimeout: ReturnType<typeof setTimeout> | null = null;

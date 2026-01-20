@@ -1,4 +1,4 @@
-export function toPrecision(x: number, n: number) {
+export function toPrecision(x: number, n: number): string {
   return x
     .toFixed(n)
     .replace(/\.(\d*[^0])0+$/, ".$1")

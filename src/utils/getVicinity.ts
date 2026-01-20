@@ -1,24 +1,20 @@
 import type { GeoBounds } from "../types/GeoBounds.ts";
 import type { GeoCoords } from "../types/GeoCoords.ts";
-import { getGeoBounds } from "./getGeoBounds.ts";
-import { isGeoCoords } from "./isGeoCoords.ts";
+import { toGeoBounds } from "./toGeoBounds.ts";
 
 const defaultPadding: GeoCoords = [0.005, 0.018];
 
-function toGeoBounds(x: GeoCoords | GeoCoords[] | GeoBounds): GeoBounds {
-  if (Array.isArray(x)) {
-    if (isGeoCoords(x))
-      return { minLat: x[0], maxLat: x[0], minLon: x[1], maxLon: x[1] };
-    else return getGeoBounds(x);
-  }
-  return x;
-}
-
+/**
+ * Returns the minimal and maximal latitudes and longitudes of a region
+ * surrounding a geographic area, an array of geographic coordinates,
+ * or a single point.
+ */
 export function getVicinity(
   x: GeoCoords | GeoCoords[] | GeoBounds,
-  [dLat, dLon] = defaultPadding,
+  padding = defaultPadding,
 ): GeoBounds {
   let { minLat = 0, maxLat = 0, minLon = 0, maxLon = 0 } = toGeoBounds(x);
+  let [dLat, dLon] = padding;
 
   return {
     minLat: minLat - dLat,

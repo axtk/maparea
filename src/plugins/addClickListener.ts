@@ -14,8 +14,8 @@ export type MapAreaClickEvent = {
 export type MapAreaClickCallback = (event: MapAreaClickEvent) => void;
 
 /**
- * Adds a click listener to the map and returns a function
- * removing the added click listener.
+ * Adds a click listener to the map and returns a function that removes
+ * the added listener.
  */
 export function addClickListener(
   map: MapArea,

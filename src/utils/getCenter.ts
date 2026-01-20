@@ -1,6 +1,10 @@
 import type { GeoCoords } from "../types/GeoCoords.ts";
 import { getGeoBounds } from "./getGeoBounds.ts";
 
+/**
+ * Calculates the geographic coordinates of the center of an array
+ * of geographic coordinates.
+ */
 export function getCenter(coords: GeoCoords[]): GeoCoords {
   let { minLat, maxLat, minLon, maxLon } = getGeoBounds(coords);
 

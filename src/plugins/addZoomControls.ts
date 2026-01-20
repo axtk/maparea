@@ -11,6 +11,9 @@ export type ZoomControlOptions = {
   inset?: string;
 };
 
+/**
+ * Adds customizable zoom controls to the given map container.
+ */
 export function addZoomControls(
   map: MapArea,
   options: ZoomControlOptions = {},

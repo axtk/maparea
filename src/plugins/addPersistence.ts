@@ -5,6 +5,11 @@ export type PersistenceOptions = {
   session?: boolean;
 };
 
+/**
+ * Enables persistence of the map's state across page reloads by saving it to
+ * the browser storage (`localStorage` by default, `sessionStorage` with
+ * `session` set to `true`).
+ */
 export function addPersistence(
   map: MapArea,
   { storageKey, session = false }: PersistenceOptions = {},

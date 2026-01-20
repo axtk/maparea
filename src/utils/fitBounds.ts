@@ -3,6 +3,9 @@ import type { GeoBounds } from "../types/GeoBounds.ts";
 
 const { abs, log2, min, floor } = Math;
 
+/**
+ * Fits the map to the given geographic bounds.
+ */
 export function fitBounds(map: MapArea, bounds: GeoBounds) {
   let {
     box: { w, h },
