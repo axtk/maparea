@@ -46,7 +46,7 @@ if (formState.apikey) {
   });
 }
 
-addMovableViewport(map);
+addMovableViewport(map, { ignore: "a, button" });
 addZoomControls(map);
 
 // map.center = getCenter(shape);

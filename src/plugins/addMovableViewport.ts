@@ -1,8 +1,10 @@
 import type { MapArea } from "../MapArea/index.ts";
+import { IgnoredElement } from "../types/IgnoredElement.ts";
 import { setMovableViewport } from "../utils/setMovableViewport.ts";
 
 export type MapAreaNavigationOptions = {
   wheel?: boolean;
+  ignore?: IgnoredElement;
 };
 
 /**
@@ -12,7 +14,7 @@ export type MapAreaNavigationOptions = {
  */
 export function addMovableViewport(
   map: MapArea,
-  options?: MapAreaNavigationOptions,
+  { wheel = true, ignore }: MapAreaNavigationOptions = {},
 ) {
   let x0 = 0;
   let y0 = 0;
@@ -32,6 +34,7 @@ export function addMovableViewport(
         y0 = y;
       }
     },
-    wheel: options?.wheel ?? true,
+    wheel,
+    ignore,
   });
 }

@@ -1,13 +1,17 @@
+import { IgnoredElement } from "../types/IgnoredElement.ts";
+import { shouldIgnore } from "./shouldIgnore.ts";
+
 export type ElementNavigationOptions = {
   onStart?: () => void;
   onMove?: (dx: number, dy: number) => void;
   onEnd?: () => void;
   wheel?: boolean;
+  ignore?: IgnoredElement;
 };
 
 export function setMovableViewport(
   element: HTMLElement,
-  { onStart, onMove, onEnd, wheel }: ElementNavigationOptions = {},
+  { onStart, onMove, onEnd, wheel, ignore }: ElementNavigationOptions = {},
 ) {
   let x0: number | null = null;
   let y0: number | null = null;
@@ -94,7 +98,7 @@ export function setMovableViewport(
   let touchHandler: ((event: TouchEvent) => void) | null = null;
 
   element.addEventListener("mousedown", (event) => {
-    if (mouseHandler) return;
+    if (mouseHandler || shouldIgnore(event.target, ignore)) return;
 
     event.preventDefault();
     start(event.pageX, event.pageY);
@@ -108,7 +112,7 @@ export function setMovableViewport(
   });
 
   element.addEventListener("mouseup", (event) => {
-    if (!mouseHandler) return;
+    if (!mouseHandler || shouldIgnore(event.target, ignore)) return;
 
     event.preventDefault();
     end(event.pageX, event.pageY);
@@ -118,7 +122,7 @@ export function setMovableViewport(
   });
 
   element.addEventListener("touchstart", (event) => {
-    if (touchHandler) return;
+    if (touchHandler || shouldIgnore(event.target, ignore)) return;
 
     event.preventDefault();
     start(event.touches[0]?.pageX, event.touches[0]?.pageY);
@@ -132,7 +136,7 @@ export function setMovableViewport(
   });
 
   element.addEventListener("touchend", (event) => {
-    if (!touchHandler) return;
+    if (!touchHandler || shouldIgnore(event.target, ignore)) return;
 
     event.preventDefault();
     end(event.touches[0]?.pageX, event.touches[0]?.pageY);
@@ -142,7 +146,7 @@ export function setMovableViewport(
   });
 
   element.addEventListener("touchcancel", (event) => {
-    if (!touchHandler) return;
+    if (!touchHandler || shouldIgnore(event.target, ignore)) return;
 
     event.preventDefault();
     end(event.touches[0]?.pageX, event.touches[0]?.pageY);
@@ -155,6 +159,8 @@ export function setMovableViewport(
     let dt = 10;
 
     element.addEventListener("wheel", (event) => {
+      if (shouldIgnore(event.target, ignore)) return;
+
       event.preventDefault();
 
       if (!started) {
