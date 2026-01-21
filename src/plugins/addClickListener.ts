@@ -13,6 +13,10 @@ export type MapAreaClickEvent = {
 
 export type MapAreaClickCallback = (event: MapAreaClickEvent) => void;
 
+export type MapAreaClickOptions = {
+  ignore?: IgnoredElement;
+};
+
 /**
  * Adds a click listener to the map and returns a function that removes
  * the added listener.
@@ -20,7 +24,7 @@ export type MapAreaClickCallback = (event: MapAreaClickEvent) => void;
 export function addClickListener(
   map: MapArea,
   callback: MapAreaClickCallback,
-  ignored?: IgnoredElement,
+  { ignore }: MapAreaClickOptions = {},
 ) {
   let t0 = Date.now();
   let pointerPosition: [number, number] | null = null;
@@ -31,7 +35,7 @@ export function addClickListener(
   };
 
   let end = (event: MouseEvent | TouchEvent) => {
-    if (shouldIgnore(event.target, ignored) || !pointerPosition) return;
+    if (shouldIgnore(event.target, ignore) || !pointerPosition) return;
 
     // Skip the click handler if the pointer was dragged
     if (Date.now() - t0 > 150) return;

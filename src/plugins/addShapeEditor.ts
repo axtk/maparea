@@ -7,8 +7,10 @@ import { renderShapeLayer } from "../utils/renderShapeLayer.ts";
 import { addClickListener } from "./addClickListener.ts";
 
 export type ShapeEditorOptions = {
+  /** Adds a shape update callback. */
   onUpdate?: (shape: GeoVertex[]) => void;
-  ignoreClicks?: IgnoredElement;
+  /** Map elements to be ignored in the shape editor when clicked. */
+  ignore?: IgnoredElement;
 };
 
 /**
@@ -60,7 +62,7 @@ export function addShapeEditor(map: MapArea, options?: ShapeEditorOptions) {
       if (markerId) clickTimeout = setTimeout(addPoint, 250);
       else addPoint();
     },
-    options?.ignoreClicks,
+    { ignore: options?.ignore },
   );
 
   map.onRender(update);

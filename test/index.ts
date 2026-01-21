@@ -78,7 +78,7 @@ addShapeEditor(map, {
 
     if (shapeOutput.textContent !== content) shapeOutput.textContent = content;
   },
-  ignoreClicks: "a, button",
+  ignore: "a, button",
 });
 
 addClickListener(map, ({ x, y, lat, lon }) => {
