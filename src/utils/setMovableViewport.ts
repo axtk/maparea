@@ -22,6 +22,7 @@ export function setMovableViewport(
 
   let started = false;
   let wheelActive = false;
+  let activePointers = 0;
 
   let dxTotal = 0;
   let dyTotal = 0;
@@ -96,10 +97,12 @@ export function setMovableViewport(
   element.dataset.draggable = "true";
 
   function isRelevantEvent(event: PointerEvent) {
-    return !shouldIgnore(event.target, ignore);
+    return !shouldIgnore(event.target, ignore) && activePointers === 1;
   }
 
   function handlePointerDown(event: PointerEvent) {
+    activePointers++;
+
     if (isRelevantEvent(event)) {
       event.preventDefault();
       start(event.pageX, event.pageY);
@@ -118,6 +121,8 @@ export function setMovableViewport(
       event.preventDefault();
       end(event.pageX, event.pageY);
     }
+
+    activePointers = 0;
   }
 
   function handleWheel(event: WheelEvent) {
