@@ -26,7 +26,7 @@ export function setMovableViewport(
   let dxTotal = 0;
   let dyTotal = 0;
 
-  function moveBy(dx: number, dy: number, dt = 100) {
+  function moveBy(dx: number, dy: number) {
     // Accumulating shifts until the actual move from the rAF callback occurs
     dxTotal += dx;
     dyTotal += dy;
@@ -40,6 +40,7 @@ export function setMovableViewport(
       element.dataset.dragged = "true";
 
     let t = Date.now();
+    let dt = wheelActive ? 10 : 100;
 
     if ((dxTotal !== 0 || dyTotal !== 0) && t - t0 >= dt) {
       if (nextMove) cancelAnimationFrame(nextMove);
@@ -56,8 +57,8 @@ export function setMovableViewport(
     }
   }
 
-  function moveTo(x: number, y: number, dt?: number) {
-    if (x0 !== null && y0 !== null) moveBy(x0 - x, y0 - y, dt);
+  function moveTo(x: number, y: number) {
+    if (x0 !== null && y0 !== null) moveBy(x0 - x, y0 - y);
   }
 
   function start(x?: number, y?: number) {
@@ -94,59 +95,66 @@ export function setMovableViewport(
 
   element.dataset.draggable = "true";
 
-  let pointerEventHandler: ((event: PointerEvent) => void) | null = null;
+  function isRelevantEvent(event: PointerEvent) {
+    return !shouldIgnore(event.target, ignore);
+  }
 
   function handlePointerDown(event: PointerEvent) {
-    if (pointerEventHandler || shouldIgnore(event.target, ignore)) return;
+    if (isRelevantEvent(event)) {
+      event.preventDefault();
+      start(event.pageX, event.pageY);
+    }
+  }
 
-    event.preventDefault();
-    start(event.pageX, event.pageY);
-
-    pointerEventHandler = (event) => {
+  function handlePointerMove(event: PointerEvent) {
+    if (isRelevantEvent(event)) {
       event.preventDefault();
       moveTo(event.pageX, event.pageY);
-    };
-
-    element.addEventListener("pointermove", pointerEventHandler);
+    }
   }
 
   function handlePointerUp(event: PointerEvent) {
-    if (!pointerEventHandler || shouldIgnore(event.target, ignore)) return;
+    if (isRelevantEvent(event)) {
+      event.preventDefault();
+      end(event.pageX, event.pageY);
+    }
+  }
+
+  function handleWheel(event: WheelEvent) {
+    if (shouldIgnore(event.target, ignore)) return;
 
     event.preventDefault();
-    end(event.pageX, event.pageY);
 
-    element.removeEventListener("pointermove", pointerEventHandler);
-    pointerEventHandler = null;
+    if (!started) {
+      start();
+      wheelActive = true;
+    }
+
+    if (event.shiftKey) moveBy(event.deltaY, event.deltaX);
+    else moveBy(event.deltaX, event.deltaY);
+
+    if (wheelEndTimeout !== null) clearTimeout(wheelEndTimeout);
+
+    wheelEndTimeout = setTimeout(() => {
+      end();
+      wheelActive = false;
+      wheelEndTimeout = null;
+    }, 200);
   }
 
   element.addEventListener("pointerdown", handlePointerDown);
+  element.addEventListener("pointermove", handlePointerMove);
   element.addEventListener("pointerup", handlePointerUp);
   element.addEventListener("pointercancel", handlePointerUp);
 
-  if (wheel) {
-    let dt = 10;
+  if (wheel) element.addEventListener("wheel", handleWheel);
 
-    element.addEventListener("wheel", (event) => {
-      if (shouldIgnore(event.target, ignore)) return;
+  return () => {
+    element.removeEventListener("pointerdown", handlePointerDown);
+    element.removeEventListener("pointermove", handlePointerMove);
+    element.removeEventListener("pointerup", handlePointerUp);
+    element.removeEventListener("pointercancel", handlePointerUp);
 
-      event.preventDefault();
-
-      if (!started) {
-        start();
-        wheelActive = true;
-      }
-
-      if (event.shiftKey) moveBy(event.deltaY, event.deltaX, dt);
-      else moveBy(event.deltaX, event.deltaY, dt);
-
-      if (wheelEndTimeout !== null) clearTimeout(wheelEndTimeout);
-
-      wheelEndTimeout = setTimeout(() => {
-        end();
-        wheelActive = false;
-        wheelEndTimeout = null;
-      }, 200);
-    });
-  }
+    if (wheel) element.removeEventListener("wheel", handleWheel);
+  };
 }
