@@ -40,6 +40,13 @@ function getTileId(map: MapArea, xIndex: number, yIndex: number) {
   return `${xIndex},${yIndex},${map.zoom},${map.lang}`;
 }
 
+function handleTileLoaded(event: Event) {
+  let tile = event.target;
+
+  if (tile instanceof HTMLImageElement)
+    tile.style.opacity = "";
+}
+
 function createTile(
   map: MapArea,
   xIndex: number,
@@ -98,8 +105,12 @@ function createTile(
   tile.height = resolvedSize;
   tile.src = getURL(xIndex, yIndex);
   tile.dataset.id = getTileId(map, xIndex, yIndex);
-  tile.style = "position: absolute;";
+  tile.style.position = "absolute";
+  
+  tile.addEventListener("load", handleTileLoaded);
   tile.addEventListener("error", handleError);
+
+  if (!tile.complete) tile.style.opacity = "0";
 
   return tile;
 }
