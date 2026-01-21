@@ -144,7 +144,7 @@ export function addTiles(map: MapArea, options: MapAreaTileOptions = {}) {
     let dx = Array.isArray(margin) ? margin[0] : margin;
     let dy = Array.isArray(margin) ? margin[1] : margin;
 
-    // Number of tiles along the axes
+    // Number of tiles in the viewport along the axes
     let nx = ceil((w + 2 * dx) / resolvedSize);
     let ny = ceil((h + 2 * dy) / resolvedSize);
 
@@ -204,7 +204,7 @@ export function addTiles(map: MapArea, options: MapAreaTileOptions = {}) {
     }
 
     if (map.zoom === prevZoom) {
-      layer.style.opacity = "";
+      if (layer.style.opacity) layer.style.opacity = "";
       renderTiles();
     } else {
       layer.style.opacity = "0";
@@ -212,7 +212,7 @@ export function addTiles(map: MapArea, options: MapAreaTileOptions = {}) {
       // requesting new tiles
       renderTimeout = setTimeout(() => {
         renderTimeout = null;
-        layer.style.opacity = "";
+        if (layer.style.opacity) layer.style.opacity = "";
         renderTiles();
       }, 300);
     }
