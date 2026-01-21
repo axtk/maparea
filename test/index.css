@@ -18,16 +18,19 @@ body {
   cursor: grabbing;
 }
 #map .elements.layer .marker {
-  --r: 0.3em;
-  display: inline-block;
-  font-size: 0.75rem;
+  --r: 0.2rem;
+  font-size: 0.7rem;
+}
+#map .elements.layer .marker span {
+  display: block;
   font-style: italic;
+  line-height: 1.1;
   color: white;
   background: #c71585a0;
-  border-top: 0.1em solid #c71585;
-  padding: 0 0.5em 0 1.25em;
-  position: relative;
+  border-bottom: 0.1em solid var(--shape-color);
+  padding: 0.15em 1.25em 0.05em;
   box-sizing: border-box;
+  transform: translateY(-100%);
 }
 #map .elements.layer .marker::before {
   content: "";
