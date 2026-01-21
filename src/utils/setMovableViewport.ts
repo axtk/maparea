@@ -20,11 +20,6 @@ export function setMovableViewport(
   let wheelActive = false;
 
   function moveBy(dx: number, dy: number, dt = 100) {
-    if (wheelTimeout !== null) {
-      clearTimeout(wheelTimeout);
-      wheelTimeout = null;
-    }
-
     if (nextMove !== null) {
       cancelAnimationFrame(nextMove);
       nextMove = null;
@@ -41,10 +36,12 @@ export function setMovableViewport(
     if (!wheelActive && !element.dataset.dragged)
       element.dataset.dragged = "true";
 
-    nextMove = requestAnimationFrame(() => {
-      nextMove = null;
-      if (dx !== 0 || dy !== 0) onMove?.(dx, dy);
-    });
+    if (dx !== 0 || dy !== 0) {
+      nextMove = requestAnimationFrame(() => {
+        onMove?.(dx, dy);
+        nextMove = null;
+      });
+    }
   }
 
   function moveTo(x: number, y: number, dt?: number) {
@@ -52,6 +49,11 @@ export function setMovableViewport(
   }
 
   function start(x?: number, y?: number) {
+    if (wheelTimeout !== null) {
+      clearTimeout(wheelTimeout);
+      wheelTimeout = null;
+    }
+
     started = true;
     onStart?.();
 
@@ -143,6 +145,11 @@ export function setMovableViewport(
 
     element.addEventListener("wheel", (event) => {
       event.preventDefault();
+
+      if (wheelTimeout !== null) {
+        clearTimeout(wheelTimeout);
+        wheelTimeout = null;
+      }
 
       if (!started) {
         wheelActive = true;
