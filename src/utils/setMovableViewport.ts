@@ -95,7 +95,7 @@ export function setMovableViewport(
 
   element.addEventListener("mousedown", (event) => {
     if (mouseHandler) return;
-    
+
     event.preventDefault();
     start(event.pageX, event.pageY);
 

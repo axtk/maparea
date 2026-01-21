@@ -43,8 +43,7 @@ function getTileId(map: MapArea, xIndex: number, yIndex: number) {
 function handleTileLoaded(event: Event) {
   let tile = event.target;
 
-  if (tile instanceof HTMLImageElement)
-    tile.style.opacity = "";
+  if (tile instanceof HTMLImageElement) tile.style.opacity = "";
 }
 
 function createTile(
@@ -106,7 +105,7 @@ function createTile(
   tile.src = getURL(xIndex, yIndex);
   tile.dataset.id = getTileId(map, xIndex, yIndex);
   tile.style.position = "absolute";
-  
+
   tile.addEventListener("load", handleTileLoaded);
   tile.addEventListener("error", handleError);
 
