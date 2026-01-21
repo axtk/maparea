@@ -5,7 +5,7 @@ export type ElementNavigationOptions = {
   wheel?: boolean;
 };
 
-export function addElementNavigation(
+export function setMovableViewport(
   element: HTMLElement,
   { onStart, onMove, onEnd, wheel }: ElementNavigationOptions = {},
 ) {

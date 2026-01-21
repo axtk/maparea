@@ -1,5 +1,5 @@
 import type { MapArea } from "../MapArea/index.ts";
-import { addElementNavigation } from "../utils/addElementNavigation.ts";
+import { setMovableViewport } from "../utils/setMovableViewport.ts";
 
 export type MapAreaNavigationOptions = {
   wheel?: boolean;
@@ -17,7 +17,7 @@ export function addMovableViewport(
   let x0 = 0;
   let y0 = 0;
 
-  addElementNavigation(map.container, {
+  setMovableViewport(map.container, {
     onStart() {
       [x0, y0] = map.centerCoords;
     },
