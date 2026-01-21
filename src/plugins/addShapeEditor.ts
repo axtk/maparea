@@ -4,7 +4,7 @@ import type { IgnoredElement } from "../types/IgnoredElement.ts";
 import type { ShapeLayerOptions } from "../types/ShapeLayerOptions.ts";
 import { getId } from "../utils/getId.ts";
 import { renderShapeLayer } from "../utils/renderShapeLayer.ts";
-import { addClickListener } from "./addClickListener.ts";
+import { addPointerListener } from "./addPointerListener.ts";
 
 export type ShapeEditorOptions = {
   /** Adds a shape update callback. */
@@ -30,7 +30,7 @@ export function addShapeEditor(map: MapArea, options?: ShapeEditorOptions) {
     options?.onUpdate?.(shape);
   };
 
-  addClickListener(
+  addPointerListener(
     map,
     ({ lat, lon, originalEvent }) => {
       let marker = (

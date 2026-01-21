@@ -1,6 +1,5 @@
 import type { MapArea } from "../MapArea/index.ts";
 import type { IgnoredElement } from "../types/IgnoredElement.ts";
-import { getPointerPosition } from "../utils/getPointerPosition.ts";
 import { shouldIgnore } from "../utils/shouldIgnore.ts";
 
 export type MapAreaClickEvent = {
@@ -18,10 +17,10 @@ export type MapAreaClickOptions = {
 };
 
 /**
- * Adds a click listener to the map and returns a function that removes
- * the added listener.
+ * Adds a pointer event listener to the map and returns a function that
+ * removes the added listener.
  */
-export function addClickListener(
+export function addPointerListener(
   map: MapArea,
   callback: MapAreaClickCallback,
   { ignore }: MapAreaClickOptions = {},

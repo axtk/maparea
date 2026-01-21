@@ -1,6 +1,6 @@
 import "./index.css";
 import {
-  addClickListener,
+  addPointerListener,
   addElement,
   addMovableViewport,
   addPersistence,
@@ -81,7 +81,7 @@ addShapeEditor(map, {
   ignore: "a, button",
 });
 
-addClickListener(map, ({ x, y, lat, lon }) => {
+addPointerListener(map, ({ x, y, lat, lon }) => {
   console.log({ x, y, lat, lon });
 });
 

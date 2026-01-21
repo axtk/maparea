@@ -1,6 +1,6 @@
 export * from "./src/MapArea/const.ts";
 export * from "./src/MapArea/index.ts";
-export * from "./src/plugins/addClickListener.ts";
+export * from "./src/plugins/addPointerListener.ts";
 export * from "./src/plugins/addElement.ts";
 export * from "./src/plugins/addMovableViewport.ts";
 export * from "./src/plugins/addPersistence.ts";
@@ -25,7 +25,6 @@ export * from "./src/utils/getCenter.ts";
 export * from "./src/utils/getGeoBounds.ts";
 export * from "./src/utils/getId.ts";
 export * from "./src/utils/getLayer.ts";
-export * from "./src/utils/getPointerPosition.ts";
 export * from "./src/utils/getVicinity.ts";
 export * from "./src/utils/isCoordsArray.ts";
 export * from "./src/utils/resolveDynamic.ts";
