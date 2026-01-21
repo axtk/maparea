@@ -14,31 +14,39 @@ export function setMovableViewport(
   let t0 = Date.now();
 
   let nextMove: ReturnType<typeof requestAnimationFrame> | null = null;
-  let wheelTimeout: ReturnType<typeof setTimeout> | null = null;
+  let wheelEndTimeout: ReturnType<typeof setTimeout> | null = null;
 
   let started = false;
   let wheelActive = false;
 
+  let dxTotal = 0;
+  let dyTotal = 0;
+
   function moveBy(dx: number, dy: number, dt = 100) {
-    if (nextMove !== null) {
-      cancelAnimationFrame(nextMove);
-      nextMove = null;
-    }
+    // Accumulating shifts until the actual move from the rAF callback occurs
+    dxTotal += dx;
+    dyTotal += dy;
 
-    let t = Date.now();
-
-    if (t - t0 < dt) return;
-
+    // Updating `x0` and `y0` used by `moveTo()` to have updated `dx` and `dy`
+    // at each move
     if (x0 !== null) x0 -= dx;
     if (y0 !== null) y0 -= dy;
-    t0 = t;
 
     if (!wheelActive && !element.dataset.dragged)
       element.dataset.dragged = "true";
 
-    if (dx !== 0 || dy !== 0) {
+    let t = Date.now();
+
+    if ((dxTotal !== 0 || dyTotal !== 0) && t - t0 >= dt) {
+      if (nextMove) cancelAnimationFrame(nextMove);
+
       nextMove = requestAnimationFrame(() => {
-        onMove?.(dx, dy);
+        onMove?.(dxTotal, dyTotal);
+
+        dxTotal = 0;
+        dyTotal = 0;
+        t0 = t;
+
         nextMove = null;
       });
     }
@@ -49,9 +57,10 @@ export function setMovableViewport(
   }
 
   function start(x?: number, y?: number) {
-    if (wheelTimeout !== null) {
-      clearTimeout(wheelTimeout);
-      wheelTimeout = null;
+    if (wheelEndTimeout !== null) {
+      clearTimeout(wheelEndTimeout);
+      wheelActive = false;
+      wheelEndTimeout = null;
     }
 
     started = true;
@@ -61,11 +70,13 @@ export function setMovableViewport(
     if (y !== undefined) y0 = y;
 
     t0 = Date.now();
+
+    dxTotal = 0;
+    dyTotal = 0;
   }
 
   function end(x?: number, y?: number) {
     started = false;
-    wheelTimeout = null;
 
     if (x !== undefined && y !== undefined) moveTo(x, y);
 
@@ -74,9 +85,7 @@ export function setMovableViewport(
     x0 = null;
     y0 = null;
 
-    requestAnimationFrame(() => {
-      onEnd?.();
-    });
+    onEnd?.();
   }
 
   element.dataset.draggable = "true";
@@ -85,57 +94,59 @@ export function setMovableViewport(
   let touchHandler: ((event: TouchEvent) => void) | null = null;
 
   element.addEventListener("mousedown", (event) => {
-    event.preventDefault();
-
     if (mouseHandler) return;
+    
+    event.preventDefault();
+    start(event.pageX, event.pageY);
 
-    start(event.clientX, event.clientY);
     mouseHandler = (event) => {
       event.preventDefault();
-      moveTo(event.clientX, event.clientY);
+      moveTo(event.pageX, event.pageY);
     };
+
     element.addEventListener("mousemove", mouseHandler);
   });
 
   element.addEventListener("mouseup", (event) => {
-    event.preventDefault();
-
     if (!mouseHandler) return;
 
-    end(event.clientX, event.clientY);
+    event.preventDefault();
+    end(event.pageX, event.pageY);
+
     element.removeEventListener("mousemove", mouseHandler);
     mouseHandler = null;
   });
 
   element.addEventListener("touchstart", (event) => {
-    event.preventDefault();
-
     if (touchHandler) return;
 
-    start(event.touches[0]?.clientX, event.touches[0]?.clientY);
+    event.preventDefault();
+    start(event.touches[0]?.pageX, event.touches[0]?.pageY);
+
     touchHandler = (event) => {
       event.preventDefault();
-      moveTo(event.touches[0]?.clientX, event.touches[0]?.clientY);
+      moveTo(event.touches[0]?.pageX, event.touches[0]?.pageY);
     };
+
     element.addEventListener("touchmove", touchHandler);
   });
 
   element.addEventListener("touchend", (event) => {
-    event.preventDefault();
-
     if (!touchHandler) return;
 
-    end(event.touches[0]?.clientX, event.touches[0]?.clientY);
+    event.preventDefault();
+    end(event.touches[0]?.pageX, event.touches[0]?.pageY);
+
     element.removeEventListener("touchmove", touchHandler);
     touchHandler = null;
   });
 
   element.addEventListener("touchcancel", (event) => {
-    event.preventDefault();
-
     if (!touchHandler) return;
 
-    end(event.touches[0]?.clientX, event.touches[0]?.clientY);
+    event.preventDefault();
+    end(event.touches[0]?.pageX, event.touches[0]?.pageY);
+
     element.removeEventListener("touchmove", touchHandler);
     touchHandler = null;
   });
@@ -146,22 +157,20 @@ export function setMovableViewport(
     element.addEventListener("wheel", (event) => {
       event.preventDefault();
 
-      if (wheelTimeout !== null) {
-        clearTimeout(wheelTimeout);
-        wheelTimeout = null;
-      }
-
       if (!started) {
-        wheelActive = true;
         start();
+        wheelActive = true;
       }
 
       if (event.shiftKey) moveBy(event.deltaY, event.deltaX, dt);
       else moveBy(event.deltaX, event.deltaY, dt);
 
-      wheelTimeout = setTimeout(() => {
+      if (wheelEndTimeout !== null) clearTimeout(wheelEndTimeout);
+
+      wheelEndTimeout = setTimeout(() => {
         end();
         wheelActive = false;
+        wheelEndTimeout = null;
       }, 200);
     });
   }
