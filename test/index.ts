@@ -1,9 +1,9 @@
 import "./index.css";
 import {
-  addPointerListener,
   addElement,
   addMovableViewport,
   addPersistence,
+  addPointerListener,
   addResizeObserver,
   addShape,
   addShapeEditor,

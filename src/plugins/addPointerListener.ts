@@ -36,7 +36,8 @@ export function addPointerListener(
   };
 
   let end = (event: PointerEvent) => {
-    if (shouldIgnore(event.target, ignore) || x0 === null || y0 === null) return;
+    if (shouldIgnore(event.target, ignore) || x0 === null || y0 === null)
+      return;
 
     // Skip the click handler if the pointer was dragged
     if (Date.now() - t0 > 150) return;
@@ -62,7 +63,7 @@ export function addPointerListener(
 
   map.container.addEventListener("pointerdown", start);
   map.container.addEventListener("pointerup", end);
-  map.container.addEventListener("pointercancel", end)
+  map.container.addEventListener("pointercancel", end);
 
   return () => {
     map.container.removeEventListener("pointerdown", start);
