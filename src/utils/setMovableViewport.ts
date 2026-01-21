@@ -1,4 +1,4 @@
-import { IgnoredElement } from "../types/IgnoredElement.ts";
+import type { IgnoredElement } from "../types/IgnoredElement.ts";
 import { shouldIgnore } from "./shouldIgnore.ts";
 
 export type ElementNavigationOptions = {

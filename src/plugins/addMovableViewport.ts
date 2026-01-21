@@ -1,5 +1,5 @@
 import type { MapArea } from "../MapArea/index.ts";
-import { IgnoredElement } from "../types/IgnoredElement.ts";
+import type { IgnoredElement } from "../types/IgnoredElement.ts";
 import { setMovableViewport } from "../utils/setMovableViewport.ts";
 
 export type MapAreaNavigationOptions = {
