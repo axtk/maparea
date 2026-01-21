@@ -94,66 +94,35 @@ export function setMovableViewport(
 
   element.dataset.draggable = "true";
 
-  let mouseHandler: ((event: MouseEvent) => void) | null = null;
-  let touchHandler: ((event: TouchEvent) => void) | null = null;
+  let pointerEventHandler: ((event: PointerEvent) => void) | null = null;
 
-  element.addEventListener("mousedown", (event) => {
-    if (mouseHandler || shouldIgnore(event.target, ignore)) return;
+  function handlePointerDown(event: PointerEvent) {
+    if (pointerEventHandler || shouldIgnore(event.target, ignore)) return;
 
     event.preventDefault();
     start(event.pageX, event.pageY);
 
-    mouseHandler = (event) => {
+    pointerEventHandler = (event) => {
       event.preventDefault();
       moveTo(event.pageX, event.pageY);
     };
 
-    element.addEventListener("mousemove", mouseHandler);
-  });
+    element.addEventListener("pointermove", pointerEventHandler);
+  }
 
-  element.addEventListener("mouseup", (event) => {
-    if (!mouseHandler || shouldIgnore(event.target, ignore)) return;
+  function handlePointerUp(event: PointerEvent) {
+    if (!pointerEventHandler || shouldIgnore(event.target, ignore)) return;
 
     event.preventDefault();
     end(event.pageX, event.pageY);
 
-    element.removeEventListener("mousemove", mouseHandler);
-    mouseHandler = null;
-  });
+    element.removeEventListener("pointermove", pointerEventHandler);
+    pointerEventHandler = null;
+  }
 
-  element.addEventListener("touchstart", (event) => {
-    if (touchHandler || shouldIgnore(event.target, ignore)) return;
-
-    event.preventDefault();
-    start(event.touches[0]?.pageX, event.touches[0]?.pageY);
-
-    touchHandler = (event) => {
-      event.preventDefault();
-      moveTo(event.touches[0]?.pageX, event.touches[0]?.pageY);
-    };
-
-    element.addEventListener("touchmove", touchHandler);
-  });
-
-  element.addEventListener("touchend", (event) => {
-    if (!touchHandler || shouldIgnore(event.target, ignore)) return;
-
-    event.preventDefault();
-    end(event.touches[0]?.pageX, event.touches[0]?.pageY);
-
-    element.removeEventListener("touchmove", touchHandler);
-    touchHandler = null;
-  });
-
-  element.addEventListener("touchcancel", (event) => {
-    if (!touchHandler || shouldIgnore(event.target, ignore)) return;
-
-    event.preventDefault();
-    end(event.touches[0]?.pageX, event.touches[0]?.pageY);
-
-    element.removeEventListener("touchmove", touchHandler);
-    touchHandler = null;
-  });
+  element.addEventListener("pointerdown", handlePointerDown);
+  element.addEventListener("pointerup", handlePointerUp);
+  element.addEventListener("pointercancel", handlePointerUp);
 
   if (wheel) {
     let dt = 10;

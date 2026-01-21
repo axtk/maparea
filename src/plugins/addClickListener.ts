@@ -26,16 +26,18 @@ export function addClickListener(
   callback: MapAreaClickCallback,
   { ignore }: MapAreaClickOptions = {},
 ) {
+  let x0: number | null = null;
+  let y0: number | null = null;
   let t0 = Date.now();
-  let pointerPosition: [number, number] | null = null;
 
-  let start = (event: MouseEvent | TouchEvent) => {
+  let start = (event: PointerEvent) => {
+    x0 = event.pageX;
+    y0 = event.pageY;
     t0 = Date.now();
-    pointerPosition = getPointerPosition(event);
   };
 
-  let end = (event: MouseEvent | TouchEvent) => {
-    if (shouldIgnore(event.target, ignore) || !pointerPosition) return;
+  let end = (event: PointerEvent) => {
+    if (shouldIgnore(event.target, ignore) || x0 === null || y0 === null) return;
 
     // Skip the click handler if the pointer was dragged
     if (Date.now() - t0 > 150) return;
@@ -45,8 +47,8 @@ export function addClickListener(
       centerCoords: [cx, cy],
     } = map;
 
-    let x = pointerPosition[0] - box.x;
-    let y = pointerPosition[1] - box.y;
+    let x = x0 - box.x;
+    let y = y0 - box.y;
 
     let [lat, lon] = map.toGeoCoords(
       x - 0.5 * box.w + cx,
@@ -54,20 +56,18 @@ export function addClickListener(
     );
 
     callback({ x, y, lat, lon, originalEvent: event });
-    pointerPosition = null;
+
+    x0 = null;
+    y0 = null;
   };
 
-  map.container.addEventListener("mousedown", start);
-  map.container.addEventListener("mouseup", end);
-
-  map.container.addEventListener("touchstart", start);
-  map.container.addEventListener("touchend", end);
+  map.container.addEventListener("pointerdown", start);
+  map.container.addEventListener("pointerup", end);
+  map.container.addEventListener("pointercancel", end)
 
   return () => {
-    map.container.removeEventListener("mousedown", start);
-    map.container.removeEventListener("mouseup", end);
-
-    map.container.removeEventListener("touchstart", start);
-    map.container.removeEventListener("touchend", end);
+    map.container.removeEventListener("pointerdown", start);
+    map.container.removeEventListener("pointerup", end);
+    map.container.removeEventListener("pointercancel", end);
   };
 }
