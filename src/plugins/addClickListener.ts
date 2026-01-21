@@ -31,7 +31,9 @@ export function addClickListener(
   };
 
   let end = (event: MouseEvent | TouchEvent) => {
-    if (shouldIgnore(event.target, ignored) || !pointerPosition) return;
+    let target = "touches" in event ? event.touches[0]?.target : event.target;
+
+    if (shouldIgnore(target, ignored) || !pointerPosition) return;
 
     // Skip the click handler if the pointer was dragged
     if (Date.now() - t0 > 150) return;
