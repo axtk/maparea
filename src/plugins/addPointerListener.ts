@@ -30,8 +30,8 @@ export function addPointerListener(
   let t0 = Date.now();
 
   let start = (event: PointerEvent) => {
-    x0 = event.pageX;
-    y0 = event.pageY;
+    x0 = event.clientX;
+    y0 = event.clientY;
     t0 = Date.now();
   };
 
