@@ -20,7 +20,7 @@ export function addZoomControl(
   let control = getZoomControl(map, options);
 
   let layer = getLayer(map, {
-    className: "zoom-control",
+    className: "controls",
     inset: options.inset ?? "0 0 auto auto",
   });
 

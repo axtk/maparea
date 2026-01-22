@@ -66,17 +66,17 @@ body {
   fill: var(--shape-color);
   cursor: pointer;
 }
-#map .zoom-control.layer {
+#map .controls.layer {
   z-index: 5000;
 }
-#map .zoom-control.layer fieldset {
+#map .controls.layer fieldset {
   display: flex;
   flex-direction: column;
   border: none;
   padding: 0;
   margin: 0.75em;
 }
-#map .zoom-control.layer button {
+#map .controls.layer button {
   --border-radius: 0.3em;
   flex: none;
   text-align: center;
@@ -88,14 +88,14 @@ body {
   margin: 0;
   cursor: pointer;
 }
-#map .zoom-control.layer button[data-id="plus"] {
+#map .controls.layer button[data-element="zoomin"] {
   border-radius: var(--border-radius) var(--border-radius) 0 0;
 }
-#map .zoom-control.layer button[data-id="minus"] {
+#map .controls.layer button[data-element="zoomout"] {
   border-radius: 0 0 var(--border-radius) var(--border-radius);
   border-top: none;
 }
-#map .zoom-control.layer button:disabled {
+#map .controls.layer button:disabled {
   opacity: 0.35;
   cursor: not-allowed;
 }
@@ -138,10 +138,10 @@ form input[name="lang"] {
     width: 380px;
     height: 300px;
   }
-  #map .zoom-control.layer {
+  #map .controls.layer {
     margin: 0.5em;
   }
-  #map .zoom-control.layer button {
+  #map .controls.layer button {
     padding: 1em;
   }
 }

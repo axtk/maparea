@@ -18,13 +18,14 @@ export function getZoomControl(
   let { plus: plusContent = "➕", minus: minusContent = "➖" } = options;
 
   let control = document.createElement("fieldset");
+  control.dataset.element = "zoom";
 
   let plus = document.createElement("button");
-  plus.dataset.id = "plus";
+  plus.dataset.element = "zoomin";
   plus.innerHTML = plusContent;
 
   let minus = document.createElement("button");
-  minus.dataset.id = "minus";
+  minus.dataset.element = "zoomout";
   minus.innerHTML = minusContent;
 
   let applyLimits = () => {
@@ -36,7 +37,7 @@ export function getZoomControl(
     let target = event.target;
 
     if (target instanceof HTMLButtonElement && control.contains(target)) {
-      map.zoom += target.dataset.id === "minus" ? -1 : 1;
+      map.zoom += target.dataset.element === "zoomout" ? -1 : 1;
       applyLimits();
     }
   });
