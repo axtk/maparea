@@ -3,6 +3,7 @@ import {
   addElement,
   addMovableViewport,
   addPersistence,
+  addPinchToZoom,
   addPointerListener,
   addResizeObserver,
   addShape,
@@ -14,7 +15,6 @@ import {
   getVicinity,
   MapArea,
   toPrecision,
-  addPinchToZoom,
 } from "../index.ts";
 import { initTestForm } from "./form.ts";
 import { shape } from "./shape.ts";

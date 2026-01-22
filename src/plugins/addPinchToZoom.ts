@@ -64,8 +64,14 @@ export function addPinchToZoom(
       let dz = log2(d / d0) / log2(pace) - dz0;
 
       if (abs(dz) >= 1) {
-        let { box: { x, y, w, h }, centerCoords: [cx, cy] } = map;
-        let [pinchX, pinchY] = getPinchCenter(event.touches[0], event.touches[1]);
+        let {
+          box: { x, y, w, h },
+          centerCoords: [cx, cy],
+        } = map;
+        let [pinchX, pinchY] = getPinchCenter(
+          event.touches[0],
+          event.touches[1],
+        );
 
         // Pinch position relative to the map center
         let px = pinchX - w / 2 - x;
@@ -83,7 +89,7 @@ export function addPinchToZoom(
           // Accumulate the already applied zoom change so that the further
           // zoom changes don't include it
           dz0 += zoomChange;
-          
+
           let [px2, py2] = map.toPixelCoords(pinchLat, pinchLon);
           let [cx2, cy2] = map.centerCoords;
 
@@ -93,7 +99,7 @@ export function addPinchToZoom(
 
           let dpx = px2 - px;
           let dpy = py2 - py;
-          
+
           // Move the map center so that the pinch center sits at about the
           // same geographic position
           map.center = map.toGeoCoords(cx2 + dpx, cy2 + dpy);

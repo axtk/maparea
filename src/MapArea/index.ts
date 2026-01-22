@@ -41,7 +41,8 @@ export class MapArea {
   _r = new Set<RenderCallback>();
   constructor(options: MapAreaOptions) {
     this._p = options;
-    this.container.style = "position: relative; overflow: hidden; touch-action: none;";
+    this.container.style =
+      "position: relative; overflow: hidden; touch-action: none;";
     this.container.dataset.type = "maparea";
   }
   render() {
