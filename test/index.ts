@@ -14,6 +14,7 @@ import {
   getVicinity,
   MapArea,
   toPrecision,
+  addPinchToZoom,
 } from "../index.ts";
 import { initTestForm } from "./form.ts";
 import { shape } from "./shape.ts";
@@ -84,6 +85,8 @@ addShapeEditor(map, {
 addPointerListener(map, ({ x, y, lat, lon }) => {
   console.log({ x, y, lat, lon });
 });
+
+addPinchToZoom(map);
 
 addResizeObserver(map, console.log);
 

@@ -4,6 +4,7 @@ export * from "./src/plugins/addElement.ts";
 export * from "./src/plugins/addMovableViewport.ts";
 export * from "./src/plugins/addPersistence.ts";
 export * from "./src/plugins/addPointerListener.ts";
+export * from "./src/plugins/addPinchToZoom.ts";
 export * from "./src/plugins/addResizeObserver.ts";
 export * from "./src/plugins/addShape.ts";
 export * from "./src/plugins/addShapeEditor.ts";
