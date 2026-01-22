@@ -134,4 +134,10 @@ form input[name="lang"] {
     width: 380px;
     height: 300px;
   }
+  #map .zoom-controls.layer {
+    margin: 0.5em;
+  }
+  #map .zoom-controls.layer button {
+    padding: 1em;
+  }
 }
