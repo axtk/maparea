@@ -15,10 +15,7 @@ export function getZoomControl(
   map: MapArea,
   options: ZoomControlOptions = {},
 ): HTMLElement {
-  let {
-    plus: plusContent = "➕",
-    minus: minusContent = "➖",
-  } = options;
+  let { plus: plusContent = "➕", minus: minusContent = "➖" } = options;
 
   let control = document.createElement("fieldset");
 

@@ -1,6 +1,9 @@
 import type { MapArea } from "../MapArea/index.ts";
 import { getLayer } from "../utils/getLayer.ts";
-import { getZoomControl, ZoomControlOptions } from "../utils/getZoomControl.ts";
+import {
+  getZoomControl,
+  type ZoomControlOptions,
+} from "../utils/getZoomControl.ts";
 
 export type AddZoomControlOptions = ZoomControlOptions & {
   /** CSS `inset` */
