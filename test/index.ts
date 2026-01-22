@@ -74,7 +74,7 @@ let { reset: resetShapeEditor } = addShapeEditor(map, {
 
     let content =
       coords.length === 0
-        ? "let shape = [];"
+        ? "let shape = [/* From clicks on the map */];"
         : `let shape = [\n${coords.join("\n")}\n];`;
 
     if (shapeOutput.textContent !== content) shapeOutput.textContent = content;

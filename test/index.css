@@ -88,12 +88,14 @@ body {
   margin: 0;
   cursor: pointer;
 }
-#map .controls.layer button[data-role="zoomin"] {
+#map .controls.layer button:first-child {
   border-radius: var(--border-radius) var(--border-radius) 0 0;
 }
-#map .controls.layer button[data-role="zoomout"] {
-  border-radius: 0 0 var(--border-radius) var(--border-radius);
+#map .controls.layer button:not(:first-child) {
   border-top: none;
+}
+#map .controls.layer button:last-child {
+  border-radius: 0 0 var(--border-radius) var(--border-radius);
 }
 #map .controls.layer button:disabled {
   opacity: 0.35;
@@ -139,7 +141,7 @@ form input[name="lang"] {
     height: 300px;
   }
   #map .controls.layer {
-    margin: 0.5em;
+    margin: 0.25em;
   }
   #map .controls.layer button {
     padding: 1em;
