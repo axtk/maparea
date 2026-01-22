@@ -66,13 +66,17 @@ body {
   fill: var(--shape-color);
   cursor: pointer;
 }
-#map .zoom-controls.layer {
-  display: flex;
-  flex-direction: column;
-  margin: 0.75em;
+#map .zoom-control.layer {
   z-index: 5000;
 }
-#map .zoom-controls.layer button {
+#map .zoom-control.layer fieldset {
+  display: flex;
+  flex-direction: column;
+  border: none;
+  padding: 0;
+  margin: 0.75em;
+}
+#map .zoom-control.layer button {
   --border-radius: 0.3em;
   flex: none;
   text-align: center;
@@ -84,14 +88,14 @@ body {
   margin: 0;
   cursor: pointer;
 }
-#map .zoom-controls.layer button[data-id="plus"] {
+#map .zoom-control.layer button[data-id="plus"] {
   border-radius: var(--border-radius) var(--border-radius) 0 0;
 }
-#map .zoom-controls.layer button[data-id="minus"] {
+#map .zoom-control.layer button[data-id="minus"] {
   border-radius: 0 0 var(--border-radius) var(--border-radius);
   border-top: none;
 }
-#map .zoom-controls.layer button:disabled {
+#map .zoom-control.layer button:disabled {
   opacity: 0.35;
   cursor: not-allowed;
 }
@@ -134,10 +138,10 @@ form input[name="lang"] {
     width: 380px;
     height: 300px;
   }
-  #map .zoom-controls.layer {
+  #map .zoom-control.layer {
     margin: 0.5em;
   }
-  #map .zoom-controls.layer button {
+  #map .zoom-control.layer button {
     padding: 1em;
   }
 }

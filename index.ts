@@ -26,6 +26,7 @@ export * from "./src/utils/getGeoBounds.ts";
 export * from "./src/utils/getId.ts";
 export * from "./src/utils/getLayer.ts";
 export * from "./src/utils/getVicinity.ts";
+export * from "./src/utils/getZoomControl.ts";
 export * from "./src/utils/isCoordsArray.ts";
 export * from "./src/utils/resolveDynamic.ts";
 export * from "./src/utils/toGeoBounds.ts";
