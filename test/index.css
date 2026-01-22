@@ -88,10 +88,10 @@ body {
   margin: 0;
   cursor: pointer;
 }
-#map .controls.layer button[data-element="zoomin"] {
+#map .controls.layer button[data-role="zoomin"] {
   border-radius: var(--border-radius) var(--border-radius) 0 0;
 }
-#map .controls.layer button[data-element="zoomout"] {
+#map .controls.layer button[data-role="zoomout"] {
   border-radius: 0 0 var(--border-radius) var(--border-radius);
   border-top: none;
 }

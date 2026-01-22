@@ -18,14 +18,14 @@ export function getZoomControl(
   let { zoomIn: zoomInContent = "➕", zoomOut: zoomOutContent = "➖" } = options;
 
   let control = document.createElement("fieldset");
-  control.dataset.element = "zoom";
+  control.dataset.role = "zoom";
 
   let zoomIn = document.createElement("button");
-  zoomIn.dataset.element = "zoomin";
+  zoomIn.dataset.role = "zoomin";
   zoomIn.innerHTML = zoomInContent;
 
   let zoomOut = document.createElement("button");
-  zoomOut.dataset.element = "zoomout";
+  zoomOut.dataset.role = "zoomout";
   zoomOut.innerHTML = zoomOutContent;
 
   let applyLimits = () => {
@@ -37,7 +37,7 @@ export function getZoomControl(
     let target = event.target;
 
     if (target instanceof HTMLButtonElement && control.contains(target)) {
-      map.zoom += target.dataset.element === "zoomout" ? -1 : 1;
+      map.zoom += target.dataset.role === "zoomout" ? -1 : 1;
       applyLimits();
     }
   });

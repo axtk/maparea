@@ -43,7 +43,7 @@ export class MapArea {
     this._p = options;
     this.container.style =
       "position: relative; overflow: hidden; touch-action: none;";
-    this.container.dataset.element = "maparea";
+    this.container.dataset.role = "maparea";
   }
   render() {
     for (let callback of this._r) callback(this);
