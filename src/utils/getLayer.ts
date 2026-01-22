@@ -17,7 +17,7 @@ export function getLayer(
   { id, className, inset = "0" }: LayerOptions = {},
 ): HTMLElement {
   let selector = `${className ? `.${className}` : ""}${id ? `[data-id="${id}"]` : ""}`;
-  let layer = document.querySelector<HTMLElement>(selector);
+  let layer = map.container.querySelector<HTMLElement>(selector);
 
   if (!layer) {
     layer = document.createElement("div");
