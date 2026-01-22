@@ -1,7 +1,7 @@
 import type { MapArea } from "../MapArea/index.ts";
 import type { GeoVertex } from "../types/GeoVertex.ts";
 import type { PixelVertex } from "../types/PixelVertex.ts";
-import { ShapeOptions } from "../types/ShapeOptions.ts";
+import type { ShapeOptions } from "../types/ShapeOptions.ts";
 import { getLayer } from "./getLayer.ts";
 import { toPrecision } from "./toPrecision.ts";
 

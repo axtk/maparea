@@ -1,7 +1,7 @@
 import type { MapArea } from "../MapArea/index.ts";
 import type { GeoVertex } from "../types/GeoVertex.ts";
 import type { IgnoredElement } from "../types/IgnoredElement.ts";
-import { ShapeOptions } from "../types/ShapeOptions.ts";
+import type { ShapeOptions } from "../types/ShapeOptions.ts";
 import { getId } from "../utils/getId.ts";
 import { getLayer } from "../utils/getLayer.ts";
 import { renderShape } from "../utils/renderShape.ts";

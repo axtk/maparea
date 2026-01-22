@@ -128,10 +128,7 @@ function getTile(layer: HTMLElement, id: string) {
  * `(map, xIndex, yIndex) => string`.
  */
 export function addTiles(map: MapArea, options: MapAreaTileOptions = {}) {
-  let {
-    attribution,
-    attributionInset = "auto 0 0 auto",
-  } = options;
+  let { attribution, attributionInset = "auto 0 0 auto" } = options;
 
   let layer = options.layer ?? getLayer(map, { className: "tiles" });
   let attributionLayer = getLayer(map, {

@@ -1,6 +1,6 @@
 import type { MapArea } from "../MapArea/index.ts";
 import type { GeoCoords } from "../types/GeoCoords.ts";
-import { ShapeOptions } from "../types/ShapeOptions.ts";
+import type { ShapeOptions } from "../types/ShapeOptions.ts";
 import { getId } from "../utils/getId.ts";
 import { renderShape } from "../utils/renderShape.ts";
 
