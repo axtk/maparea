@@ -15,7 +15,8 @@ export function getZoomControl(
   map: MapArea,
   options: ZoomControlOptions = {},
 ): HTMLElement {
-  let { zoomIn: zoomInContent = "➕", zoomOut: zoomOutContent = "➖" } = options;
+  let { zoomIn: zoomInContent = "➕", zoomOut: zoomOutContent = "➖" } =
+    options;
 
   let control = document.createElement("fieldset");
   control.dataset.role = "zoom";
