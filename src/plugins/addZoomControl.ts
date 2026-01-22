@@ -10,7 +10,7 @@ export type AddZoomControlOptions = ZoomControlOptions & {
 /**
  * Adds a customizable zoom control to the given map container.
  */
-export function addZoomControls(
+export function addZoomControl(
   map: MapArea,
   options: AddZoomControlOptions = {},
 ) {

@@ -9,7 +9,7 @@ export * from "./src/plugins/addResizeObserver.ts";
 export * from "./src/plugins/addShape.ts";
 export * from "./src/plugins/addShapeEditor.ts";
 export * from "./src/plugins/addTiles.ts";
-export * from "./src/plugins/addZoomControls.ts";
+export * from "./src/plugins/addZoomControl.ts";
 export * from "./src/types/BoxDimensions.ts";
 export * from "./src/types/Dynamic.ts";
 export * from "./src/types/GeoBounds.ts";

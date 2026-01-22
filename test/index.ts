@@ -9,7 +9,7 @@ import {
   addShape,
   addShapeEditor,
   addTiles,
-  addZoomControls,
+  addZoomControl,
   fitGeoBounds,
   // getCenter,
   getVicinity,
@@ -48,7 +48,7 @@ if (formState.apikey) {
 }
 
 addMovableViewport(map, { ignore: "a, button" });
-addZoomControls(map);
+addZoomControl(map);
 
 // map.center = getCenter(shape);
 // map.bounds = getVicinity(shape);
