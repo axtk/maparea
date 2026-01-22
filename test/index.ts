@@ -16,7 +16,7 @@ import {
   MapArea,
   toPrecision,
 } from "../index.ts";
-import { initTestForm } from "./form.ts";
+import { initTestForm, initTestFormReset } from "./form.ts";
 import { shape } from "./shape.ts";
 
 let formState = initTestForm();
@@ -90,6 +90,8 @@ addPinchToZoom(map);
 
 addResizeObserver(map, console.log);
 
-addPersistence(map);
+let { reset } = addPersistence(map);
+
+initTestFormReset(reset);
 
 map.lang = formState.lang || "en_US";

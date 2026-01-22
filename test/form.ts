@@ -6,12 +6,6 @@ let form = document.querySelector("form")!;
 let apikeyInput = form.querySelector<HTMLInputElement>('input[name="apikey"]')!;
 let langInput = form.querySelector<HTMLInputElement>('input[name="lang"]')!;
 
-function reset() {
-  try {
-    localStorage.removeItem("maparea#map");
-  } catch {}
-}
-
 function toFormState(x: FormData | URLSearchParams) {
   let value = Object.fromEntries(x) as FormState;
 
@@ -70,11 +64,6 @@ export function initTestForm() {
     window.location.assign("/");
   });
 
-  form.querySelector(".reset")?.addEventListener("click", () => {
-    reset();
-    window.location.reload();
-  });
-
   let formState = {
     ...getStoredState(),
     ...getURLState(),
@@ -83,4 +72,10 @@ export function initTestForm() {
   setState(formState);
 
   return formState;
+}
+
+export function initTestFormReset(callback: () => void) {
+  form.querySelector(".reset")?.addEventListener("click", () => {
+    callback();
+  });
 }
