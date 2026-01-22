@@ -1,7 +1,5 @@
 import type { MapArea } from "../MapArea/index.ts";
 import type { Dynamic } from "../types/Dynamic.ts";
-import type { LayerOptions } from "../types/LayerOptions.ts";
-import { getId } from "../utils/getId.ts";
 import { getLayer } from "../utils/getLayer.ts";
 import { resolveDynamic } from "../utils/resolveDynamic.ts";
 import { toPrecision } from "../utils/toPrecision.ts";
@@ -10,7 +8,7 @@ const { floor, ceil, random } = Math;
 
 const defaultTileSize = 256;
 
-export type MapAreaTileOptions = LayerOptions & {
+export type MapAreaTileOptions = {
   /**
    * Tile URL, either a string with placeholders (`{x}` and `{y}` for the
    * tile indices, `{z}` for the zoom level, `{lang}` for the map language)
@@ -34,6 +32,8 @@ export type MapAreaTileOptions = LayerOptions & {
   attribution?: Dynamic<string>;
   /** Attribution's CSS `inset`. */
   attributionInset?: string;
+  /** Target map layer. */
+  layer?: HTMLElement;
 };
 
 function getTileId(map: MapArea, xIndex: number, yIndex: number) {
@@ -129,14 +129,13 @@ function getTile(layer: HTMLElement, id: string) {
  */
 export function addTiles(map: MapArea, options: MapAreaTileOptions = {}) {
   let {
-    id = getId(),
     attribution,
     attributionInset = "auto 0 0 auto",
   } = options;
 
-  let layer = getLayer(map, { id, className: "tiles", ...options });
+  let layer = options.layer ?? getLayer(map, { className: "tiles" });
   let attributionLayer = getLayer(map, {
-    id,
+    id: layer.dataset.id,
     className: "tiles-attribution",
     inset: attributionInset,
   });
