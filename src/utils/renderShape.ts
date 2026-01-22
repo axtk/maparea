@@ -19,7 +19,7 @@ function getStrokeWidth(path: SVGPathElement) {
   );
 }
 
-function renderShape(
+function renderShapePath(
   svg: SVGSVGElement,
   shape: PixelVertex[],
   options?: ShapeLayerOptions,
@@ -91,7 +91,7 @@ function renderShape(
   return { xMin, xMax, yMin, yMax };
 }
 
-export function renderShapeLayer(
+export function renderShape(
   map: MapArea,
   shape: GeoVertex[],
   options?: ShapeLayerOptions,
@@ -107,7 +107,7 @@ export function renderShapeLayer(
     layer.append(svg);
   }
 
-  let result = renderShape(
+  let result = renderShapePath(
     svg,
     shape.map(({ id, coords: [lat, lon] }) => ({
       id,

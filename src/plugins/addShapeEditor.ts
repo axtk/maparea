@@ -3,7 +3,7 @@ import type { GeoVertex } from "../types/GeoVertex.ts";
 import type { IgnoredElement } from "../types/IgnoredElement.ts";
 import type { ShapeLayerOptions } from "../types/ShapeLayerOptions.ts";
 import { getId } from "../utils/getId.ts";
-import { renderShapeLayer } from "../utils/renderShapeLayer.ts";
+import { renderShape } from "../utils/renderShape.ts";
 import { addPointerListener } from "./addPointerListener.ts";
 
 export type ShapeEditorOptions = {
@@ -26,7 +26,7 @@ export function addShapeEditor(map: MapArea, options?: ShapeEditorOptions) {
   };
 
   let update = () => {
-    renderShapeLayer(map, shape, layerOptions);
+    renderShape(map, shape, layerOptions);
     options?.onUpdate?.(shape);
   };
 
