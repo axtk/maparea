@@ -3,9 +3,9 @@ import { addPointerListener } from "../plugins/addPointerListener.ts";
 
 export type ZoomControlOptions = {
   /** HTML content of the zoom-in button */
-  plus?: string;
+  zoomIn?: string;
   /** HTML content of the zoom-out button */
-  minus?: string;
+  zoomOut?: string;
 };
 
 /**
@@ -15,22 +15,22 @@ export function getZoomControl(
   map: MapArea,
   options: ZoomControlOptions = {},
 ): HTMLElement {
-  let { plus: plusContent = "➕", minus: minusContent = "➖" } = options;
+  let { zoomIn: zoomInContent = "➕", zoomOut: zoomOutContent = "➖" } = options;
 
   let control = document.createElement("fieldset");
   control.dataset.element = "zoom";
 
-  let plus = document.createElement("button");
-  plus.dataset.element = "zoomin";
-  plus.innerHTML = plusContent;
+  let zoomIn = document.createElement("button");
+  zoomIn.dataset.element = "zoomin";
+  zoomIn.innerHTML = zoomInContent;
 
-  let minus = document.createElement("button");
-  minus.dataset.element = "zoomout";
-  minus.innerHTML = minusContent;
+  let zoomOut = document.createElement("button");
+  zoomOut.dataset.element = "zoomout";
+  zoomOut.innerHTML = zoomOutContent;
 
   let applyLimits = () => {
-    plus.toggleAttribute("disabled", map.zoom + 1 > map.maxZoom);
-    minus.toggleAttribute("disabled", map.zoom - 1 < map.minZoom);
+    zoomIn.toggleAttribute("disabled", map.zoom + 1 > map.maxZoom);
+    zoomOut.toggleAttribute("disabled", map.zoom - 1 < map.minZoom);
   };
 
   addPointerListener(map, ({ originalEvent: event }) => {
@@ -44,7 +44,7 @@ export function getZoomControl(
 
   map.onRender(applyLimits);
 
-  control.append(plus, minus);
+  control.append(zoomIn, zoomOut);
 
   return control;
 }
