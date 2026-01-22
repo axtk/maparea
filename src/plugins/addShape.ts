@@ -1,6 +1,6 @@
 import type { MapArea } from "../MapArea/index.ts";
 import type { GeoCoords } from "../types/GeoCoords.ts";
-import type { LayerOptions } from "../types/LayerOptions.ts";
+import { ShapeOptions } from "../types/ShapeOptions.ts";
 import { getId } from "../utils/getId.ts";
 import { renderShape } from "../utils/renderShape.ts";
 
@@ -11,7 +11,7 @@ import { renderShape } from "../utils/renderShape.ts";
 export function addShape(
   map: MapArea,
   coords: GeoCoords[],
-  layerOptions?: LayerOptions,
+  options?: ShapeOptions,
 ) {
   let shape = coords.map((point) => ({
     id: getId(),
@@ -19,6 +19,6 @@ export function addShape(
   }));
 
   map.onRender(() => {
-    renderShape(map, shape, { className: "shape", ...layerOptions });
+    renderShape(map, shape, options);
   });
 }

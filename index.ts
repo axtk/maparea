@@ -20,7 +20,7 @@ export * from "./src/types/LayerOptions.ts";
 export * from "./src/types/PixelCoords.ts";
 export * from "./src/types/PixelVertex.ts";
 export * from "./src/types/Projection.ts";
-export * from "./src/types/ShapeLayerOptions.ts";
+export * from "./src/types/ShapeOptions.ts";
 export * from "./src/utils/fitGeoBounds.ts";
 export * from "./src/utils/getCenter.ts";
 export * from "./src/utils/getGeoBounds.ts";

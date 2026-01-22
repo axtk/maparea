@@ -1,15 +1,11 @@
 import type { MapArea } from "../MapArea/index.ts";
 import type { GeoVertex } from "../types/GeoVertex.ts";
 import type { PixelVertex } from "../types/PixelVertex.ts";
-import type { ShapeLayerOptions } from "../types/ShapeLayerOptions.ts";
+import { ShapeOptions } from "../types/ShapeOptions.ts";
 import { getLayer } from "./getLayer.ts";
 import { toPrecision } from "./toPrecision.ts";
 
 const svgNS = "http://www.w3.org/2000/svg";
-
-const defaultLayerOptions = {
-  className: "shape",
-};
 
 function getStrokeWidth(path: SVGPathElement) {
   return parseFloat(
@@ -22,7 +18,7 @@ function getStrokeWidth(path: SVGPathElement) {
 function renderShapePath(
   svg: SVGSVGElement,
   shape: PixelVertex[],
-  options?: ShapeLayerOptions,
+  options?: ShapeOptions,
 ) {
   if (shape.length === 0) {
     svg.innerHTML = "";
@@ -94,9 +90,9 @@ function renderShapePath(
 export function renderShape(
   map: MapArea,
   shape: GeoVertex[],
-  options?: ShapeLayerOptions,
+  options?: ShapeOptions,
 ) {
-  let layer = getLayer(map, options ?? defaultLayerOptions);
+  let layer = options?.layer ?? getLayer(map, { className: "shape" });
   layer.toggleAttribute("hidden", shape.length === 0);
 
   let svg = layer.querySelector("svg");

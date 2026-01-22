@@ -1,8 +1,9 @@
 import type { MapArea } from "../MapArea/index.ts";
 import type { GeoVertex } from "../types/GeoVertex.ts";
 import type { IgnoredElement } from "../types/IgnoredElement.ts";
-import type { ShapeLayerOptions } from "../types/ShapeLayerOptions.ts";
+import { ShapeOptions } from "../types/ShapeOptions.ts";
 import { getId } from "../utils/getId.ts";
+import { getLayer } from "../utils/getLayer.ts";
 import { renderShape } from "../utils/renderShape.ts";
 import { addPointerListener } from "./addPointerListener.ts";
 
@@ -20,13 +21,13 @@ export function addShapeEditor(map: MapArea, options?: ShapeEditorOptions) {
   let shape: GeoVertex[] = [];
   let clickTimeout: ReturnType<typeof setTimeout> | null = null;
 
-  let layerOptions: ShapeLayerOptions = {
-    className: "shape-editor",
+  let shapeOptions: ShapeOptions = {
+    layer: getLayer(map, { className: "shape-editor" }),
     markers: true,
   };
 
   let update = () => {
-    renderShape(map, shape, layerOptions);
+    renderShape(map, shape, shapeOptions);
     options?.onUpdate?.(shape);
   };
 
