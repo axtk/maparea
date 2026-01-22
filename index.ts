@@ -16,7 +16,6 @@ export * from "./src/types/GeoBounds.ts";
 export * from "./src/types/GeoCoords.ts";
 export * from "./src/types/GeoVertex.ts";
 export * from "./src/types/IgnoredElement.ts";
-export * from "./src/types/LayerOptions.ts";
 export * from "./src/types/PixelCoords.ts";
 export * from "./src/types/PixelVertex.ts";
 export * from "./src/types/Projection.ts";

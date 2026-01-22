@@ -1,6 +1,12 @@
 import type { MapArea } from "../MapArea/index.ts";
-import type { LayerOptions } from "../types/LayerOptions.ts";
 import { getId } from "./getId.ts";
+
+export type LayerOptions = {
+  id?: string;
+  className?: string;
+  /** CSS `inset` */
+  inset?: string;
+};
 
 /**
  * Returns an existing map layer based on the given properties,
