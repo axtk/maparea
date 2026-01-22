@@ -31,6 +31,11 @@ export function addShapeEditor(map: MapArea, options?: ShapeEditorOptions) {
     options?.onUpdate?.(shape);
   };
 
+  let reset = () => {
+    shape = [];
+    update();
+  };
+
   addPointerListener(
     map,
     ({ lat, lon, originalEvent }) => {
@@ -67,4 +72,6 @@ export function addShapeEditor(map: MapArea, options?: ShapeEditorOptions) {
   );
 
   map.onRender(update);
+
+  return { reset };
 }

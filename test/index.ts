@@ -66,7 +66,7 @@ addShape(map, shape);
 
 let shapeOutput = document.querySelector("pre")!;
 
-addShapeEditor(map, {
+let { reset: resetShapeEditor } = addShapeEditor(map, {
   onUpdate: (shape) => {
     let coords = shape.map(({ coords: [lat, lon] }) => {
       return `  [${toPrecision(lat, 8)}, ${toPrecision(lon, 8)}],`;
@@ -90,8 +90,11 @@ addPinchToZoom(map);
 
 addResizeObserver(map, console.log);
 
-let { reset } = addPersistence(map);
+let { reset: resetMapOptions } = addPersistence(map);
 
-initTestFormReset(reset);
+initTestFormReset(() => {
+  resetMapOptions();
+  resetShapeEditor();
+});
 
 map.lang = formState.lang || "en_US";

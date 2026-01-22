@@ -21,4 +21,11 @@ export function addShape(
   map.onRender(() => {
     renderShape(map, shape, options);
   });
+
+  let remove = () => {
+    shape = [];
+    renderShape(map, shape, options);
+  };
+
+  return { remove };
 }
