@@ -11,56 +11,6 @@ const defaultLayerOptions = {
   className: "shape",
 };
 
-export function renderShapeLayer(
-  map: MapArea,
-  shape: GeoVertex[],
-  options?: ShapeLayerOptions,
-) {
-  let layer = getLayer(map, options ?? defaultLayerOptions);
-  layer.toggleAttribute("hidden", shape.length === 0);
-
-  let svg = layer.querySelector("svg");
-
-  if (!svg) {
-    svg = document.createElementNS(svgNS, "svg");
-    svg.setAttribute("xmlns", svgNS);
-    layer.append(svg);
-  }
-
-  let result = renderShape(
-    svg,
-    shape.map(({ id, coords: [lat, lon] }) => ({
-      id,
-      coords: map.toPixelCoords(lat, lon),
-    })),
-    options,
-  );
-
-  if (result) {
-    let { xMin, xMax, yMin, yMax } = result;
-    let {
-      centerCoords: [cx, cy],
-      box,
-    } = map;
-
-    let w = toPrecision(xMax - xMin, 3);
-    let h = toPrecision(yMax - yMin, 3);
-
-    let x = toPrecision(0.5 * box.w + xMin - cx, 2);
-    let y = toPrecision(0.5 * box.h + yMin - cy, 2);
-
-    svg.setAttribute("viewBox", `0 0 ${w} ${h}`);
-    svg.setAttribute("width", w);
-    svg.setAttribute("height", h);
-    svg.setAttribute(
-      "style",
-      `position: absolute; transform: translate3d(${x}px, ${y}px, 0);`,
-    );
-  }
-
-  return layer;
-}
-
 function getStrokeWidth(path: SVGPathElement) {
   return parseFloat(
     window.getComputedStyle(path).strokeWidth ||
@@ -139,4 +89,54 @@ function renderShape(
   path.setAttribute("d", s);
 
   return { xMin, xMax, yMin, yMax };
+}
+
+export function renderShapeLayer(
+  map: MapArea,
+  shape: GeoVertex[],
+  options?: ShapeLayerOptions,
+) {
+  let layer = getLayer(map, options ?? defaultLayerOptions);
+  layer.toggleAttribute("hidden", shape.length === 0);
+
+  let svg = layer.querySelector("svg");
+
+  if (!svg) {
+    svg = document.createElementNS(svgNS, "svg");
+    svg.setAttribute("xmlns", svgNS);
+    layer.append(svg);
+  }
+
+  let result = renderShape(
+    svg,
+    shape.map(({ id, coords: [lat, lon] }) => ({
+      id,
+      coords: map.toPixelCoords(lat, lon),
+    })),
+    options,
+  );
+
+  if (result) {
+    let { xMin, xMax, yMin, yMax } = result;
+    let {
+      centerCoords: [cx, cy],
+      box,
+    } = map;
+
+    let w = toPrecision(xMax - xMin, 3);
+    let h = toPrecision(yMax - yMin, 3);
+
+    let x = toPrecision(0.5 * box.w + xMin - cx, 2);
+    let y = toPrecision(0.5 * box.h + yMin - cy, 2);
+
+    svg.setAttribute("viewBox", `0 0 ${w} ${h}`);
+    svg.setAttribute("width", w);
+    svg.setAttribute("height", h);
+    svg.setAttribute(
+      "style",
+      `position: absolute; transform: translate3d(${x}px, ${y}px, 0);`,
+    );
+  }
+
+  return layer;
 }
