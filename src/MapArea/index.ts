@@ -18,8 +18,11 @@ const { PI, sin, tan, atan, pow, exp, log, abs } = Math;
 export type MapAreaOptions = {
   container: string;
   center?: GeoCoords;
+  /** Initial map zoom level (default: `minZoom`) */
   zoom?: number;
+  /** Minimal map zoom level (default: `0`) */
   minZoom?: number;
+  /** Maximal map zoom level (default: `20`) */
   maxZoom?: number;
   /** Minimal and maximal latitudes and longitudes */
   bounds?: GeoBounds;
@@ -122,7 +125,7 @@ export class MapArea {
     return this._cc;
   }
   get zoom() {
-    return this._p.zoom ?? this._p.minZoom ?? 0;
+    return this._p.zoom ?? this.minZoom;
   }
   set zoom(value: number) {
     let { minZoom, maxZoom } = this;
@@ -136,14 +139,14 @@ export class MapArea {
     this.render();
   }
   get minZoom() {
-    return this._p.minZoom ?? -Infinity;
+    return this._p.minZoom ?? 0;
   }
   set minZoom(value: number) {
     this._p.minZoom = value;
     if (this.zoom < this.minZoom) this.zoom = this.minZoom;
   }
   get maxZoom() {
-    return this._p.maxZoom ?? Infinity;
+    return this._p.maxZoom ?? 20;
   }
   set maxZoom(value: number) {
     this._p.maxZoom = value;
