@@ -8,7 +8,7 @@ const { floor, ceil, random } = Math;
 
 const defaultTileSize = 256;
 
-export type MapAreaTileOptions = {
+export type AddTilesOptions = {
   /**
    * Tile URL, either a string with placeholders (`{x}` and `{y}` for the
    * tile indices, `{z}` for the zoom level, `{lang}` for the map language)
@@ -50,7 +50,7 @@ function createTile(
   map: MapArea,
   xIndex: number,
   yIndex: number,
-  { size, url, subdomains, retries = 0, error }: MapAreaTileOptions,
+  { size, url, subdomains, retries = 0, error }: AddTilesOptions,
 ): HTMLElement {
   let tile = new Image();
   let resolvedSize = resolveDynamic(map, size) ?? defaultTileSize;
@@ -127,7 +127,7 @@ function getTile(layer: HTMLElement, id: string) {
  * which is a string URL with placeholders or a function of
  * `(map, xIndex, yIndex) => string`.
  */
-export function addTiles(map: MapArea, options: MapAreaTileOptions = {}) {
+export function addTiles(map: MapArea, options: AddTilesOptions = {}) {
   let { attribution, attributionInset = "auto 0 0 auto" } = options;
 
   let layer = options.layer ?? getLayer(map, { className: "tiles" });

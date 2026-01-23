@@ -7,7 +7,7 @@ import { getLayer } from "../utils/getLayer.ts";
 import { renderShape } from "../utils/renderShape.ts";
 import { addPointerListener } from "./addPointerListener.ts";
 
-export type ShapeEditorOptions = {
+export type AddShapeEditorOptions = {
   /** Adds a shape update callback. */
   onUpdate?: (shape: GeoVertex[]) => void;
   /** Map elements to be ignored in the shape editor when clicked. */
@@ -17,7 +17,7 @@ export type ShapeEditorOptions = {
 /**
  * Adds a shape editor to the given map container.
  */
-export function addShapeEditor(map: MapArea, options?: ShapeEditorOptions) {
+export function addShapeEditor(map: MapArea, options?: AddShapeEditorOptions) {
   let shape: GeoVertex[] = [];
   let clickTimeout: ReturnType<typeof setTimeout> | null = null;
 

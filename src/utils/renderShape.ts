@@ -87,10 +87,12 @@ function renderShapePath(
   return { xMin, xMax, yMin, yMax };
 }
 
+export type RenderShapeOptions = ShapeOptions;
+
 export function renderShape(
   map: MapArea,
   shape: GeoVertex[],
-  options?: ShapeOptions,
+  options?: RenderShapeOptions,
 ) {
   let layer = options?.layer ?? getLayer(map, { className: "shape" });
   layer.toggleAttribute("hidden", shape.length === 0);

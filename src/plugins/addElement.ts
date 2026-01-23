@@ -5,7 +5,7 @@ import { getLayer } from "../utils/getLayer.ts";
 import { resolveDynamic } from "../utils/resolveDynamic.ts";
 import { toPrecision } from "../utils/toPrecision.ts";
 
-export type MapAreaElementOptions = {
+export type AddElementOptions = {
   className?: string;
   /** Geographical position (`[lat, lon]`) of the element's top left corner. */
   coords?: GeoCoords;
@@ -27,7 +27,7 @@ export type MapAreaElementOptions = {
 export function addElement(
   map: MapArea,
   element: HTMLElement | SVGSVGElement,
-  { className, coords, inset, layer, content }: MapAreaElementOptions,
+  { className, coords, inset, layer, content }: AddElementOptions,
 ) {
   let effectiveLayer = layer ?? getLayer(map, { className: "elements" });
 

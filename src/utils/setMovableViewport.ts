@@ -1,7 +1,7 @@
 import type { IgnoredElement } from "../types/IgnoredElement.ts";
 import { shouldIgnore } from "./shouldIgnore.ts";
 
-export type ElementNavigationOptions = {
+export type SetMovableViewportOptions = {
   onStart?: () => void;
   onMove?: (dx: number, dy: number) => void;
   onEnd?: () => void;
@@ -11,7 +11,7 @@ export type ElementNavigationOptions = {
 
 export function setMovableViewport(
   element: HTMLElement,
-  { onStart, onMove, onEnd, wheel, ignore }: ElementNavigationOptions = {},
+  { onStart, onMove, onEnd, wheel, ignore }: SetMovableViewportOptions = {},
 ) {
   let x0: number | null = null;
   let y0: number | null = null;

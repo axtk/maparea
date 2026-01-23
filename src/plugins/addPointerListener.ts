@@ -2,7 +2,7 @@ import type { MapArea } from "../MapArea/index.ts";
 import type { IgnoredElement } from "../types/IgnoredElement.ts";
 import { shouldIgnore } from "../utils/shouldIgnore.ts";
 
-export type MapAreaClickEvent = {
+export type MapAreaPointerEvent = {
   x: number;
   y: number;
   lat: number;
@@ -10,9 +10,9 @@ export type MapAreaClickEvent = {
   originalEvent: MouseEvent | TouchEvent;
 };
 
-export type MapAreaClickCallback = (event: MapAreaClickEvent) => void;
+export type MapAreaPointerEventCallback = (event: MapAreaPointerEvent) => void;
 
-export type MapAreaClickOptions = {
+export type AddPointerListenerOptions = {
   ignore?: IgnoredElement;
 };
 
@@ -22,8 +22,8 @@ export type MapAreaClickOptions = {
  */
 export function addPointerListener(
   map: MapArea,
-  callback: MapAreaClickCallback,
-  { ignore }: MapAreaClickOptions = {},
+  callback: MapAreaPointerEventCallback,
+  { ignore }: AddPointerListenerOptions = {},
 ) {
   let x0: number | null = null;
   let y0: number | null = null;

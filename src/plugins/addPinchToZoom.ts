@@ -17,7 +17,7 @@ function getPinchCenter(
   return [(x1 + x2) / 2, (y1 + y2) / 2];
 }
 
-export type MapAreaPinchToZoomOptions = {
+export type AddPinchToZoomOptions = {
   /**
    * Defines how much the distance between the pinch touches should change
    * in order to change the map zoom by 1.
@@ -29,7 +29,7 @@ const defaultPace = 1.2;
 
 export function addPinchToZoom(
   map: MapArea,
-  { pace = defaultPace }: MapAreaPinchToZoomOptions = {},
+  { pace = defaultPace }: AddPinchToZoomOptions = {},
 ) {
   let { container } = map;
 

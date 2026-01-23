@@ -4,6 +4,8 @@ import type { ShapeOptions } from "../types/ShapeOptions.ts";
 import { getId } from "../utils/getId.ts";
 import { renderShape } from "../utils/renderShape.ts";
 
+export type AddShapeOptions = ShapeOptions;
+
 /**
  * Adds a shape based on the given array of geographic coordinates to
  * the specified map layer.
@@ -11,7 +13,7 @@ import { renderShape } from "../utils/renderShape.ts";
 export function addShape(
   map: MapArea,
   coords: GeoCoords[],
-  options?: ShapeOptions,
+  options?: AddShapeOptions,
 ) {
   let shape = coords.map((point) => ({
     id: getId(),

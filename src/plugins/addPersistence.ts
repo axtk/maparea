@@ -1,6 +1,6 @@
 import type { MapArea, MapAreaOptions } from "../MapArea/index.ts";
 
-export type PersistenceOptions = {
+export type AddPersistenceOptions = {
   storageKey?: string;
   session?: boolean;
 };
@@ -12,7 +12,7 @@ export type PersistenceOptions = {
  */
 export function addPersistence(
   map: MapArea,
-  { storageKey, session = false }: PersistenceOptions = {},
+  { storageKey, session = false }: AddPersistenceOptions = {},
 ) {
   let storage = session ? window.sessionStorage : window.localStorage;
   let key =
