@@ -7,7 +7,7 @@ export type MapAreaPointerEvent = {
   y: number;
   lat: number;
   lon: number;
-  originalEvent: MouseEvent | TouchEvent;
+  originalEvent: PointerEvent;
 };
 
 export type MapAreaPointerEventCallback = (event: MapAreaPointerEvent) => void;
