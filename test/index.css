@@ -51,8 +51,10 @@ body {
   fill: none;
 }
 #map .tiles-attribution.layer {
-  font-size: 0;
   z-index: 5000;
+}
+#map .tiles-attribution.layer img {
+  display: block;
 }
 #map .shape-editor.layer path {
   stroke: var(--shape-color);

@@ -24,12 +24,8 @@ let formState = initTestForm();
 let map = new MapArea({
   container: "#map",
   center: [59.94607, 30.33476],
-  // center: getCenter(shape),
-  // bounds: getVicinity(shape),
   projection: "ellipsoidal",
   zoom: 10,
-  minZoom: 1,
-  maxZoom: 19,
   lang: formState.lang || "en_US",
 });
 
@@ -74,8 +70,8 @@ let { reset: resetShapeEditor } = addShapeEditor(map, {
 
     let content =
       coords.length === 0
-        ? "let shape = [/* From clicks on the map */];"
-        : `let shape = [\n${coords.join("\n")}\n];`;
+        ? "shape: [/* From clicks on the map */];"
+        : `shape: [\n${coords.join("\n")}\n];`;
 
     if (shapeOutput.textContent !== content) shapeOutput.textContent = content;
   },
