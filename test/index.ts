@@ -1,7 +1,7 @@
 import "./index.css";
 import {
-  addElement,
   addDragPan,
+  addElement,
   addPersistence,
   addPinchToZoom,
   addPointerListener,
