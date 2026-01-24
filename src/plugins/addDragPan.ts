@@ -1,8 +1,8 @@
 import type { MapArea } from "../MapArea/index.ts";
 import type { IgnoredElement } from "../types/IgnoredElement.ts";
-import { setMovableViewport } from "../utils/setMovableViewport.ts";
+import { setDragPan } from "../utils/setDragPan.ts";
 
-export type AddMovableViewportOptions = {
+export type AddDragPanOptions = {
   wheel?: boolean;
   ignore?: IgnoredElement;
 };
@@ -12,14 +12,14 @@ export type AddMovableViewportOptions = {
  * or a scroll wheel (the latter can be disabled by setting `options.wheel`
  * to `false`).
  */
-export function addMovableViewport(
+export function addDragPan(
   map: MapArea,
-  { wheel = true, ignore }: AddMovableViewportOptions = {},
+  { wheel = true, ignore }: AddDragPanOptions = {},
 ) {
   let x0 = 0;
   let y0 = 0;
 
-  setMovableViewport(map.container, {
+  setDragPan(map.container, {
     onStart() {
       [x0, y0] = map.centerCoords;
     },

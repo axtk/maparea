@@ -1,7 +1,7 @@
 import type { IgnoredElement } from "../types/IgnoredElement.ts";
 import { shouldIgnore } from "./shouldIgnore.ts";
 
-export type SetMovableViewportOptions = {
+export type SetDragPanOptions = {
   onStart?: () => void;
   onMove?: (dx: number, dy: number) => void;
   onEnd?: () => void;
@@ -9,9 +9,9 @@ export type SetMovableViewportOptions = {
   ignore?: IgnoredElement;
 };
 
-export function setMovableViewport(
+export function setDragPan(
   element: HTMLElement,
-  { onStart, onMove, onEnd, wheel, ignore }: SetMovableViewportOptions = {},
+  { onStart, onMove, onEnd, wheel, ignore }: SetDragPanOptions = {},
 ) {
   let x0: number | null = null;
   let y0: number | null = null;

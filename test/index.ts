@@ -1,7 +1,7 @@
 import "./index.css";
 import {
   addElement,
-  addMovableViewport,
+  addDragPan,
   addPersistence,
   addPinchToZoom,
   addPointerListener,
@@ -47,7 +47,7 @@ if (formState.apikey) {
   });
 }
 
-addMovableViewport(map, { ignore: "a, button" });
+addDragPan(map, { ignore: "a, button" });
 addZoomControl(map);
 
 // map.center = getCenter(shape);
