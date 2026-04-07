@@ -25,6 +25,8 @@ export type AddTilesOptions = {
   onLoad?: (tile: HTMLImageElement) => void;
   /** Called for each tile when it fails to be loaded. */
   onError?: (tile: HTMLImageElement) => void;
+  /** Defines whether a specific tile should be rendered. */
+  shouldRender?: (map: MapArea, xIndex: number, yIndex: number) => boolean;
   /** Tile size. */
   size?: Dynamic<number>;
   /**
@@ -149,7 +151,7 @@ export function addTiles(map: MapArea, options: AddTilesOptions = {}) {
       centerCoords: [cx, cy],
     } = map;
 
-    let { size, margin = 0 } = options;
+    let { size, margin = 0, shouldRender } = options;
     let resolvedSize = resolveDynamic(map, size) ?? defaultTileSize;
 
     // Viewport margins
@@ -174,6 +176,9 @@ export function addTiles(map: MapArea, options: AddTilesOptions = {}) {
 
       for (let nyi = 0; nyi <= ny; nyi++) {
         let yi = yi0 + (nyi % 2 === 0 ? -1 : 1) * floor(nyi / 2);
+        let ok = shouldRender?.(map, xi, yi) ?? true;
+
+        if (!ok) continue;
 
         id = getTileId(map, xi, yi);
         tile = getTile(layer, id);
