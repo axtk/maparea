@@ -7,8 +7,8 @@
   "types": "./dist/index.d.ts",
   "scripts": {
     "preversion": "npm run shape",
-    "shape": "npx codeshape --minify",
-    "start": "npx @t8/serve test --spa -b --watch"
+    "shape": "npx codeshape",
+    "start": "npx auxsrv test"
   },
   "repository": {
     "type": "git",
