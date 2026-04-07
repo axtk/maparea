@@ -21,6 +21,10 @@ export type AddTilesOptions = {
   subdomains?: string[];
   /** URL to be used instead of a tile that failed to load. */
   error?: Dynamic<string>;
+  /** Called for each tile when it's loaded. */
+  onLoad?: (tile: HTMLImageElement) => void;
+  /** Called for each tile when it fails to be loaded. */
+  onError?: (tile: HTMLImageElement) => void;
   /** Tile size. */
   size?: Dynamic<number>;
   /**
@@ -50,7 +54,7 @@ function createTile(
   map: MapArea,
   xIndex: number,
   yIndex: number,
-  { size, url, subdomains, retries = 0, error }: AddTilesOptions,
+  { size, url, subdomains, retries = 0, error, onLoad, onError }: AddTilesOptions,
 ): HTMLElement {
   let tile = new Image();
   let resolvedSize = resolveDynamic(map, size) ?? defaultTileSize;
@@ -76,28 +80,30 @@ function createTile(
     return resolvedURL;
   };
 
-  let handleError = (event: ErrorEvent) => {
-    let failedTile = event.target;
+  let handleLoad = onLoad
+    ? (event: Event) => { handleTileLoaded(event); onLoad(tile); }
+    : handleTileLoaded;
 
-    if (failedTile instanceof HTMLImageElement) {
-      if (errorCount++ < retries) {
-        let srcURL = new URL(failedTile.src);
+  let handleError = () => {
+    if (errorCount++ < retries) {
+      let srcURL = new URL(tile.src);
 
-        srcURL.searchParams.set("_t", String(Date.now()));
-        failedTile.src = srcURL.href;
+      srcURL.searchParams.set("_t", String(Date.now()));
+      tile.src = srcURL.href;
 
-        return;
-      }
-
-      let errorSrc = resolveDynamic(map, error);
-
-      if (errorSrc) {
-        failedTile.dataset.src = failedTile.src;
-        failedTile.src = errorSrc;
-      }
-
-      tile.removeEventListener("error", handleError);
+      return;
     }
+
+    let errorSrc = resolveDynamic(map, error);
+
+    if (errorSrc) {
+      tile.dataset.src = tile.src;
+      tile.src = errorSrc;
+    }
+
+    if (onError) onError(tile);
+
+    tile.removeEventListener("error", handleError);
   };
 
   tile.width = resolvedSize;
@@ -106,7 +112,7 @@ function createTile(
   tile.dataset.id = getTileId(map, xIndex, yIndex);
   tile.style.position = "absolute";
 
-  tile.addEventListener("load", handleTileLoaded);
+  tile.addEventListener("load", handleLoad);
   tile.addEventListener("error", handleError);
 
   if (!tile.complete) tile.style.opacity = "0";
