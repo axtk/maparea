@@ -10,7 +10,7 @@ export type SetDragPanOptions = {
 };
 
 export function setDragPan(
-  element: HTMLElement,
+  element: HTMLElement | SVGElement,
   { onStart, onMove, onEnd, wheel, ignore }: SetDragPanOptions = {},
 ) {
   let x0: number | null = null;
@@ -100,7 +100,9 @@ export function setDragPan(
     return !shouldIgnore(event.target, ignore) && activePointers === 1;
   }
 
-  function handlePointerDown(event: PointerEvent) {
+  function handlePointerDown(event: Event) {
+    if (!(event instanceof PointerEvent)) return;
+
     activePointers++;
 
     if (isRelevantEvent(event)) {
@@ -109,14 +111,18 @@ export function setDragPan(
     }
   }
 
-  function handlePointerMove(event: PointerEvent) {
+  function handlePointerMove(event: Event) {
+    if (!(event instanceof PointerEvent)) return;
+
     if (isRelevantEvent(event)) {
       event.preventDefault();
       moveTo(event.pageX, event.pageY);
     }
   }
 
-  function handlePointerUp(event: PointerEvent) {
+  function handlePointerUp(event: Event) {
+    if (!(event instanceof PointerEvent)) return;
+
     if (isRelevantEvent(event)) {
       event.preventDefault();
       end(event.pageX, event.pageY);
@@ -125,8 +131,9 @@ export function setDragPan(
     activePointers = 0;
   }
 
-  function handleWheel(event: WheelEvent) {
-    if (shouldIgnore(event.target, ignore)) return;
+  function handleWheel(event: Event) {
+    if (!(event instanceof WheelEvent) || shouldIgnore(event.target, ignore))
+      return;
 
     event.preventDefault();
 
