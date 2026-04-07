@@ -56,7 +56,15 @@ function createTile(
   map: MapArea,
   xIndex: number,
   yIndex: number,
-  { size, url, subdomains, retries = 0, error, onLoad, onError }: AddTilesOptions,
+  {
+    size,
+    url,
+    subdomains,
+    retries = 0,
+    error,
+    onLoad,
+    onError,
+  }: AddTilesOptions,
 ): HTMLElement {
   let tile = new Image();
   let resolvedSize = resolveDynamic(map, size) ?? defaultTileSize;
@@ -83,7 +91,10 @@ function createTile(
   };
 
   let handleLoad = onLoad
-    ? (event: Event) => { handleTileLoaded(event); onLoad(tile); }
+    ? (event: Event) => {
+        handleTileLoaded(event);
+        onLoad(tile);
+      }
     : handleTileLoaded;
 
   let handleError = () => {
