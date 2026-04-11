@@ -40,6 +40,7 @@ if (formState.apikey) {
     error: "/assets/blank.png",
     retries: 1,
     margin: 500,
+    labels: true,
   });
 }
 

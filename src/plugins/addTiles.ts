@@ -40,6 +40,10 @@ export type AddTilesOptions = {
   attributionInset?: string;
   /** Target map layer. */
   layer?: HTMLElement;
+  /** Whether to add container elements for tiles. */
+  containers?: boolean;
+  /** Whether to show labels with the tiles' indices. */
+  labels?: boolean;
 };
 
 function getTileId(map: MapArea, xIndex: number, yIndex: number) {
@@ -64,9 +68,13 @@ function createTile(
     error,
     onLoad,
     onError,
+    containers,
+    labels,
   }: AddTilesOptions,
 ): HTMLElement {
   let tile = new Image();
+  let tileId = getTileId(map, xIndex, yIndex);
+
   let resolvedSize = resolveDynamic(map, size) ?? defaultTileSize;
   let errorCount = 0;
 
@@ -122,7 +130,6 @@ function createTile(
   tile.width = resolvedSize;
   tile.height = resolvedSize;
   tile.src = getURL(xIndex, yIndex);
-  tile.dataset.id = getTileId(map, xIndex, yIndex);
   tile.style.position = "absolute";
 
   tile.addEventListener("load", handleLoad);
@@ -130,15 +137,35 @@ function createTile(
 
   if (!tile.complete) tile.style.opacity = "0";
 
+  if (containers || labels) {
+    let container = document.createElement("span");
+    container.style.position = "absolute";
+    container.style.width = `${resolvedSize}px`;
+    container.style.height = `${resolvedSize}px`;
+    container.dataset.id = tileId;
+    container.append(tile);
+
+    if (labels) {
+      let label = document.createElement("i");
+      label.style.position = "absolute";
+      label.textContent = `${xIndex}, ${yIndex}`;
+      container.append(label);
+    }
+
+    return container;
+  }
+
+  tile.dataset.id = tileId;
+
   return tile;
 }
 
 function getTiles(layer: HTMLElement) {
-  return layer.querySelectorAll<HTMLElement>("img[data-id]");
+  return layer.querySelectorAll<HTMLElement>("[data-id]");
 }
 
 function getTile(layer: HTMLElement, id: string) {
-  return layer.querySelector<HTMLElement>(`img[data-id="${id}"]`);
+  return layer.querySelector<HTMLElement>(`[data-id="${id}"]`);
 }
 
 /**

@@ -50,6 +50,16 @@ body {
   stroke-opacity: 0.65;
   fill: none;
 }
+#map .tiles.layer span {
+  outline: 0.05em solid blue;
+}
+#map .tiles.layer i {
+  display: inline-block;
+  font-size: 0.75em;
+  color: #00fa;
+  background: #00f2;
+  padding: 0.05em 0.35em;
+}
 #map .tiles-attribution.layer {
   z-index: 5000;
 }
