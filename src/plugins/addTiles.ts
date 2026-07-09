@@ -116,6 +116,7 @@ function createTile(
       let srcURL = new URL(tile.src);
 
       srcURL.searchParams.set("_t", String(Date.now()));
+      srcURL.searchParams.set("_r", String(errorCount));
       tile.src = srcURL.href;
 
       return;
