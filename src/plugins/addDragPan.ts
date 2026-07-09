@@ -1,11 +1,7 @@
 import type { MapArea } from "../MapArea/index.ts";
-import type { IgnoredElement } from "../types/IgnoredElement.ts";
-import { setDragPan } from "../utils/setDragPan.ts";
+import { setDragPan, SetDragPanOptions } from "../utils/setDragPan.ts";
 
-export type AddDragPanOptions = {
-  wheel?: boolean;
-  ignore?: IgnoredElement;
-};
+export type AddDragPanOptions = SetDragPanOptions;
 
 /**
  * Enables navigation over the given map container with a mouse or touches
@@ -14,7 +10,7 @@ export type AddDragPanOptions = {
  */
 export function addDragPan(
   map: MapArea,
-  { wheel = true, ignore }: AddDragPanOptions = {},
+  { wheel = true, ignore, onStart, onMove, onEnd }: AddDragPanOptions = {},
 ) {
   let x0 = 0;
   let y0 = 0;
@@ -22,6 +18,7 @@ export function addDragPan(
   setDragPan(map.container, {
     onStart() {
       [x0, y0] = map.centerCoords;
+      onStart?.();
     },
     onMove(dx, dy) {
       let x = x0 + dx;
@@ -32,8 +29,10 @@ export function addDragPan(
         map.center = geoCoords;
         x0 = x;
         y0 = y;
+        onMove?.(dx, dy);
       }
     },
+    onEnd,
     wheel,
     ignore,
   });
