@@ -38,7 +38,7 @@ if (formState.apikey) {
         : `<a href="https://yandex.com/maps" target="_blank"><img src="/assets/yx_en.svg" alt="Yandex Maps"></a>`;
     },
     error: "/assets/blank.png",
-    retries: 1,
+    retries: 3,
     margin: 500,
     labels: true,
   });

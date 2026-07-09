@@ -21,6 +21,11 @@ export type AddTilesOptions = {
   subdomains?: string[];
   /** URL to be used instead of a tile that failed to load. */
   error?: Dynamic<string>;
+  /**
+   * Whether to load the tiles lazily.
+   * @default true
+   */
+  lazy?: boolean;
   /** Called for each tile when it's loaded. */
   onLoad?: (tile: HTMLImageElement) => void;
   /** Called for each tile when it fails to be loaded. */
@@ -66,6 +71,7 @@ function createTile(
     subdomains,
     retries = 0,
     error,
+    lazy = true,
     onLoad,
     onError,
     containers,
@@ -126,6 +132,8 @@ function createTile(
 
     tile.removeEventListener("error", handleError);
   };
+
+  if (lazy) tile.loading = "lazy";
 
   tile.width = resolvedSize;
   tile.height = resolvedSize;
