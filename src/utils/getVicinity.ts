@@ -2,7 +2,12 @@ import type { GeoBounds } from "../types/GeoBounds.ts";
 import type { GeoCoords } from "../types/GeoCoords.ts";
 import { toGeoBounds } from "./toGeoBounds.ts";
 
-function getDefaultPadding({ minLat = 0, maxLat = 0, minLon = 0, maxLon = 0 }: GeoBounds): GeoCoords {
+function getDefaultPadding({
+  minLat = 0,
+  maxLat = 0,
+  minLon = 0,
+  maxLon = 0,
+}: GeoBounds): GeoCoords {
   let d = 0.03 * Math.max(maxLat - minLat, maxLon - minLon);
   return [d, d];
 }
