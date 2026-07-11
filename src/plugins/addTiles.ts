@@ -116,9 +116,10 @@ function createTile(
 
   let handleError = () => {
     if (errorCount < retries) {
-      let delay = typeof retryDelay === "function"
-        ? retryDelay(errorCount)
-        : retryDelay ?? 0;
+      let delay =
+        typeof retryDelay === "function"
+          ? retryDelay(errorCount)
+          : (retryDelay ?? 0);
 
       setTimeout(() => {
         let srcURL = new URL(tile.src);
