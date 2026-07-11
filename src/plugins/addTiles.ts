@@ -17,6 +17,8 @@ export type AddTilesOptions = {
   url?: string | ((map: MapArea, xIndex: number, yIndex: number) => string);
   /** Maximum retry count per tile. */
   retries?: number;
+  /** Delay before retrying a tile request in milliseconds. */
+  retryDelay?: number | ((iteration: number) => number);
   /** Values of the `{s}` placeholder of the tile URLs. */
   subdomains?: string[];
   /** URL to be used instead of a tile that failed to load. */
@@ -70,6 +72,7 @@ function createTile(
     url,
     subdomains,
     retries = 0,
+    retryDelay,
     error,
     lazy = true,
     onLoad,
@@ -112,13 +115,20 @@ function createTile(
     : handleTileLoaded;
 
   let handleError = () => {
-    if (errorCount++ < retries) {
-      let srcURL = new URL(tile.src);
+    if (errorCount < retries) {
+      let delay = typeof retryDelay === "function"
+        ? retryDelay(errorCount)
+        : retryDelay ?? 0;
 
-      srcURL.searchParams.set("_t", String(Date.now()));
-      srcURL.searchParams.set("_r", String(errorCount));
-      tile.src = srcURL.href;
+      setTimeout(() => {
+        let srcURL = new URL(tile.src);
 
+        srcURL.searchParams.set("_t", String(Date.now()));
+        srcURL.searchParams.set("_r", String(errorCount));
+        tile.src = srcURL.href;
+      }, delay);
+
+      errorCount++;
       return;
     }
 
