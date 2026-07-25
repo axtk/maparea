@@ -104,7 +104,8 @@ export function renderShape(
     svg.setAttribute("xmlns", svgNS);
 
     if (options?.id) svg.dataset.id = options.id;
-    if (options?.className) svg.classList.add(...options.className.split(/\s+/));
+    if (options?.className)
+      svg.classList.add(...options.className.split(/\s+/));
 
     layer.append(svg);
   }
