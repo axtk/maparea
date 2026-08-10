@@ -135,10 +135,8 @@ export function renderShape(
     svg.setAttribute("viewBox", `0 0 ${w} ${h}`);
     svg.setAttribute("width", w);
     svg.setAttribute("height", h);
-    svg.setAttribute(
-      "style",
-      `position: absolute; transform: translate3d(${x}px, ${y}px, 0);`,
-    );
+    svg.style.position = "absolute";
+    svg.style.transform = `translate3d(${x}px, ${y}px, 0)`;
   }
 
   return layer;
