@@ -129,6 +129,10 @@ export function createTile(
   if (!tile.complete) tile.style.opacity = "0";
 
   if (containers || labels) {
+    tile.style.inset = "0";
+    tile.style.width = "100%";
+    tile.style.height = "100%";
+
     let container = document.createElement("span");
     container.style.position = "absolute";
     container.append(tile);
