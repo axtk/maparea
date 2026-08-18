@@ -179,9 +179,7 @@ function getTile(layer: HTMLElement, id: string) {
   return layer.querySelector<HTMLElement>(`[data-id="${id}"]`);
 }
 
-function setTileSize(tile: HTMLElement, map: MapArea, { size }: AddTilesOptions) {
-  let resolvedSize = resolveDynamic(map, size) ?? defaultTileSize;
-
+function setTileSize(tile: HTMLElement, resolvedSize: number) {
   if (tile instanceof HTMLImageElement) {
     tile.width = resolvedSize;
     tile.height = resolvedSize;
@@ -189,7 +187,6 @@ function setTileSize(tile: HTMLElement, map: MapArea, { size }: AddTilesOptions)
     tile.style.width = `${resolvedSize}px`;
     tile.style.height = `${resolvedSize}px`;
   }
-
   return tile;
 }
 
@@ -253,7 +250,7 @@ export function addTiles(map: MapArea, options: AddTilesOptions = {}) {
 
           if (tile) {
             tile.dataset.id = id;
-            layer.append(setTileSize(tile, map, options));
+            layer.append(setTileSize(tile, resolvedSize));
           }
         }
 
