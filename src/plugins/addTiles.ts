@@ -36,6 +36,8 @@ export type AddTilesOptions = {
   shouldRender?: (map: MapArea, xIndex: number, yIndex: number) => boolean;
   /** Tile size. */
   size?: Dynamic<number>;
+  /** Custom tile creation mechanism. */
+  create?: (map: MapArea, xIndex: number, yIndex: number) => HTMLElement | null;
   /**
    * Margin in pixels, or a tuple of an x- and y-margin, to be tiled
    * outside the viewport.
@@ -245,16 +247,23 @@ export function addTiles(map: MapArea, options: AddTilesOptions = {}) {
         tile = getTile(layer, id);
 
         if (!tile) {
-          tile = createTile(map, xi, yi, options);
-          tile.dataset.id = id;
-          layer.append(setTileSize(tile, map, options));
+          tile = options.create
+            ? options.create(map, xi, yi)
+            : createTile(map, xi, yi, options);
+
+          if (tile) {
+            tile.dataset.id = id;
+            layer.append(setTileSize(tile, map, options));
+          }
         }
 
-        let x = toPrecision(0.5 * w + xi * resolvedSize - cx, 2);
-        let y = toPrecision(0.5 * h + yi * resolvedSize - cy, 2);
+        if (tile) {
+          let x = toPrecision(0.5 * w + xi * resolvedSize - cx, 2);
+          let y = toPrecision(0.5 * h + yi * resolvedSize - cy, 2);
 
-        tile.style.transform = `translate3d(${x}px, ${y}px, 0)`;
-        nextIds.add(id);
+          tile.style.transform = `translate3d(${x}px, ${y}px, 0)`;
+          nextIds.add(id);
+        }
       }
     }
 
