@@ -1,5 +1,5 @@
 import type { MapArea } from "../MapArea/index.ts";
-import { Dynamic } from "../types/Dynamic.ts";
+import type { Dynamic } from "../types/Dynamic.ts";
 import { resolveDynamic } from "./resolveDynamic.ts";
 
 const { floor, random } = Math;

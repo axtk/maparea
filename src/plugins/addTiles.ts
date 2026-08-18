@@ -1,6 +1,6 @@
 import type { MapArea } from "../MapArea/index.ts";
 import type { Dynamic } from "../types/Dynamic.ts";
-import { createTile, CreateTileOptions } from "../utils/createTile.ts";
+import { type CreateTileOptions, createTile } from "../utils/createTile.ts";
 import { getLayer } from "../utils/getLayer.ts";
 import { resolveDynamic } from "../utils/resolveDynamic.ts";
 import { toPrecision } from "../utils/toPrecision.ts";
@@ -9,10 +9,17 @@ const { floor, ceil } = Math;
 
 const defaultTileSize = 256;
 
-export type AddTilesOptions = (CreateTileOptions | {
-  /** Custom tile creation mechanism. */
-  create?: (map: MapArea, xIndex: number, yIndex: number) => HTMLElement | null;
-}) & {
+export type AddTilesOptions = (
+  | CreateTileOptions
+  | {
+      /** Custom tile creation mechanism. */
+      create?: (
+        map: MapArea,
+        xIndex: number,
+        yIndex: number,
+      ) => HTMLElement | null;
+    }
+) & {
   /** Defines whether a specific tile should be rendered. */
   shouldRender?: (map: MapArea, xIndex: number, yIndex: number) => boolean;
   /** Tile size. */
@@ -107,9 +114,10 @@ export function addTiles(map: MapArea, options: AddTilesOptions = {}) {
         tile = getTile(layer, id);
 
         if (!tile) {
-          tile = "create" in options && options.create !== undefined
-            ? options.create(map, xi, yi)
-            : createTile(map, xi, yi, options as CreateTileOptions);
+          tile =
+            "create" in options && options.create !== undefined
+              ? options.create(map, xi, yi)
+              : createTile(map, xi, yi, options as CreateTileOptions);
 
           if (tile) {
             tile.dataset.id = id;
