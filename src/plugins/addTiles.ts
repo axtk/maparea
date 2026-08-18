@@ -68,7 +68,6 @@ function createTile(
   xIndex: number,
   yIndex: number,
   {
-    size,
     url,
     subdomains,
     retries = 0,
@@ -82,9 +81,6 @@ function createTile(
   }: AddTilesOptions,
 ): HTMLElement {
   let tile = new Image();
-  let tileId = getTileId(map, xIndex, yIndex);
-
-  let resolvedSize = resolveDynamic(map, size) ?? defaultTileSize;
   let errorCount = 0;
 
   let getURL = (x: number, y: number) => {
@@ -147,8 +143,6 @@ function createTile(
 
   if (lazy) tile.loading = "lazy";
 
-  tile.width = resolvedSize;
-  tile.height = resolvedSize;
   tile.src = getURL(xIndex, yIndex);
   tile.style.position = "absolute";
 
@@ -160,9 +154,6 @@ function createTile(
   if (containers || labels) {
     let container = document.createElement("span");
     container.style.position = "absolute";
-    container.style.width = `${resolvedSize}px`;
-    container.style.height = `${resolvedSize}px`;
-    container.dataset.id = tileId;
     container.append(tile);
 
     if (labels) {
@@ -175,8 +166,6 @@ function createTile(
     return container;
   }
 
-  tile.dataset.id = tileId;
-
   return tile;
 }
 
@@ -186,6 +175,20 @@ function getTiles(layer: HTMLElement) {
 
 function getTile(layer: HTMLElement, id: string) {
   return layer.querySelector<HTMLElement>(`[data-id="${id}"]`);
+}
+
+function setTileSize(tile: HTMLElement, map: MapArea, { size }: AddTilesOptions) {
+  let resolvedSize = resolveDynamic(map, size) ?? defaultTileSize;
+
+  if (tile instanceof HTMLImageElement) {
+    tile.width = resolvedSize;
+    tile.height = resolvedSize;
+  } else {
+    tile.style.width = `${resolvedSize}px`;
+    tile.style.height = `${resolvedSize}px`;
+  }
+
+  return tile;
 }
 
 /**
@@ -243,7 +246,8 @@ export function addTiles(map: MapArea, options: AddTilesOptions = {}) {
 
         if (!tile) {
           tile = createTile(map, xi, yi, options);
-          layer.append(tile);
+          tile.dataset.id = id;
+          layer.append(setTileSize(tile, map, options));
         }
 
         let x = toPrecision(0.5 * w + xi * resolvedSize - cx, 2);
