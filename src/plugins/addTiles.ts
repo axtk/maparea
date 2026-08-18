@@ -1,3 +1,4 @@
+import { defaultTileSize } from "../MapArea/const.ts";
 import type { MapArea } from "../MapArea/index.ts";
 import type { Dynamic } from "../types/Dynamic.ts";
 import { type CreateTileOptions, createTile } from "../utils/createTile.ts";
@@ -6,8 +7,6 @@ import { resolveDynamic } from "../utils/resolveDynamic.ts";
 import { toPrecision } from "../utils/toPrecision.ts";
 
 const { floor, ceil } = Math;
-
-const defaultTileSize = 256;
 
 export type AddTilesOptions = (
   | CreateTileOptions
