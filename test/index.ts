@@ -29,6 +29,9 @@ let map = new MapArea({
   lang: formState.lang || "en_US",
 });
 
+addDragPan(map, { ignore: "a, button" });
+addZoomControl(map);
+
 if (formState.apikey) {
   addTiles(map, {
     url: `https://tiles.api-maps.yandex.ru/v1/tiles/?x={x}&y={y}&z={z}&lang={lang}&l=map&scale=${window.devicePixelRatio ?? 1}&maptype=future_map&apikey=${formState.apikey}`,
@@ -39,13 +42,9 @@ if (formState.apikey) {
     },
     error: "/assets/blank.png",
     retries: 3,
-    margin: 500,
     labels: true,
   });
 }
-
-addDragPan(map, { ignore: "a, button" });
-addZoomControl(map);
 
 // map.center = getCenter(shape);
 // map.bounds = getVicinity(shape);

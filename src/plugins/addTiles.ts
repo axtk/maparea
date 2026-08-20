@@ -81,7 +81,10 @@ export function addTiles(map: MapArea, options: AddTilesOptions = {}) {
     } = map;
 
     let resolvedSize = resolveDynamic(map, options.size) ?? defaultTileSize;
-    let { margin = resolvedSize, shouldRender } = options;
+    let { margin, shouldRender } = options;
+
+    if (margin === undefined)
+      margin = (map.features.has("plugin.drag_pan") ? 2 : 1) * resolvedSize;
 
     // Viewport margins
     let dx = Array.isArray(margin) ? margin[0] : margin;
