@@ -3,6 +3,8 @@ import { type SetDragPanOptions, setDragPan } from "dragpan";
 
 export type AddDragPanOptions = SetDragPanOptions;
 
+const featureName = "plugin.drag_pan";
+
 /**
  * Enables navigation over the given map container with a mouse or touches
  * or a scroll wheel (the latter can be disabled by setting `options.wheel`
@@ -12,10 +14,14 @@ export function addDragPan(
   map: MapArea,
   { wheel = true, ignore, onStart, onMove, onEnd }: AddDragPanOptions = {},
 ) {
+  if (map.features.has(featureName)) return;
+
   let x0 = 0;
   let y0 = 0;
 
-  setDragPan(map.container, {
+  map.features.add(featureName);
+
+  let unset = setDragPan(map.container, {
     onStart() {
       [x0, y0] = map.centerCoords;
       onStart?.();
@@ -36,4 +42,9 @@ export function addDragPan(
     wheel,
     ignore,
   });
+
+  return () => {
+    unset();
+    map.features.delete(featureName);
+  };
 }

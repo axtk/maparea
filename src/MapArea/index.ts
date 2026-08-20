@@ -42,6 +42,8 @@ export class MapArea {
   _cc: PixelCoords | undefined;
   /** Render callbacks */
   _r = new Set<RenderCallback>();
+  /** Feature register */
+  features = new Set<string>();
   constructor(options: MapAreaOptions) {
     this._p = options;
 

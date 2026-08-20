@@ -25,12 +25,15 @@ export type AddPinchToZoomOptions = {
   pace?: number;
 };
 
+const featureName = "plugin.pinch_to_zoom";
 const defaultPace = 1.2;
 
 export function addPinchToZoom(
   map: MapArea,
   { pace = defaultPace }: AddPinchToZoomOptions = {},
 ) {
+  if (map.features.has(featureName)) return;
+
   let { container } = map;
 
   // Distance between the initial touches
@@ -108,11 +111,13 @@ export function addPinchToZoom(
     }
   }
 
+  map.features.add(featureName);
   container.addEventListener("touchstart", handleTouchStart);
   container.addEventListener("touchmove", handleTouchMove);
 
   return () => {
     container.removeEventListener("touchstart", handleTouchStart);
     container.removeEventListener("touchmove", handleTouchMove);
+    map.features.delete(featureName);
   };
 }
