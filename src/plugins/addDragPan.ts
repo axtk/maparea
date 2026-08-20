@@ -1,5 +1,5 @@
-import type { MapArea } from "../MapArea/index.ts";
 import { type SetDragPanOptions, setDragPan } from "dragpan";
+import type { MapArea } from "../MapArea/index.ts";
 
 export type AddDragPanOptions = SetDragPanOptions;
 
