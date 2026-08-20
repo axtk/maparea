@@ -15,5 +15,8 @@
     "url": "git://github.com/axtk/maparea.git"
   },
   "author": "axtk",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "dragpan": "^0.1.2"
+  }
 }
