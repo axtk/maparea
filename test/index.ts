@@ -29,6 +29,11 @@ let map = new MapArea({
   lang: formState.lang || "en_US",
 });
 
+// map.center = getCenter(shape);
+// map.bounds = getVicinity(shape);
+
+fitGeoBounds(map, getVicinity(shape));
+
 addDragPan(map, { ignore: "a, button" });
 addZoomControl(map);
 
@@ -45,11 +50,6 @@ if (formState.apikey) {
     labels: true,
   });
 }
-
-// map.center = getCenter(shape);
-// map.bounds = getVicinity(shape);
-
-fitGeoBounds(map, getVicinity(shape));
 
 addElement(map, document.createElement("div"), {
   className: "marker",
