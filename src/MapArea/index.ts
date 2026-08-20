@@ -230,9 +230,10 @@ export class MapArea {
     else {
       // With no analytic form for a non-spherical projection,
       // `lat` is derived from `y` via binary search
-      let dlat = MAX_LAT - MIN_LAT;
+      let { minLat = MIN_LAT, maxLat = MAX_LAT } = this.bounds;
+      let dlat = maxLat - minLat;
 
-      lat = MIN_LAT + dlat / 2;
+      lat = minLat + dlat / 2;
 
       let ys = this.toPixelCoords(lat, lon)[1];
       let k = 0;
