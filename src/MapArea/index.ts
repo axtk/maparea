@@ -230,17 +230,17 @@ export class MapArea {
     else {
       // With no analytic form for a non-spherical projection,
       // `lat` is derived from `y` via binary search
-      lat = MIN_LAT;
-
       let dlat = MAX_LAT - MIN_LAT;
-      let y0 = Number.NaN;
+
+      lat = MIN_LAT + dlat / 2;
+
+      let ys = this.toPixelCoords(lat, lon)[1];
       let k = 0;
 
-      while ((Number.isNaN(y0) || abs(y0 - y) > 0.1) && k++ < 30) {
+      while (abs(y - ys) > 0.1 && k++ < 30) {
         dlat /= 2;
-        y0 = this.toPixelCoords(lat + dlat, lon)[1];
-
-        if (y0 > y) lat += dlat;
+        lat += y < ys ? dlat : -dlat;
+        ys = this.toPixelCoords(lat, lon)[1];
       }
     }
 
