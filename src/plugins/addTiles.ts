@@ -113,24 +113,21 @@ export function addTiles(map: MapArea, options: AddTilesOptions = {}) {
         tile = getTile(layer, id);
 
         if (!tile) {
-          tile =
-            "create" in options && options.create !== undefined
-              ? options.create(map, xi, yi)
-              : createTile(map, xi, yi, options as CreateTileOptions);
-
-          if (tile) {
-            tile.dataset.id = id;
-            layer.append(setTileSize(tile, resolvedSize));
-          }
+          if ("create" in options && options.create !== undefined)
+            tile = options.create(map, xi, yi);
+          else tile = createTile(map, xi, yi, options as CreateTileOptions);
         }
 
-        if (tile) {
-          let x = toPrecision(0.5 * w + xi * resolvedSize - cx, 2);
-          let y = toPrecision(0.5 * h + yi * resolvedSize - cy, 2);
+        if (!tile) continue;
 
-          tile.style.transform = `translate3d(${x}px, ${y}px, 0)`;
-          nextIds.add(id);
-        }
+        if (!tile.dataset.id) tile.dataset.id = id;
+        if (!tile.parentElement) layer.append(setTileSize(tile, resolvedSize));
+
+        let x = toPrecision(0.5 * w + xi * resolvedSize - cx, 2);
+        let y = toPrecision(0.5 * h + yi * resolvedSize - cy, 2);
+
+        tile.style.transform = `translate3d(${x}px, ${y}px, 0)`;
+        nextIds.add(id);
       }
     }
 
