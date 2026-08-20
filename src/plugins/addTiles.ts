@@ -80,8 +80,8 @@ export function addTiles(map: MapArea, options: AddTilesOptions = {}) {
       centerCoords: [cx, cy],
     } = map;
 
-    let { size, margin = 0, shouldRender } = options;
-    let resolvedSize = resolveDynamic(map, size) ?? defaultTileSize;
+    let resolvedSize = resolveDynamic(map, options.size) ?? defaultTileSize;
+    let { margin = resolvedSize, shouldRender } = options;
 
     // Viewport margins
     let dx = Array.isArray(margin) ? margin[0] : margin;
