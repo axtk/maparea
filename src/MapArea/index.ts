@@ -16,7 +16,7 @@ import {
 const { PI, sin, tan, atan, pow, exp, log, abs } = Math;
 
 export type MapAreaOptions = {
-  container: string;
+  container: string | HTMLElement;
   center?: GeoCoords;
   /** Initial map zoom level (default: `minZoom`) */
   zoom?: number;
@@ -85,11 +85,14 @@ export class MapArea {
   }
   get container(): HTMLElement {
     if (!this._c) {
-      let container = document.querySelector<HTMLElement>(this._p.container);
+      let { container } = this._p;
+      let c = container instanceof HTMLElement
+        ? container
+        : document.querySelector<HTMLElement>(container);
 
-      if (!container) throw new Error("missing container element");
+      if (!c) throw new Error("missing container element");
 
-      this._c = container;
+      this._c = c;
     }
 
     return this._c;
