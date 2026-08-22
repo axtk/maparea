@@ -86,9 +86,10 @@ export class MapArea {
   get container(): HTMLElement {
     if (!this._c) {
       let { container } = this._p;
-      let c = container instanceof HTMLElement
-        ? container
-        : document.querySelector<HTMLElement>(container);
+      let c =
+        container instanceof HTMLElement
+          ? container
+          : document.querySelector<HTMLElement>(container);
 
       if (!c) throw new Error("missing container element");
 
