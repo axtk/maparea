@@ -1,8 +1,10 @@
 import type { MapArea } from "../MapArea/index.ts";
 import { addPointerListener } from "../plugins/addPointerListener.ts";
 
-const zoomInIcon = '<svg viewBox="0 0 10 10" height="16"><path d="M 1 5 L 9 5 M 5 1 L 5 9" stroke="currentColor" fill="none"/></svg>';
-const zoomOutIcon = '<svg viewBox="0 0 10 10" height="16"><path d="M 1 5 L 9 5" stroke="currentColor" fill="none"/></svg>';
+const zoomInIcon =
+  '<svg viewBox="0 0 10 10" height="16"><path d="M 1 5 L 9 5 M 5 1 L 5 9" stroke="currentColor" fill="none"/></svg>';
+const zoomOutIcon =
+  '<svg viewBox="0 0 10 10" height="16"><path d="M 1 5 L 9 5" stroke="currentColor" fill="none"/></svg>';
 
 export type ZoomControlOptions = {
   /** HTML content of the zoom-in button */
@@ -18,8 +20,10 @@ export function getZoomControl(
   map: MapArea,
   options: ZoomControlOptions = {},
 ): HTMLElement {
-  let { zoomIn: zoomInContent = zoomInIcon, zoomOut: zoomOutContent = zoomOutIcon } =
-    options;
+  let {
+    zoomIn: zoomInContent = zoomInIcon,
+    zoomOut: zoomOutContent = zoomOutIcon,
+  } = options;
 
   let control = document.createElement("fieldset");
   control.dataset.role = "zoom";
