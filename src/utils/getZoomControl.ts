@@ -45,7 +45,7 @@ export function getZoomControl(
     let target = event.target;
     let z = map.zoom;
 
-    if (target instanceof HTMLElement) {
+    if (target instanceof Element) {
       if (zoomIn.contains(target)) z += 1;
       else if (zoomOut.contains(target)) z -= 1;
 
