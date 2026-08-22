@@ -44,7 +44,7 @@ export function getZoomControl(
   addPointerListener(map, ({ originalEvent: event }) => {
     let target = event.target;
 
-    if (target instanceof HTMLButtonElement && control.contains(target)) {
+    if (target instanceof HTMLElement && control.contains(target)) {
       map.zoom += target.dataset.role === "zoomout" ? -1 : 1;
       applyLimits();
     }
