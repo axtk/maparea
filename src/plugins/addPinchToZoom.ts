@@ -35,6 +35,7 @@ export function addPinchToZoom(
   if (map.features.has(featureName)) return;
 
   let { container } = map;
+  let initialTouchAction = container.style.touchAction;
 
   // Distance between the initial touches
   let d0: number | null = null;
@@ -112,12 +113,14 @@ export function addPinchToZoom(
   }
 
   map.features.add(featureName);
+  container.style.touchAction = "none";
   container.addEventListener("touchstart", handleTouchStart);
   container.addEventListener("touchmove", handleTouchMove);
 
   return () => {
     container.removeEventListener("touchstart", handleTouchStart);
     container.removeEventListener("touchmove", handleTouchMove);
+    container.style.touchAction = initialTouchAction;
     map.features.delete(featureName);
   };
 }

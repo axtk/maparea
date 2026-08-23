@@ -51,7 +51,6 @@ export class MapArea {
 
     container.style.position = "relative";
     container.style.overflow = "hidden";
-    container.style.touchAction = "none";
 
     container.dataset.role = "maparea";
   }
