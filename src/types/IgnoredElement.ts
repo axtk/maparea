@@ -1,1 +1,1 @@
-export type IgnoredElement = string | ((element: HTMLElement) => boolean);
+export type IgnoredElement = string | ((element: Element) => boolean);
