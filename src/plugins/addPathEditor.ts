@@ -4,14 +4,16 @@ import type { IgnoredElement } from "../types/IgnoredElement.ts";
 import { getCanvasLayer } from "../utils/getCanvasLayer.ts";
 import { initCanvasContext } from "../utils/initCanvasContext.ts";
 import { setCanvasSize } from "../utils/setCanvasSize.ts";
-import { Circle } from "../utils/shapes/Circle.ts";
-import { Path } from "../utils/shapes/Path.ts";
+import { Circle, CircleAttributes } from "../utils/shapes/Circle.ts";
+import { Path, PathAttributes } from "../utils/shapes/Path.ts";
 import { addPointerListener } from "./addPointerListener.ts";
 
 export type AddPathEditorOptions = {
   layer?: HTMLCanvasElement;
   onUpdate?: (points: GeoCoords[]) => void;
   ignore?: IgnoredElement;
+  path?: PathAttributes;
+  markers?: CircleAttributes;
   clickRadius?: number;
 };
 
@@ -34,20 +36,13 @@ export function addPathEditor(
 
     if (points.length === 0) return;
 
-    let path = new Path(points, {
-      strokeStyle: "#c71585b0",
-      lineWidth: 5,
-    });
-
+    let path = new Path(points);
+    path.setAttributes(options.path);
     path.render(ctx, map);
 
     for (let p of points) {
-      let marker = new Circle(p, 5, {
-        strokeStyle: "#c71585b0",
-        fillStyle: "#fff",
-        lineWidth: 2,
-      });
-
+      let marker = new Circle(p);
+      marker.setAttributes(options.markers);
       marker.render(ctx, map);
     }
   };

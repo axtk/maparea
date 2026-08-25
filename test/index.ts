@@ -98,6 +98,16 @@ let { clear: clearPathEditor } = addPathEditor(map, {
     if (pathEditorOutput.textContent !== content)
       pathEditorOutput.textContent = content;
   },
+  path: {
+    strokeStyle: "#c71585b0",
+    lineWidth: 5,
+  },
+  markers: {
+    r: 5,
+    strokeStyle: "#c71585b0",
+    fillStyle: "#fff",
+    lineWidth: 2,
+  },
   ignore: "a, button",
 });
 

@@ -30,5 +30,12 @@ export class Shape<A extends ShapeAttributes = ShapeAttributes> {
   setAttribute<N extends keyof A>(name: N, value: A[N]) {
     this._attrs[name] = value;
   }
+  setAttributes(attrs?: Partial<A>) {
+    if (!attrs) return;
+    this._attrs = {
+      ...this._attrs,
+      ...attrs,
+    };
+  }
   render(_ctx: CanvasRenderingContext2D, _map: MapArea) {}
 }

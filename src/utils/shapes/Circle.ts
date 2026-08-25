@@ -15,7 +15,7 @@ export type CircleAttributes = ShapeAttributes<
 export class Circle extends Shape<CircleAttributes> {
   constructor(
     c: CircleAttributes["c"],
-    r: CircleAttributes["r"],
+    r?: CircleAttributes["r"],
     attrs?: Omit<CircleAttributes, "c" | "r">,
   ) {
     super("circle", { c, r, ...attrs });
