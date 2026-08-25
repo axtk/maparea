@@ -119,9 +119,9 @@ addPinchToZoom(map);
 
 addResizeObserver(map, console.log);
 
-let { reset: resetMapOptions } = addPersistence(map);
+let { clear: clearMapState } = addPersistence(map);
 
 initTestFormReset(() => {
-  resetMapOptions();
+  clearMapState();
   clearPathEditor();
 });

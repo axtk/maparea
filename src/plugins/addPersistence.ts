@@ -40,7 +40,7 @@ export function addPersistence(
     disabled = value === undefined ? !disabled : value;
   };
 
-  let reset = () => {
+  let clear = () => {
     map.setOptions(initialOptions);
   };
 
@@ -74,6 +74,6 @@ export function addPersistence(
     /** Enables and disables the persistence. */
     toggle,
     /** Resets the map to the initial options. */
-    reset,
+    clear,
   };
 }
