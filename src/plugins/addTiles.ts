@@ -29,6 +29,8 @@ export type AddTilesOptions = GetTileImageOptions & {
   attributionInset?: string;
   /** Target map layer. */
   layer?: HTMLCanvasElement;
+  /** Whether to show the grid with the tiles' indices. */
+  grid?: boolean | string;
 };
 
 function getTileId(map: MapArea, xIndex: number, yIndex: number) {
@@ -41,7 +43,7 @@ function getTileId(map: MapArea, xIndex: number, yIndex: number) {
  * `(map, xIndex, yIndex) => string`.
  */
 export function addTiles(map: MapArea, options: AddTilesOptions = {}) {
-  let { attribution, attributionInset = "auto 0 0 auto" } = options;
+  let { grid, attribution, attributionInset = "auto 0 0 auto" } = options;
 
   let canvas = options.layer ?? getCanvasLayer(map, { id: "maparea.tiles" });
   let attributionLayer = getLayer(map, {
@@ -51,6 +53,26 @@ export function addTiles(map: MapArea, options: AddTilesOptions = {}) {
 
   let ctx = initCanvasContext(canvas);
   let tileCache = new Map<string, HTMLImageElement>();
+
+  let renderBox = (xi: number, yi: number) => {
+    if (!ctx) return;
+
+    let { w, h } = map.box;
+    let [cx, cy] = map.centerCoords;
+    let resolvedSize = resolveDynamic(map, options.size) ?? defaultTileSize;
+
+    let x = 0.5 * w + xi * resolvedSize - cx;
+    let y = 0.5 * h + yi * resolvedSize - cy;
+
+    ctx.beginPath();
+    if (typeof grid === "string") ctx.fillStyle = grid;
+    ctx.lineWidth = 0.6;
+    ctx.font = "normal 12px/1.05 sans-serif";
+    ctx.fillText(`${xi}, ${yi}`, x + 4, y + 14);
+    if (typeof grid === "string") ctx.strokeStyle = grid;
+    ctx.rect(x, y, resolvedSize, resolvedSize);
+    ctx.stroke();
+  };
 
   let renderTiles = () => {
     if (!ctx) return;
@@ -110,6 +132,7 @@ export function addTiles(map: MapArea, options: AddTilesOptions = {}) {
               // Catch the broken image exceptions
               try {
                 ctx.drawImage(image, x, y, resolvedSize, resolvedSize);
+                if (grid) renderBox(xi, yi);
               } catch {}
 
               options.onLoad?.(image);
@@ -119,6 +142,7 @@ export function addTiles(map: MapArea, options: AddTilesOptions = {}) {
         } else if (tile.complete) {
           try {
             ctx.drawImage(tile, x, y, resolvedSize, resolvedSize);
+            if (grid) renderBox(xi, yi);
           } catch {}
         }
         renderedIds.add(id);

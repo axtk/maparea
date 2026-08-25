@@ -51,7 +51,7 @@ if (formState.apikey) {
     },
     error: "/assets/blank.png",
     retries: 3,
-    // labels: true,
+    grid: "#c71585",
   });
 }
 

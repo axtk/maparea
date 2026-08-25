@@ -10,8 +10,6 @@ body {
   margin: 0;
 }
 #map {
-  --stroke-style: #e324e1;
-  --line-width: 5;
   width: 1000px;
   height: 500px;
   background: #f2f2f2;
