@@ -2,31 +2,35 @@ import "./index.css";
 import {
   addDragPan,
   addElement,
+  addPathEditor,
   addPersistence,
   addPinchToZoom,
   addPointerListener,
   addResizeObserver,
-  addShape,
-  addShapeEditor,
+  addShapes,
   addTiles,
   addZoomControl,
   fitGeoBounds,
+  type GeoCoords,
   // getCenter,
   getVicinity,
   MapArea,
-  toPrecision,
 } from "../index.ts";
+import { Circle } from "../src/utils/shapes/Circle.ts";
+import { Path } from "../src/utils/shapes/Path.ts";
+import { toPrecision } from "../src/utils/toPrecision.ts";
 import { initTestForm, initTestFormReset } from "./form.ts";
 import { shape } from "./shape.ts";
 
 let formState = initTestForm();
+let lang = formState.lang || "en_US";
 
 let map = new MapArea({
   container: "#map",
   center: [59.94607, 30.33476],
   projection: "ellipsoidal",
   zoom: 10,
-  lang: formState.lang || "en_US",
+  lang,
 });
 
 // map.center = getCenter(shape);
@@ -47,33 +51,52 @@ if (formState.apikey) {
     },
     error: "/assets/blank.png",
     retries: 3,
-    labels: true,
+    // labels: true,
   });
 }
 
-addElement(map, document.createElement("div"), {
-  className: "marker",
-  coords: [59.94589, 30.33479],
-  content: ({ lang }) =>
-    `<span>${lang.split("_")[0] === "ru" ? "Летний сад" : "Letní sad"}</span>`,
+let marker = document.createElement("div");
+marker.className = "marker";
+marker.innerHTML = `<span>${lang.split("_")[0] === "ru" ? "Летний сад" : "Letní sad"}</span>`;
+
+addElement(map, marker, {
+  position: [59.94589, 30.33479],
 });
 
-addShape(map, shape);
+let markers: GeoCoords[] = [];
+while (markers.length < 3)
+  markers.push(shape[Math.floor(shape.length * Math.random())]);
 
-let shapeOutput = document.querySelector("pre")!;
+addShapes(map, [
+  new Path(shape, {
+    strokeStyle: "#c71585b0",
+    lineWidth: 5,
+  }),
+  ...markers.map(
+    (c) =>
+      new Circle(c, 5, {
+        strokeStyle: "#c71585b0",
+        fillStyle: "#fff",
+        lineWidth: 2,
+      }),
+  ),
+]);
 
-let { reset: resetShapeEditor } = addShapeEditor(map, {
-  onUpdate: (shape) => {
-    let coords = shape.map(({ coords: [lat, lon] }) => {
+let pathEditorOutput = document.querySelector("pre")!;
+
+let { clear: clearPathEditor } = addPathEditor(map, {
+  onUpdate: (points) => {
+    let lines = points.map(([lat, lon]) => {
       return `  [${toPrecision(lat, 8)}, ${toPrecision(lon, 8)}],`;
     });
 
     let content =
-      coords.length === 0
-        ? "shape: [/* From clicks on the map */];"
-        : `shape: [\n${coords.join("\n")}\n];`;
+      points.length === 0
+        ? "points: [/* From clicks on the map */];"
+        : `points: [\n${lines.join("\n")}\n];`;
 
-    if (shapeOutput.textContent !== content) shapeOutput.textContent = content;
+    if (pathEditorOutput.textContent !== content)
+      pathEditorOutput.textContent = content;
   },
   ignore: "a, button",
 });
@@ -90,7 +113,5 @@ let { reset: resetMapOptions } = addPersistence(map);
 
 initTestFormReset(() => {
   resetMapOptions();
-  resetShapeEditor();
+  clearPathEditor();
 });
-
-map.lang = formState.lang || "en_US";

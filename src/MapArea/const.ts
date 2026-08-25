@@ -16,3 +16,5 @@ export const MIN_LON = -180;
 export const MAX_LON = 180;
 
 export const defaultTileSize = 256;
+
+export const defaultRenderThrottlingTimeout = 250;

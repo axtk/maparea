@@ -5,6 +5,7 @@ import type { PixelCoords } from "../types/PixelCoords.ts";
 import type { Projection } from "../types/Projection.ts";
 import {
   DEG,
+  defaultRenderThrottlingTimeout,
   eccentricityMap,
   MAX_LAT,
   MAX_LON,
@@ -18,15 +19,15 @@ const { PI, sin, tan, atan, pow, exp, log, abs } = Math;
 export type MapAreaOptions = {
   container: string | HTMLElement;
   center?: GeoCoords;
-  /** Initial map zoom level (default: `minZoom`) */
+  /** Initial map zoom level (default: `minZoom`). */
   zoom?: number;
-  /** Minimal map zoom level (default: `0`) */
+  /** Minimal map zoom level (default: `0`). */
   minZoom?: number;
-  /** Maximal map zoom level (default: `20`) */
+  /** Maximal map zoom level (default: `20`). */
   maxZoom?: number;
-  /** Minimal and maximal latitudes and longitudes */
+  /** Minimal and maximal latitudes and longitudes. */
   bounds?: GeoBounds;
-  /** Map projection (default: `"spherical"`) */
+  /** Map projection (default: `"spherical"`). */
   projection?: Projection;
   lang?: string;
 };
@@ -34,15 +35,22 @@ export type MapAreaOptions = {
 export type RenderCallback = (map: MapArea) => void;
 
 export class MapArea {
-  /** Map parameters */
+  /** Map parameters. */
   _p: MapAreaOptions;
-  /** Map container */
+  /** Map container. */
   _c: HTMLElement | undefined;
-  /** Pixel coordinates of the map center */
+  /** Map container's dimensions. */
+  _b: BoxDimensions | undefined;
+  /** Pixel coordinates of the map center. */
   _cc: PixelCoords | undefined;
-  /** Render callbacks */
+  /** Render callbacks. */
   _r = new Set<RenderCallback>();
-  /** Feature register */
+  /** Render props. */
+  _rp: {
+    timeout?: ReturnType<typeof setTimeout>;
+    prevZoom?: number;
+  } = {};
+  /** Feature register. */
   features = new Set<string>();
   constructor(options: MapAreaOptions) {
     this._p = options;
@@ -54,8 +62,34 @@ export class MapArea {
 
     container.dataset.role = "maparea";
   }
-  render() {
+  renderSync() {
     for (let callback of this._r) callback(this);
+  }
+  render(throttlingTimeout = defaultRenderThrottlingTimeout) {
+    let { timeout, prevZoom } = this._rp;
+
+    if (timeout !== undefined) {
+      clearTimeout(timeout);
+      this._rp.timeout = undefined;
+    }
+
+    if (
+      throttlingTimeout < 0 ||
+      prevZoom === undefined ||
+      prevZoom === this.zoom
+    )
+      this.renderSync();
+    else {
+      // Wait for all quick zoom changes to get through before the next
+      // rendering
+      this._rp.timeout = setTimeout(() => {
+        this._rp.timeout = undefined;
+        this.renderSync();
+      }, throttlingTimeout);
+    }
+
+    if (prevZoom === undefined || prevZoom !== this.zoom)
+      this._rp.prevZoom = this.zoom;
   }
   onRender(callback: RenderCallback, skipInitialCall = false) {
     this._r.add(callback);
@@ -77,7 +111,10 @@ export class MapArea {
     this._p = { ...this._p, ...options };
 
     // Flush cache
-    if ("container" in options) delete this._c;
+    if ("container" in options) {
+      delete this._c;
+      delete this._b;
+    }
     delete this._cc;
 
     this.render();
@@ -98,14 +135,18 @@ export class MapArea {
     return this._c;
   }
   get box(): BoxDimensions {
-    let box = this.container.getBoundingClientRect();
+    if (!this._b) {
+      let box = this.container.getBoundingClientRect();
 
-    return {
-      x: box.left,
-      y: box.top,
-      w: box.width,
-      h: box.height,
-    };
+      this._b = {
+        x: box.left,
+        y: box.top,
+        w: box.width,
+        h: box.height,
+      };
+    }
+
+    return this._b;
   }
   get bounds(): GeoBounds {
     let value = this._p.bounds;
@@ -220,6 +261,15 @@ export class MapArea {
 
     return [x, y];
   }
+  toViewportCoords(lat: number, lon: number): PixelCoords {
+    let [x, y] = this.toPixelCoords(lat, lon);
+    let {
+      centerCoords: [cx, cy],
+      box: { w, h },
+    } = this;
+
+    return [x - cx + 0.5 * w, y - cy + 0.5 * h];
+  }
   /** Converts pixel coordinates to geographic coordinates. */
   toGeoCoords(x: number, y: number): GeoCoords {
     let e = eccentricityMap[this.projection];
@@ -253,5 +303,25 @@ export class MapArea {
     if (lat < -90 || lat >= 90) lat = ((lat + 90) % 180) - 90;
 
     return [lat, lon];
+  }
+  isOffscreen(x: number | null, y: number | null, dx = 0, dy = 0) {
+    if (x === null || y === null) return "null";
+    if (x < -dx && y < -dy) return "-x,-y";
+    if (x < -dx && y > this.box.h + dy) return "-x,+y";
+    if (x > this.box.w + dx && y < -dy) return "+x,-y";
+    if (x > this.box.w + dx && y > this.box.h + dy) return "+x,+y";
+    return "";
+  }
+  isOffscreenRegion(
+    xMin: number | null,
+    yMin: number | null,
+    xMax: number | null,
+    yMax: number | null,
+    dx = 0,
+    dy = 0,
+  ) {
+    let offMin = this.isOffscreen(xMin, yMin, dx, dy);
+    let offMax = this.isOffscreen(xMax, yMax, dx, dy);
+    return offMin && offMax && offMin === offMax;
   }
 }

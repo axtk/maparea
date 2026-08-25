@@ -18,11 +18,10 @@ export function addZoomControl(
   options: AddZoomControlOptions = {},
 ) {
   let layer = getLayer(map, {
-    className: "controls",
+    id: "maparea.controls",
     inset: options.inset ?? "0 0 auto auto",
   });
 
   layer.append(getZoomControl(map, options));
-
   return layer;
 }

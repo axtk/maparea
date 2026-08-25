@@ -1,20 +1,12 @@
 import type { MapArea } from "../MapArea/index.ts";
-import type { Dynamic } from "../types/Dynamic.ts";
 import type { GeoCoords } from "../types/GeoCoords.ts";
 import { getLayer } from "../utils/getLayer.ts";
-import { resolveDynamic } from "../utils/resolveDynamic.ts";
-import { toPrecision } from "../utils/toPrecision.ts";
 
 export type AddElementOptions = {
-  className?: string;
-  /** Geographical position (`[lat, lon]`) of the element's top left corner. */
-  coords?: GeoCoords;
-  /** CSS `inset` (disregarding `coords`). */
-  inset?: Dynamic<string>;
   /** Target layer. */
-  layer?: Element;
-  /** HTML content of the element. */
-  content?: Dynamic<string>;
+  layer?: HTMLElement;
+  /** Geographical position (`[lat, lon]`) of the element's top left corner. */
+  position?: GeoCoords;
 };
 
 /**
@@ -27,37 +19,25 @@ export type AddElementOptions = {
 export function addElement(
   map: MapArea,
   element: HTMLElement | SVGSVGElement,
-  { className, coords, inset, layer, content }: AddElementOptions,
+  options: AddElementOptions = {},
 ) {
-  let effectiveLayer = layer ?? getLayer(map, { className: "elements" });
-
-  // SVGs require `setAttribute()`
-  if (className) element.setAttribute("class", className);
+  let layer = options.layer ?? getLayer(map, { id: "maparea.elements" });
 
   element.style.position = "absolute";
-  effectiveLayer.append(element);
+  layer.append(element);
 
   map.onRender(() => {
-    if (inset) element.style.inset = resolveDynamic(map, inset) ?? "";
-    else if (coords) {
-      let {
-        centerCoords: [cx, cy],
-        box: { w, h },
-      } = map;
+    let { position } = options;
+    if (!position) return;
 
-      let [px, py] = map.toPixelCoords(...coords);
-
-      let x = toPrecision(px - cx + w / 2, 2);
-      let y = toPrecision(py - cy + h / 2, 2);
-
-      element.style.transform = `translate3d(${x}px, ${y}px, 0)`;
-    }
-
-    if (content) {
-      let resolvedContent = resolveDynamic(map, content) ?? "";
-
-      if (element.innerHTML !== resolvedContent)
-        element.innerHTML = resolvedContent;
-    }
+    let [x, y] = map.toViewportCoords(...position);
+    element.style.transform = `translate3d(${x}px, ${y}px, 0)`;
   });
+
+  return {
+    container: layer,
+    clear() {
+      element.remove();
+    },
+  };
 }

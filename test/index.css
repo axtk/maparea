@@ -10,6 +10,8 @@ body {
   margin: 0;
 }
 #map {
+  --stroke-style: #e324e1;
+  --line-width: 5;
   width: 1000px;
   height: 500px;
   background: #f2f2f2;
@@ -17,78 +19,23 @@ body {
 #map[data-dragged] {
   cursor: grabbing;
 }
-#map .elements.layer .marker {
-  --r: 0.2rem;
-  font-size: 0.7rem;
-}
-#map .elements.layer .marker span {
-  display: block;
-  font-style: italic;
-  line-height: 1.1;
-  color: white;
-  background: #c71585a0;
-  border-bottom: 0.1em solid var(--shape-color);
-  padding: 0.15em 1.25em 0.05em;
-  box-sizing: border-box;
-  transform: translateY(-100%);
-}
-#map .elements.layer .marker::before {
-  content: "";
-  display: block;
-  width: calc(2 * var(--r));
-  height: calc(2 * var(--r));
-  background: var(--shape-color);
-  border-radius: 50%;
-  position: absolute;
-  left: 0;
-  top: 0;
-  transform: translate(-50%, -50%);
-}
-#map .shape.layer path {
-  stroke: var(--shape-color);
-  stroke-width: 4;
-  stroke-opacity: 0.65;
-  fill: none;
-}
-#map .tiles.layer span {
-  outline: 0.05em solid blue;
-}
-#map .tiles.layer i {
-  display: inline-block;
-  font-size: 0.75em;
-  color: #00fa;
-  background: #00f2;
-  padding: 0.05em 0.35em;
-}
-#map .tiles-attribution.layer {
+.layer[data-id="maparea.attribution"] {
   z-index: 5000;
 }
-#map .tiles-attribution.layer img {
+.layer[data-id="maparea.attribution"] img {
   display: block;
 }
-#map .shape-editor.layer path {
-  stroke: var(--shape-color);
-  stroke-width: 3;
-  fill: none;
-}
-#map .shape-editor.layer .marker {
-  stroke: var(--shape-color);
-  stroke-width: 10;
-  stroke-opacity: 0.3;
-  fill: var(--shape-color);
-  cursor: pointer;
-}
-#map .controls.layer {
+.layer[data-id="maparea.controls"] {
   z-index: 5000;
 }
-#map .controls.layer fieldset {
+.layer[data-id="maparea.controls"] fieldset {
   display: flex;
   flex-direction: column;
   border: none;
   padding: 0;
   margin: 0.75em;
 }
-#map .controls.layer button {
+.layer[data-id="maparea.controls"] button {
   --border-radius: 0.3em;
   flex: none;
   display: flex;
@@ -103,18 +50,45 @@ body {
   margin: 0;
   cursor: pointer;
 }
-#map .controls.layer button:first-child {
+.layer[data-id="maparea.controls"] button:first-child {
   border-radius: var(--border-radius) var(--border-radius) 0 0;
 }
-#map .controls.layer button:not(:first-child) {
+.layer[data-id="maparea.controls"] button:not(:first-child) {
   border-top: none;
 }
-#map .controls.layer button:last-child {
+.layer[data-id="maparea.controls"] button:last-child {
   border-radius: 0 0 var(--border-radius) var(--border-radius);
 }
-#map .controls.layer button:disabled {
+.layer[data-id="maparea.controls"] button:disabled {
   opacity: 0.35;
   cursor: not-allowed;
+}
+.layer[data-id="maparea.elements"] .marker {
+  --r: 0.2rem;
+  font-size: 0.7rem;
+}
+.layer[data-id="maparea.elements"] .marker span {
+  display: block;
+  font-style: italic;
+  line-height: 1.1;
+  color: white;
+  background: #c71585a0;
+  border-bottom: 0.1em solid var(--shape-color);
+  padding: 0.15em 1.25em 0.05em;
+  box-sizing: border-box;
+  transform: translateY(-100%);
+}
+.layer[data-id="maparea.elements"] .marker::before {
+  content: "";
+  display: block;
+  width: calc(2 * var(--r));
+  height: calc(2 * var(--r));
+  background: var(--shape-color);
+  border-radius: 50%;
+  position: absolute;
+  left: 0;
+  top: 0;
+  transform: translate(-50%, -50%);
 }
 form {
   display: flex;
@@ -155,10 +129,10 @@ form input[name="lang"] {
     width: 380px;
     height: 300px;
   }
-  #map .controls.layer {
+  .layer[data-id="maparea.controls"] {
     margin: 0.25em;
   }
-  #map .controls.layer button {
+  .layer[data-id="maparea.controls"] button {
     padding: 1em;
   }
 }
