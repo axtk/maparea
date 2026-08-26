@@ -4,8 +4,8 @@ import type { IgnoredElement } from "../types/IgnoredElement.ts";
 import { getCanvasLayer } from "../utils/getCanvasLayer.ts";
 import { initCanvasContext } from "../utils/initCanvasContext.ts";
 import { setCanvasSize } from "../utils/setCanvasSize.ts";
-import { Circle, CircleAttributes } from "../utils/shapes/Circle.ts";
-import { Path, PathAttributes } from "../utils/shapes/Path.ts";
+import { Circle, type CircleAttributes } from "../utils/shapes/Circle.ts";
+import { Path, type PathAttributes } from "../utils/shapes/Path.ts";
 import { addPointerListener } from "./addPointerListener.ts";
 
 export type AddPathEditorOptions = {

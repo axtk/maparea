@@ -30,14 +30,21 @@ export type AddTilesOptions = GetTileImageOptions & {
   /** Custom target map layer. */
   layer?: HTMLCanvasElement;
   /** Custom tile rendering. */
-  render?: (ctx: CanvasRenderingContext2D, xIndex: number, yIndex: number) => void;
+  render?: (
+    ctx: CanvasRenderingContext2D,
+    xIndex: number,
+    yIndex: number,
+  ) => void;
   /** Whether to show the grid with the tiles' indices. */
-  grid?: boolean | string | {
-    /** Color of grid lines. */
-    lines: string;
-    /** Color of grid captions. */
-    text: string;
-  };
+  grid?:
+    | boolean
+    | string
+    | {
+        /** Color of grid lines. */
+        lines: string;
+        /** Color of grid captions. */
+        text: string;
+      };
 };
 
 function getTileId(map: MapArea, xIndex: number, yIndex: number) {
@@ -60,14 +67,21 @@ export function addTiles(map: MapArea, options: AddTilesOptions = {}) {
 
   let ctx = initCanvasContext(canvas);
 
-  let renderGridBox = (x: number, y: number, w: number, h: number, label: string) => {
+  let renderGridBox = (
+    x: number,
+    y: number,
+    w: number,
+    h: number,
+    label: string,
+  ) => {
     if (!grid || !ctx) return;
 
     ctx.font = "normal 12px/1 sans-serif";
 
     let metrics = ctx.measureText(label);
     let labelWidth = metrics.width;
-    let labelHeight = metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent;
+    let labelHeight =
+      metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent;
 
     let lineColor = "black";
     let textColor = "black";
@@ -77,8 +91,7 @@ export function addTiles(map: MapArea, options: AddTilesOptions = {}) {
       lineColor = grid.lines;
       textColor = grid.text;
       labelBox = true;
-    }
-    else if (typeof grid === "string") {
+    } else if (typeof grid === "string") {
       lineColor = grid;
       textColor = grid;
     }
@@ -103,51 +116,53 @@ export function addTiles(map: MapArea, options: AddTilesOptions = {}) {
   let imageCache = new Map<string, HTMLImageElement>();
   let renderedIds = new Set<string>();
 
-  let renderTile = options.render ?? ((ctx: CanvasRenderingContext2D, xi: number, yi: number) => {
-    let {
-      box: { w, h },
-      centerCoords: [cx, cy],
-      zoom: z,
-    } = map;
+  let renderTile =
+    options.render ??
+    ((ctx: CanvasRenderingContext2D, xi: number, yi: number) => {
+      let {
+        box: { w, h },
+        centerCoords: [cx, cy],
+        zoom: z,
+      } = map;
 
-    let id = getTileId(map, xi, yi);
-    let size = options.size ?? defaultTileSize;
+      let id = getTileId(map, xi, yi);
+      let size = options.size ?? defaultTileSize;
 
-    let image = imageCache.get(id);
-    let gridLabel = `${xi}, ${yi}, ${z}`;
+      let image = imageCache.get(id);
+      let gridLabel = `${xi}, ${yi}, ${z}`;
 
-    let x = 0.5 * w + xi * size - cx;
-    let y = 0.5 * h + yi * size - cy;
+      let x = 0.5 * w + xi * size - cx;
+      let y = 0.5 * h + yi * size - cy;
 
-    if (!image) {
-      image = getTileImage(map, xi, yi, {
-        ...options,
-        onLoad(image) {
-          let [cx2, cy2] = map.centerCoords;
+      if (!image) {
+        image = getTileImage(map, xi, yi, {
+          ...options,
+          onLoad(image) {
+            let [cx2, cy2] = map.centerCoords;
 
-          // The map might have been moved away while the tile was loading
-          x += cx - cx2;
-          y += cy - cy2;
+            // The map might have been moved away while the tile was loading
+            x += cx - cx2;
+            y += cy - cy2;
 
-          // Catch the broken image exceptions
-          try {
-            ctx.drawImage(image, x, y, size, size);
-          } catch {}
+            // Catch the broken image exceptions
+            try {
+              ctx.drawImage(image, x, y, size, size);
+            } catch {}
 
-          renderGridBox(x, y, size, size, gridLabel);
-          options.onLoad?.(image);
-        },
-      });
-      imageCache.set(id, image);
-    } else if (image.complete) {
-      try {
-        ctx.drawImage(image, x, y, size, size);
-      } catch {}
-    }
+            renderGridBox(x, y, size, size, gridLabel);
+            options.onLoad?.(image);
+          },
+        });
+        imageCache.set(id, image);
+      } else if (image.complete) {
+        try {
+          ctx.drawImage(image, x, y, size, size);
+        } catch {}
+      }
 
-    renderedIds.add(id);
-    renderGridBox(x, y, size, size, gridLabel);
-  });
+      renderedIds.add(id);
+      renderGridBox(x, y, size, size, gridLabel);
+    });
 
   let renderTiles = () => {
     if (!ctx) return;
