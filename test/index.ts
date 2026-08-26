@@ -119,7 +119,9 @@ addPinchToZoom(map);
 
 addResizeObserver(map, console.log);
 
-let { clear: clearMapState } = addPersistence(map);
+let { clear: clearMapState } = addPersistence(map, {
+  lang: formState.lang,
+});
 
 initTestFormReset(() => {
   clearMapState();

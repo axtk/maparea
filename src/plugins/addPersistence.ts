@@ -5,6 +5,8 @@ export type AddPersistenceOptions = {
   session?: boolean;
 };
 
+type InitMapAreaOptions = Partial<MapAreaOptions> | null;
+
 /**
  * Enables persistence of the map's state across page reloads by saving it to
  * the browser storage (`localStorage` by default, `sessionStorage` with
@@ -12,6 +14,7 @@ export type AddPersistenceOptions = {
  */
 export function addPersistence(
   map: MapArea,
+  initOptions: InitMapAreaOptions = null,
   { storageKey, session = false }: AddPersistenceOptions = {},
 ) {
   let storage = session ? window.sessionStorage : window.localStorage;
@@ -21,18 +24,24 @@ export function addPersistence(
   let initialOptions = map.getOptions();
   let disabled = false;
 
-  let write = () => {
+  let write = (init?: InitMapAreaOptions) => {
     try {
-      storage.setItem(key, JSON.stringify(map.getOptions()));
+      let options = map.getOptions();
+      if (init !== null) options = { ...options, ...init };
+      storage.setItem(key, JSON.stringify(options));
     } catch {}
   };
 
-  let sync = () => {
+  let sync = (init?: InitMapAreaOptions) => {
     try {
       let rawOptions = storage.getItem(key);
 
-      if (rawOptions === null) write();
-      else map.setOptions(JSON.parse(rawOptions) as MapAreaOptions);
+      if (rawOptions === null) write(init);
+      else {
+        let options = JSON.parse(rawOptions) as MapAreaOptions;
+        if (init !== null) options = { ...options, ...init };
+        map.setOptions(options);
+      }
     } catch {}
   };
 
@@ -44,7 +53,7 @@ export function addPersistence(
     map.setOptions(initialOptions);
   };
 
-  sync();
+  sync(initOptions);
 
   let writeTimeout: ReturnType<typeof setTimeout> | null = null;
 
