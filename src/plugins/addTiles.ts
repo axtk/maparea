@@ -17,7 +17,7 @@ export type AddTilesOptions = GetTileImageOptions & {
   /** Defines whether a specific tile should be rendered. */
   shouldRender?: (map: MapArea, xIndex: number, yIndex: number) => boolean;
   /** Tile size. */
-  size?: Dynamic<number>;
+  size?: number;
   /**
    * Margin in pixels, or a tuple of an x- and y-margin, to be tiled
    * outside the viewport.
@@ -27,8 +27,10 @@ export type AddTilesOptions = GetTileImageOptions & {
   attribution?: Dynamic<string>;
   /** Attribution's CSS `inset`. */
   attributionInset?: string;
-  /** Target map layer. */
+  /** Custom target map layer. */
   layer?: HTMLCanvasElement;
+  /** Custom tile rendering. */
+  render?: (ctx: CanvasRenderingContext2D, xIndex: number, yIndex: number) => void;
   /** Whether to show the grid with the tiles' indices. */
   grid?: boolean | string | {
     /** Color of grid lines. */
@@ -57,7 +59,6 @@ export function addTiles(map: MapArea, options: AddTilesOptions = {}) {
   });
 
   let ctx = initCanvasContext(canvas);
-  let tileCache = new Map<string, HTMLImageElement>();
 
   let renderGridBox = (x: number, y: number, w: number, h: number, label: string) => {
     if (!grid || !ctx) return;
@@ -99,6 +100,55 @@ export function addTiles(map: MapArea, options: AddTilesOptions = {}) {
     ctx.stroke();
   };
 
+  let imageCache = new Map<string, HTMLImageElement>();
+  let renderedIds = new Set<string>();
+
+  let renderTile = options.render ?? ((ctx: CanvasRenderingContext2D, xi: number, yi: number) => {
+    let {
+      box: { w, h },
+      centerCoords: [cx, cy],
+      zoom: z,
+    } = map;
+
+    let id = getTileId(map, xi, yi);
+    let size = options.size ?? defaultTileSize;
+
+    let image = imageCache.get(id);
+    let gridLabel = `${xi}, ${yi}, ${z}`;
+
+    let x = 0.5 * w + xi * size - cx;
+    let y = 0.5 * h + yi * size - cy;
+
+    if (!image) {
+      image = getTileImage(map, xi, yi, {
+        ...options,
+        onLoad(image) {
+          let [cx2, cy2] = map.centerCoords;
+
+          // The map might have been moved away while the tile was loading
+          x += cx - cx2;
+          y += cy - cy2;
+
+          // Catch the broken image exceptions
+          try {
+            ctx.drawImage(image, x, y, size, size);
+          } catch {}
+
+          renderGridBox(x, y, size, size, gridLabel);
+          options.onLoad?.(image);
+        },
+      });
+      imageCache.set(id, image);
+    } else if (image.complete) {
+      try {
+        ctx.drawImage(image, x, y, size, size);
+      } catch {}
+    }
+
+    renderedIds.add(id);
+    renderGridBox(x, y, size, size, gridLabel);
+  });
+
   let renderTiles = () => {
     if (!ctx) return;
 
@@ -108,28 +158,26 @@ export function addTiles(map: MapArea, options: AddTilesOptions = {}) {
     let {
       box: { w, h },
       centerCoords: [cx, cy],
-      zoom: z,
     } = map;
 
-    let resolvedSize = resolveDynamic(map, options.size) ?? defaultTileSize;
-    let { margin, shouldRender } = options;
+    let { margin, shouldRender, size = defaultTileSize } = options;
 
     if (margin === undefined)
-      margin = (map.features.has("plugin.drag_pan") ? 2 : 1) * resolvedSize;
+      margin = (map.features.has("plugin.drag_pan") ? 2 : 1) * size;
 
     // Viewport margins
     let dx = Array.isArray(margin) ? margin[0] : margin;
     let dy = Array.isArray(margin) ? margin[1] : margin;
 
     // Number of tiles in the viewport along the axes
-    let nx = ceil((w + 2 * dx) / resolvedSize);
-    let ny = ceil((h + 2 * dy) / resolvedSize);
+    let nx = ceil((w + 2 * dx) / size);
+    let ny = ceil((h + 2 * dy) / size);
 
     // Center tile indices
-    let xi0 = floor(cx / resolvedSize);
-    let yi0 = floor(cy / resolvedSize);
+    let xi0 = floor(cx / size);
+    let yi0 = floor(cy / size);
 
-    let renderedIds = new Set<string>();
+    renderedIds.clear();
 
     for (let nxi = 0; nxi <= nx; nxi++) {
       // Start from the center tile, then move to the sides alternately
@@ -139,49 +187,15 @@ export function addTiles(map: MapArea, options: AddTilesOptions = {}) {
         let yi = yi0 + (nyi % 2 === 0 ? -1 : 1) * floor(nyi / 2);
         let ok = shouldRender?.(map, xi, yi) ?? true;
 
-        if (!ok) continue;
-
-        let id = getTileId(map, xi, yi);
-        let tile = tileCache.get(id);
-        let gridLabel = `${xi}, ${yi}, ${z}`;
-
-        let x = 0.5 * w + xi * resolvedSize - cx;
-        let y = 0.5 * h + yi * resolvedSize - cy;
-
-        if (!tile) {
-          tile = getTileImage(map, xi, yi, {
-            ...options,
-            onLoad(image) {
-              let [cx2, cy2] = map.centerCoords;
-
-              // The map might have been moved away while the tile was loading
-              x += cx - cx2;
-              y += cy - cy2;
-
-              // Catch the broken image exceptions
-              try {
-                ctx.drawImage(image, x, y, resolvedSize, resolvedSize);
-              } catch {}
-
-              renderGridBox(x, y, resolvedSize, resolvedSize, gridLabel);
-              options.onLoad?.(image);
-            },
-          });
-          tileCache.set(id, tile);
-        } else if (tile.complete) {
-          try {
-            ctx.drawImage(tile, x, y, resolvedSize, resolvedSize);
-          } catch {}
-        }
-
-        renderedIds.add(id);
-        renderGridBox(x, y, resolvedSize, resolvedSize, gridLabel);
+        if (ok) renderTile(ctx, xi, yi);
       }
     }
 
-    // Remove unused tiles from the cache
-    for (let id of tileCache.keys()) {
-      if (!renderedIds.has(id)) tileCache.delete(id);
+    if (imageCache.size !== 0) {
+      // Remove unused tiles from the cache
+      for (let id of imageCache.keys()) {
+        if (!renderedIds.has(id)) imageCache.delete(id);
+      }
     }
 
     let attributionContent = resolveDynamic(map, attribution) ?? "";
