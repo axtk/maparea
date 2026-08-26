@@ -30,7 +30,12 @@ export type AddTilesOptions = GetTileImageOptions & {
   /** Target map layer. */
   layer?: HTMLCanvasElement;
   /** Whether to show the grid with the tiles' indices. */
-  grid?: boolean | string;
+  grid?: boolean | string | {
+    /** Color of grid lines. */
+    lines: string;
+    /** Color of grid captions. */
+    text: string;
+  };
 };
 
 function getTileId(map: MapArea, xIndex: number, yIndex: number) {
@@ -54,23 +59,43 @@ export function addTiles(map: MapArea, options: AddTilesOptions = {}) {
   let ctx = initCanvasContext(canvas);
   let tileCache = new Map<string, HTMLImageElement>();
 
-  let renderBox = (xi: number, yi: number) => {
-    if (!ctx) return;
+  let renderGridBox = (x: number, y: number, w: number, h: number, label: string) => {
+    if (!grid || !ctx) return;
 
-    let { w, h } = map.box;
-    let [cx, cy] = map.centerCoords;
-    let resolvedSize = resolveDynamic(map, options.size) ?? defaultTileSize;
+    ctx.font = "normal 12px/1 sans-serif";
 
-    let x = 0.5 * w + xi * resolvedSize - cx;
-    let y = 0.5 * h + yi * resolvedSize - cy;
+    let metrics = ctx.measureText(label);
+    let labelWidth = metrics.width;
+    let labelHeight = metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent;
+
+    let lineColor = "black";
+    let textColor = "black";
+    let labelBox = false;
+
+    if (typeof grid === "object") {
+      lineColor = grid.lines;
+      textColor = grid.text;
+      labelBox = true;
+    }
+    else if (typeof grid === "string") {
+      lineColor = grid;
+      textColor = grid;
+    }
 
     ctx.beginPath();
-    if (typeof grid === "string") ctx.fillStyle = grid;
+
+    if (labelBox) {
+      ctx.fillStyle = lineColor;
+      ctx.rect(x, y, labelWidth + 8, labelHeight + 5);
+      ctx.fill();
+    }
+
+    ctx.fillStyle = textColor;
+    ctx.fillText(label, x + 4, y + labelHeight + 2);
+
+    ctx.strokeStyle = lineColor;
     ctx.lineWidth = 0.6;
-    ctx.font = "normal 12px/1.05 sans-serif";
-    ctx.fillText(`${xi}, ${yi}`, x + 4, y + 14);
-    if (typeof grid === "string") ctx.strokeStyle = grid;
-    ctx.rect(x, y, resolvedSize, resolvedSize);
+    ctx.rect(x, y, w, h);
     ctx.stroke();
   };
 
@@ -80,8 +105,11 @@ export function addTiles(map: MapArea, options: AddTilesOptions = {}) {
     setCanvasSize(canvas, map.box);
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    let { w, h } = map.box;
-    let [cx, cy] = map.centerCoords;
+    let {
+      box: { w, h },
+      centerCoords: [cx, cy],
+      zoom: z,
+    } = map;
 
     let resolvedSize = resolveDynamic(map, options.size) ?? defaultTileSize;
     let { margin, shouldRender } = options;
@@ -115,6 +143,7 @@ export function addTiles(map: MapArea, options: AddTilesOptions = {}) {
 
         let id = getTileId(map, xi, yi);
         let tile = tileCache.get(id);
+        let gridLabel = `${xi}, ${yi}, ${z}`;
 
         let x = 0.5 * w + xi * resolvedSize - cx;
         let y = 0.5 * h + yi * resolvedSize - cy;
@@ -132,9 +161,9 @@ export function addTiles(map: MapArea, options: AddTilesOptions = {}) {
               // Catch the broken image exceptions
               try {
                 ctx.drawImage(image, x, y, resolvedSize, resolvedSize);
-                if (grid) renderBox(xi, yi);
               } catch {}
 
+              renderGridBox(x, y, resolvedSize, resolvedSize, gridLabel);
               options.onLoad?.(image);
             },
           });
@@ -142,10 +171,11 @@ export function addTiles(map: MapArea, options: AddTilesOptions = {}) {
         } else if (tile.complete) {
           try {
             ctx.drawImage(tile, x, y, resolvedSize, resolvedSize);
-            if (grid) renderBox(xi, yi);
           } catch {}
         }
+
         renderedIds.add(id);
+        renderGridBox(x, y, resolvedSize, resolvedSize, gridLabel);
       }
     }
 

@@ -51,7 +51,7 @@ if (formState.apikey) {
     },
     error: "/assets/blank.png",
     retries: 3,
-    grid: "#c71585",
+    grid: { lines: "#c71585b0", text: "#fff" },
   });
 }
 
