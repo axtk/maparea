@@ -1,4 +1,4 @@
-import { CanvasStyles } from "./CanvasStyles.ts";
+import type { CanvasStyles } from "./CanvasStyles.ts";
 
 export type RenderingProps = {
   lineDash?: number[];

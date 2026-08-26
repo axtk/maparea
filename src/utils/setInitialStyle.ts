@@ -1,4 +1,4 @@
-import { ExtendedCanvasStyles } from "./shapes/ExtendedCanvasStyles.ts";
+import type { ExtendedCanvasStyles } from "./shapes/ExtendedCanvasStyles.ts";
 
 const styleProps: (keyof ExtendedCanvasStyles)[] = [
   // CanvasPathDrawingStyles
@@ -41,13 +41,13 @@ export function setInitialStyle(ctx: CanvasRenderingContext2D | null) {
   if (initialStyle === null) {
     let auxCanvas: HTMLCanvasElement | null = document.createElement("canvas");
     let auxCtx = auxCanvas.getContext("2d");
-    
+
     initialStyle = {};
 
     if (auxCtx) {
       for (let k of styleProps) {
         if (k in auxCtx) {
-          // @ts-ignore k of CanvasRenderingContext2D
+          // @ts-expect-error k of CanvasRenderingContext2D
           initialStyle[k] = auxCtx[k];
         }
       }
@@ -57,7 +57,7 @@ export function setInitialStyle(ctx: CanvasRenderingContext2D | null) {
   }
 
   for (let [k, v] of Object.entries(initialStyle)) {
-    // @ts-ignore k of CanvasRenderingContext2D
+    // @ts-expect-error k of CanvasRenderingContext2D
     ctx[k] = v;
   }
 
