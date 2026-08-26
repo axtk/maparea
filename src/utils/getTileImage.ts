@@ -39,7 +39,7 @@ export function getTileImage(
         typeof retryDelay === "function" ? retryDelay(errorCount) : retryDelay;
 
       setTimeout(() => {
-        let u = new URL(resolvedURL);
+        let u = new URL(image.src);
         u.searchParams.set("_t", String(Date.now()));
         u.searchParams.set("_r", String(errorCount));
         image.src = u.href;
