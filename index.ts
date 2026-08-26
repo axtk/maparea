@@ -30,6 +30,7 @@ export * from "./src/utils/getZoomControl.ts";
 export * from "./src/utils/isCoordsArray.ts";
 export * from "./src/utils/resolveDynamic.ts";
 export * from "./src/utils/setCanvasSize.ts";
+export * from "./src/utils/setInitialStyle.ts";
 export * from "./src/utils/shapes/Circle.ts";
 export * from "./src/utils/shapes/Ellipse.ts";
 export * from "./src/utils/shapes/Path.ts";

@@ -1,10 +1,6 @@
+import { CanvasStyles } from "./CanvasStyles.ts";
+
 export type RenderingProps = {
   lineDash?: number[];
   fillRule?: CanvasFillRule;
-} & Partial<
-  CanvasPathDrawingStyles &
-    CanvasTextDrawingStyles &
-    CanvasFillStrokeStyles &
-    CanvasShadowStyles &
-    CanvasFilters
->;
+} & CanvasStyles;

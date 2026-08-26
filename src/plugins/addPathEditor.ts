@@ -2,8 +2,8 @@ import type { MapArea } from "../MapArea/index.ts";
 import type { GeoCoords } from "../types/GeoCoords.ts";
 import type { IgnoredElement } from "../types/IgnoredElement.ts";
 import { getCanvasLayer } from "../utils/getCanvasLayer.ts";
-import { initCanvasContext } from "../utils/initCanvasContext.ts";
 import { setCanvasSize } from "../utils/setCanvasSize.ts";
+import { setInitialStyle } from "../utils/setInitialStyle.ts";
 import { Circle, type CircleAttributes } from "../utils/shapes/Circle.ts";
 import { Path, type PathAttributes } from "../utils/shapes/Path.ts";
 import { addPointerListener } from "./addPointerListener.ts";
@@ -26,12 +26,13 @@ export function addPathEditor(
 
   let canvas =
     options.layer ?? getCanvasLayer(map, { id: "maparea.path-editor" });
-  let ctx = initCanvasContext(canvas);
+  let ctx = canvas.getContext("2d");
 
   let renderPath = () => {
     if (!ctx) return;
 
     setCanvasSize(canvas, map.box);
+    setInitialStyle(ctx);
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     if (points.length === 0) return;

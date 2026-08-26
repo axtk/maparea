@@ -1,3 +1,4 @@
+import { setInitialStyle } from "../setInitialStyle.ts";
 import type { RenderingProps } from "./RenderingProps.ts";
 
 export function initContextStyles(
@@ -5,6 +6,8 @@ export function initContextStyles(
   props: RenderingProps,
 ) {
   let { lineDash, fillStyle, ...p } = props;
+
+  setInitialStyle(ctx);
 
   if (lineDash !== undefined) ctx.setLineDash(lineDash);
 

@@ -7,9 +7,9 @@ import {
   type GetTileImageOptions,
   getTileImage,
 } from "../utils/getTileImage.ts";
-import { initCanvasContext } from "../utils/initCanvasContext.ts";
 import { resolveDynamic } from "../utils/resolveDynamic.ts";
 import { setCanvasSize } from "../utils/setCanvasSize.ts";
+import { setInitialStyle } from "../utils/setInitialStyle.ts";
 
 const { floor, ceil } = Math;
 
@@ -65,7 +65,7 @@ export function addTiles(map: MapArea, options: AddTilesOptions = {}) {
     inset: attributionInset,
   });
 
-  let ctx = initCanvasContext(canvas);
+  let ctx = canvas.getContext("2d");
 
   let renderGridBox = (
     x: number,
@@ -144,6 +144,8 @@ export function addTiles(map: MapArea, options: AddTilesOptions = {}) {
             x += cx - cx2;
             y += cy - cy2;
 
+            setInitialStyle(ctx);
+
             // Catch the broken image exceptions
             try {
               ctx.drawImage(image, x, y, size, size);
@@ -168,6 +170,7 @@ export function addTiles(map: MapArea, options: AddTilesOptions = {}) {
     if (!ctx) return;
 
     setCanvasSize(canvas, map.box);
+    setInitialStyle(ctx);
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     let {
@@ -226,6 +229,7 @@ export function addTiles(map: MapArea, options: AddTilesOptions = {}) {
   return {
     container: canvas,
     clear() {
+      setInitialStyle(ctx);
       ctx?.clearRect(0, 0, canvas.width, canvas.height);
     },
   };
