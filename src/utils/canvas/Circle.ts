@@ -19,13 +19,20 @@ export class Circle extends Shape<CircleAttributes> {
     r?: CircleAttributes["r"],
     attrs?: Omit<CircleAttributes, "c" | "r">,
   );
+  constructor(
+    c?: CircleAttributes["c"],
+    attrs?: Omit<CircleAttributes, "c">,
+  );
   constructor(attrs?: CircleAttributes);
   constructor(
     c?: CircleAttributes["c"] | CircleAttributes,
-    r?: CircleAttributes["r"],
+    r?: CircleAttributes["r"] | Omit<CircleAttributes, "c">,
     attrs?: Omit<CircleAttributes, "c" | "r">,
   ) {
-    if (isCoordsArray(c)) super("circle", { c, r, ...attrs });
+    if (isCoordsArray(c)) {
+      if (typeof r === "number") super("circle", { c, r, ...attrs });
+      else super("circle", { c, ...r });
+    }
     else super("circle", c);
   }
   render(ctx: CanvasRenderingContext2D, map: MapArea) {

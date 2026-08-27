@@ -26,14 +26,21 @@ export class Ellipse extends Shape<EllipseAttributes> {
     ry?: EllipseAttributes["ry"],
     attrs?: Omit<EllipseAttributes, "c" | "rx" | "ry">,
   );
+  constructor(
+    c?: EllipseAttributes["c"],
+    attrs?: Omit<EllipseAttributes, "c">,
+  );
   constructor(attrs?: EllipseAttributes);
   constructor(
     c?: EllipseAttributes["c"] | EllipseAttributes,
-    rx?: EllipseAttributes["rx"],
+    rx?: EllipseAttributes["rx"] | Omit<EllipseAttributes, "c">,
     ry?: EllipseAttributes["ry"],
     attrs?: Omit<EllipseAttributes, "c" | "rx" | "ry">,
   ) {
-    if (isCoordsArray(c)) super("ellipse", { c, rx, ry, ...attrs });
+    if (isCoordsArray(c)) {
+      if (typeof rx === "number") super("ellipse", { c, rx, ry, ...attrs });
+      else super("ellipse", { c, ...rx });
+    }
     else super("ellipse", c);
   }
   render(ctx: CanvasRenderingContext2D, map: MapArea) {
