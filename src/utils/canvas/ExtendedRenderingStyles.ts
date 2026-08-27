@@ -1,4 +1,4 @@
-export type ExtendedCanvasStyles = Partial<
+export type ExtendedRenderingStyles = Partial<
   CanvasPathDrawingStyles &
     CanvasTextDrawingStyles &
     CanvasFillStrokeStyles &

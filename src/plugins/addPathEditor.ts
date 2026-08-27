@@ -2,8 +2,8 @@ import type { MapArea } from "../MapArea/index.ts";
 import type { GeoCoords } from "../types/GeoCoords.ts";
 import type { IgnoredElement } from "../types/IgnoredElement.ts";
 import { getCanvasLayer } from "../utils/getCanvasLayer.ts";
-import { setCanvasSize } from "../utils/setCanvasSize.ts";
-import { setInitialStyle } from "../utils/setInitialStyle.ts";
+import { setSize } from "../utils/canvas/setSize.ts";
+import { setInitialStyle } from "../utils/canvas/setInitialStyle.ts";
 import { Circle, type CircleAttributes } from "../utils/canvas/Circle.ts";
 import { Path, type PathAttributes } from "../utils/canvas/Path.ts";
 import { addPointerListener } from "./addPointerListener.ts";
@@ -31,7 +31,7 @@ export function addPathEditor(
   let renderPath = () => {
     if (!ctx) return;
 
-    setCanvasSize(canvas, map.box);
+    setSize(canvas, map.box);
     setInitialStyle(ctx);
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 

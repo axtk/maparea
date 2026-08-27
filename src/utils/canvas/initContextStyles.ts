@@ -1,4 +1,4 @@
-import { setInitialStyle } from "../setInitialStyle.ts";
+import { setInitialStyle } from "./setInitialStyle.ts";
 import type { RenderingProps } from "./RenderingProps.ts";
 
 export function initContextStyles(

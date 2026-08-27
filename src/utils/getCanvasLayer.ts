@@ -1,5 +1,5 @@
 import type { MapArea } from "../MapArea/index.ts";
-import { setCanvasSize } from "./setCanvasSize.ts";
+import { setSize } from "./canvas/setSize.ts";
 
 export type CanvasLayerOptions = {
   id: string;
@@ -30,7 +30,7 @@ export function getCanvasLayer(
     if (existingCanvas) existingCanvas.after(canvas);
     else container.prepend(canvas);
 
-    setCanvasSize(canvas, map.box);
+    setSize(canvas, map.box);
   }
 
   return canvas;

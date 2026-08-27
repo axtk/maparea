@@ -1,7 +1,7 @@
 import type { MapArea } from "../MapArea/index.ts";
 import { getCanvasLayer } from "../utils/getCanvasLayer.ts";
-import { setCanvasSize } from "../utils/setCanvasSize.ts";
-import { setInitialStyle } from "../utils/setInitialStyle.ts";
+import { setSize } from "../utils/canvas/setSize.ts";
+import { setInitialStyle } from "../utils/canvas/setInitialStyle.ts";
 import type { Shape } from "../utils/canvas/Shape.ts";
 
 export type AddShapesOptions = {
@@ -24,7 +24,7 @@ export function addShapes(
   let renderShapes = () => {
     if (!ctx) return;
 
-    setCanvasSize(canvas, map.box);
+    setSize(canvas, map.box);
     setInitialStyle(ctx);
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 

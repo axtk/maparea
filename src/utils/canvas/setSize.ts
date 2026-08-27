@@ -1,6 +1,6 @@
-import type { BoxSize } from "../types/BoxSize.ts";
+import type { BoxSize } from "../../types/BoxSize.ts";
 
-export function setCanvasSize(canvas: HTMLCanvasElement, { w, h }: BoxSize) {
+export function setSize(canvas: HTMLCanvasElement, { w, h }: BoxSize) {
   let dpr = window.devicePixelRatio || 1;
 
   if (

@@ -8,8 +8,8 @@ import {
   getTileImage,
 } from "../utils/getTileImage.ts";
 import { resolveDynamic } from "../utils/resolveDynamic.ts";
-import { setCanvasSize } from "../utils/setCanvasSize.ts";
-import { setInitialStyle } from "../utils/setInitialStyle.ts";
+import { setSize } from "../utils/canvas/setSize.ts";
+import { setInitialStyle } from "../utils/canvas/setInitialStyle.ts";
 
 const { floor, ceil } = Math;
 
@@ -169,7 +169,7 @@ export function addTiles(map: MapArea, options: AddTilesOptions = {}) {
   let renderTiles = () => {
     if (!ctx) return;
 
-    setCanvasSize(canvas, map.box);
+    setSize(canvas, map.box);
     setInitialStyle(ctx);
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 

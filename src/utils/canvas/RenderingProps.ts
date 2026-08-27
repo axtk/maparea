@@ -1,6 +1,6 @@
-import type { CanvasStyles } from "./CanvasStyles.ts";
+import type { RenderingStyles } from "./RenderingStyles.ts";
 
 export type RenderingProps = {
   lineDash?: number[];
   fillRule?: CanvasFillRule;
-} & CanvasStyles;
+} & RenderingStyles;
