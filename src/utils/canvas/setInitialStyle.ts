@@ -1,6 +1,6 @@
-import type { ExtendedRenderingStyles } from "./ExtendedRenderingStyles.ts";
+import type { RenderingStyles } from "./RenderingStyles.ts";
 
-const styleProps: (keyof ExtendedRenderingStyles)[] = [
+const styleProps: (keyof RenderingStyles)[] = [
   // CanvasPathDrawingStyles
   "lineCap",
   "lineDashOffset",
@@ -33,7 +33,7 @@ const styleProps: (keyof ExtendedRenderingStyles)[] = [
   "globalCompositeOperation",
 ];
 
-let initialStyle: ExtendedRenderingStyles | null = null;
+let initialStyle: RenderingStyles | null = null;
 
 export function setInitialStyle(ctx: CanvasRenderingContext2D | null) {
   if (!ctx) return;
