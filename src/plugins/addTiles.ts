@@ -1,6 +1,8 @@
 import { defaultTileSize } from "../MapArea/const.ts";
 import type { MapArea } from "../MapArea/index.ts";
 import type { Dynamic } from "../types/Dynamic.ts";
+import { setInitialStyle } from "../utils/canvas/setInitialStyle.ts";
+import { setSize } from "../utils/canvas/setSize.ts";
 import { getCanvasLayer } from "../utils/getCanvasLayer.ts";
 import { getLayer } from "../utils/getLayer.ts";
 import {
@@ -8,8 +10,6 @@ import {
   getTileImage,
 } from "../utils/getTileImage.ts";
 import { resolveDynamic } from "../utils/resolveDynamic.ts";
-import { setSize } from "../utils/canvas/setSize.ts";
-import { setInitialStyle } from "../utils/canvas/setInitialStyle.ts";
 
 const { floor, ceil } = Math;
 

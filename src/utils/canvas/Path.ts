@@ -16,7 +16,10 @@ export type PathAttributes = ShapeAttributes<
 export class Path extends Shape<PathAttributes> {
   constructor(d?: PathAttributes["d"], attrs?: Omit<PathAttributes, "d">);
   constructor(attrs?: PathAttributes);
-  constructor(d?: PathAttributes["d"] | PathAttributes, attrs?: Omit<PathAttributes, "d">) {
+  constructor(
+    d?: PathAttributes["d"] | PathAttributes,
+    attrs?: Omit<PathAttributes, "d">,
+  ) {
     if (Array.isArray(d)) super("path", { d, ...attrs });
     else super("path", d);
   }

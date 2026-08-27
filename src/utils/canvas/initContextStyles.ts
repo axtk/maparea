@@ -1,5 +1,5 @@
-import { setInitialStyle } from "./setInitialStyle.ts";
 import type { RenderingProps } from "./RenderingProps.ts";
+import { setInitialStyle } from "./setInitialStyle.ts";
 
 export function initContextStyles(
   ctx: CanvasRenderingContext2D,

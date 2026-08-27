@@ -20,7 +20,12 @@ export type EllipseAttributes = ShapeAttributes<
 >;
 
 export class Ellipse extends Shape<EllipseAttributes> {
-  constructor(c?: EllipseAttributes["c"], rx?: EllipseAttributes["rx"], ry?: EllipseAttributes["ry"], attrs?: Omit<EllipseAttributes, "c" | "rx" | "ry">);
+  constructor(
+    c?: EllipseAttributes["c"],
+    rx?: EllipseAttributes["rx"],
+    ry?: EllipseAttributes["ry"],
+    attrs?: Omit<EllipseAttributes, "c" | "rx" | "ry">,
+  );
   constructor(attrs?: EllipseAttributes);
   constructor(
     c?: EllipseAttributes["c"] | EllipseAttributes,

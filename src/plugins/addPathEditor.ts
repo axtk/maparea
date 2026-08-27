@@ -1,11 +1,11 @@
 import type { MapArea } from "../MapArea/index.ts";
 import type { GeoCoords } from "../types/GeoCoords.ts";
 import type { IgnoredElement } from "../types/IgnoredElement.ts";
-import { getCanvasLayer } from "../utils/getCanvasLayer.ts";
-import { setSize } from "../utils/canvas/setSize.ts";
-import { setInitialStyle } from "../utils/canvas/setInitialStyle.ts";
 import { Circle, type CircleAttributes } from "../utils/canvas/Circle.ts";
 import { Path, type PathAttributes } from "../utils/canvas/Path.ts";
+import { setInitialStyle } from "../utils/canvas/setInitialStyle.ts";
+import { setSize } from "../utils/canvas/setSize.ts";
+import { getCanvasLayer } from "../utils/getCanvasLayer.ts";
 import { addPointerListener } from "./addPointerListener.ts";
 
 export type AddPathEditorOptions = {

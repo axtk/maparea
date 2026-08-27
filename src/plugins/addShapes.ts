@@ -1,8 +1,8 @@
 import type { MapArea } from "../MapArea/index.ts";
-import { getCanvasLayer } from "../utils/getCanvasLayer.ts";
-import { setSize } from "../utils/canvas/setSize.ts";
-import { setInitialStyle } from "../utils/canvas/setInitialStyle.ts";
 import type { Shape } from "../utils/canvas/Shape.ts";
+import { setInitialStyle } from "../utils/canvas/setInitialStyle.ts";
+import { setSize } from "../utils/canvas/setSize.ts";
+import { getCanvasLayer } from "../utils/getCanvasLayer.ts";
 
 export type AddShapesOptions = {
   /** Target map layer. */
