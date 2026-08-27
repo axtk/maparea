@@ -15,9 +15,7 @@ export function initContextStyles(
     ctx.fillStyle = fillStyle;
 
   for (let [k, v] of Object.entries(p)) {
-    if (typeof v !== "function") {
-      // @ts-expect-error [k, v] of CanvasStyles
-      ctx[k] = v;
-    }
+    // @ts-expect-error [k, v] of CanvasRenderingContext2D
+    ctx[k] = v;
   }
 }
