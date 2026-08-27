@@ -26,10 +26,7 @@ export class Ellipse extends Shape<EllipseAttributes> {
     ry?: EllipseAttributes["ry"],
     attrs?: Omit<EllipseAttributes, "c" | "rx" | "ry">,
   );
-  constructor(
-    c?: EllipseAttributes["c"],
-    attrs?: Omit<EllipseAttributes, "c">,
-  );
+  constructor(c?: EllipseAttributes["c"], attrs?: Omit<EllipseAttributes, "c">);
   constructor(attrs?: EllipseAttributes);
   constructor(
     c?: EllipseAttributes["c"] | EllipseAttributes,
@@ -40,8 +37,7 @@ export class Ellipse extends Shape<EllipseAttributes> {
     if (isCoordsArray(c)) {
       if (typeof rx === "number") super("ellipse", { c, rx, ry, ...attrs });
       else super("ellipse", { c, ...rx });
-    }
-    else super("ellipse", c);
+    } else super("ellipse", c);
   }
   render(ctx: CanvasRenderingContext2D, map: MapArea) {
     let {
