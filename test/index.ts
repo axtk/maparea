@@ -16,8 +16,8 @@ import {
   getVicinity,
   MapArea,
 } from "../index.ts";
-import { Circle } from "../src/utils/shapes/Circle.ts";
-import { Path } from "../src/utils/shapes/Path.ts";
+import { Circle } from "../src/utils/canvas/Circle.ts";
+import { Path } from "../src/utils/canvas/Path.ts";
 import { toPrecision } from "../src/utils/toPrecision.ts";
 import { initTestForm, initTestFormReset } from "./form.ts";
 import { shape } from "./shape.ts";

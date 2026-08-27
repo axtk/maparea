@@ -1,4 +1,4 @@
-import type { ExtendedCanvasStyles } from "./shapes/ExtendedCanvasStyles.ts";
+import type { ExtendedCanvasStyles } from "./canvas/ExtendedCanvasStyles.ts";
 
 const styleProps: (keyof ExtendedCanvasStyles)[] = [
   // CanvasPathDrawingStyles
