@@ -1,5 +1,6 @@
 import type { MapArea } from "../../MapArea/index.ts";
 import type { GeoCoords } from "../../types/GeoCoords.ts";
+import { isCoordsArray } from "../isCoordsArray.ts";
 import { initContextStyles } from "./initContextStyles.ts";
 import type { RenderingProps } from "./RenderingProps.ts";
 import { Shape, type ShapeAttributes } from "./Shape.ts";
@@ -19,13 +20,16 @@ export type EllipseAttributes = ShapeAttributes<
 >;
 
 export class Ellipse extends Shape<EllipseAttributes> {
+  constructor(c?: EllipseAttributes["c"], rx?: EllipseAttributes["rx"], ry?: EllipseAttributes["ry"], attrs?: Omit<EllipseAttributes, "c" | "rx" | "ry">);
+  constructor(attrs?: EllipseAttributes);
   constructor(
-    c: EllipseAttributes["c"],
-    rx: EllipseAttributes["rx"],
-    ry: EllipseAttributes["ry"],
+    c?: EllipseAttributes["c"] | EllipseAttributes,
+    rx?: EllipseAttributes["rx"],
+    ry?: EllipseAttributes["ry"],
     attrs?: Omit<EllipseAttributes, "c" | "rx" | "ry">,
   ) {
-    super("ellipse", { c, rx, ry, ...attrs });
+    if (isCoordsArray(c)) super("ellipse", { c, rx, ry, ...attrs });
+    else super("ellipse", c);
   }
   render(ctx: CanvasRenderingContext2D, map: MapArea) {
     let {
