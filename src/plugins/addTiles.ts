@@ -66,6 +66,18 @@ export function addTiles(map: MapArea, options: AddTilesOptions = {}) {
   });
 
   let ctx = canvas.getContext("2d");
+  let loaded = false;
+
+  let renderAttributionContent = () => {
+    if (!loaded) return;
+
+    let attributionContent = resolveDynamic(map, attribution) ?? "";
+
+    attributionLayer.toggleAttribute("hidden", !attributionContent);
+
+    if (attributionLayer.innerHTML !== attributionContent)
+      attributionLayer.innerHTML = attributionContent;
+  };
 
   let renderGridBox = (
     x: number,
@@ -152,6 +164,12 @@ export function addTiles(map: MapArea, options: AddTilesOptions = {}) {
             } catch {}
 
             renderGridBox(x, y, size, size, gridLabel);
+
+            if (!loaded) {
+              loaded = true;
+              renderAttributionContent();
+            }
+
             options.onLoad?.(image);
           },
         });
@@ -160,6 +178,7 @@ export function addTiles(map: MapArea, options: AddTilesOptions = {}) {
         try {
           ctx.drawImage(image, x, y, size, size);
         } catch {}
+        loaded = true;
       }
 
       renderedIds.add(id);
@@ -216,12 +235,7 @@ export function addTiles(map: MapArea, options: AddTilesOptions = {}) {
       }
     }
 
-    let attributionContent = resolveDynamic(map, attribution) ?? "";
-
-    attributionLayer.toggleAttribute("hidden", !attributionContent);
-
-    if (attributionLayer.innerHTML !== attributionContent)
-      attributionLayer.innerHTML = attributionContent;
+    renderAttributionContent();
   };
 
   map.onRender(renderTiles);
