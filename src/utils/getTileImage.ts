@@ -1,12 +1,19 @@
 import type { MapArea } from "../MapArea/index.ts";
 import type { Dynamic } from "../types/Dynamic.ts";
+import { expBackoff } from "./expBackoff.ts";
 import { type GetTileURLOptions, getTileURL } from "./getTileURL.ts";
 import { resolveDynamic } from "./resolveDynamic.ts";
 
 export type GetTileImageOptions = GetTileURLOptions & {
-  /** Maximum retry count per tile. */
+  /**
+   * Maximum retry count per tile.
+   * @default 5
+   */
   retries?: number;
-  /** Delay before retrying a tile request in milliseconds. */
+  /**
+   * Delay before retrying a tile request in milliseconds.
+   * @default expBackoff()
+   */
   retryDelay?: number | ((iteration: number) => number);
   /** URL to be used instead of a tile that failed to load. */
   error?: Dynamic<string>;
@@ -23,7 +30,7 @@ export function getTileImage(
   options: GetTileImageOptions,
 ): HTMLImageElement {
   let resolvedURL = getTileURL(map, xIndex, yIndex, options);
-  let { retries = 0, retryDelay = 0, onLoad, onError, error } = options;
+  let { retries = 5, retryDelay = expBackoff(), onLoad, onError, error } = options;
 
   let image = new Image();
   let errorCount = 0;

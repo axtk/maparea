@@ -24,6 +24,7 @@ export * from "./src/utils/canvas/RenderingProps.ts";
 export * from "./src/utils/canvas/Shape.ts";
 export * from "./src/utils/canvas/setInitialStyle.ts";
 export * from "./src/utils/canvas/setSize.ts";
+export * from "./src/utils/expBackoff.ts";
 export * from "./src/utils/fitGeoBounds.ts";
 export * from "./src/utils/getCenter.ts";
 export * from "./src/utils/getGeoBounds.ts";
