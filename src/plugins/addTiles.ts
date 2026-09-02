@@ -9,35 +9,39 @@ import {
   type GetTileImageOptions,
   getTileImage,
 } from "../utils/getTileImage.ts";
-import { getTileIndices, GetTileIndicesOptions } from "../utils/getTileIndices.ts";
+import {
+  type GetTileIndicesOptions,
+  getTileIndices,
+} from "../utils/getTileIndices.ts";
 import { resolveDynamic } from "../utils/resolveDynamic.ts";
 
-export type AddTilesOptions = GetTileImageOptions & GetTileIndicesOptions & {
-  /** Defines whether a specific tile should be rendered. */
-  shouldRender?: (map: MapArea, xIndex: number, yIndex: number) => boolean;
-  /** Attribution HTML content. */
-  attribution?: Dynamic<string>;
-  /** Attribution's CSS `inset`. */
-  attributionInset?: string;
-  /** Custom target map layer. */
-  layer?: HTMLCanvasElement;
-  /** Custom tile rendering. */
-  render?: (
-    ctx: CanvasRenderingContext2D,
-    xIndex: number,
-    yIndex: number,
-  ) => void;
-  /** Whether to show the grid with the tiles' indices. */
-  grid?:
-    | boolean
-    | string
-    | {
-        /** Color of grid lines. */
-        lines: string;
-        /** Color of grid captions. */
-        text: string;
-      };
-};
+export type AddTilesOptions = GetTileImageOptions &
+  GetTileIndicesOptions & {
+    /** Defines whether a specific tile should be rendered. */
+    shouldRender?: (map: MapArea, xIndex: number, yIndex: number) => boolean;
+    /** Attribution HTML content. */
+    attribution?: Dynamic<string>;
+    /** Attribution's CSS `inset`. */
+    attributionInset?: string;
+    /** Custom target map layer. */
+    layer?: HTMLCanvasElement;
+    /** Custom tile rendering. */
+    render?: (
+      ctx: CanvasRenderingContext2D,
+      xIndex: number,
+      yIndex: number,
+    ) => void;
+    /** Whether to show the grid with the tiles' indices. */
+    grid?:
+      | boolean
+      | string
+      | {
+          /** Color of grid lines. */
+          lines: string;
+          /** Color of grid captions. */
+          text: string;
+        };
+  };
 
 function getTileId(map: MapArea, xIndex: number, yIndex: number) {
   return `${xIndex},${yIndex},${map.zoom},${map.lang}`;
@@ -49,7 +53,13 @@ function getTileId(map: MapArea, xIndex: number, yIndex: number) {
  * `(map, xIndex, yIndex) => string`.
  */
 export function addTiles(map: MapArea, options: AddTilesOptions = {}) {
-  let { size = defaultTileSize, shouldRender, attribution, attributionInset = "auto 0 0 auto", grid } = options;
+  let {
+    size = defaultTileSize,
+    shouldRender,
+    attribution,
+    attributionInset = "auto 0 0 auto",
+    grid,
+  } = options;
 
   let canvas = options.layer ?? getCanvasLayer(map, { id: "maparea.tiles" });
   let attributionLayer = getLayer(map, {
