@@ -32,6 +32,7 @@ export * from "./src/utils/getId.ts";
 export * from "./src/utils/getLayer.ts";
 export * from "./src/utils/getTileBlob.ts";
 export * from "./src/utils/getTileImage.ts";
+export * from "./src/utils/getTileIndices.ts";
 export * from "./src/utils/getTileURL.ts";
 export * from "./src/utils/getVicinity.ts";
 export * from "./src/utils/getZoomControl.ts";

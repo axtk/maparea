@@ -9,20 +9,12 @@ import {
   type GetTileImageOptions,
   getTileImage,
 } from "../utils/getTileImage.ts";
+import { getTileIndices, GetTileIndicesOptions } from "../utils/getTileIndices.ts";
 import { resolveDynamic } from "../utils/resolveDynamic.ts";
 
-const { floor, ceil } = Math;
-
-export type AddTilesOptions = GetTileImageOptions & {
+export type AddTilesOptions = GetTileImageOptions & GetTileIndicesOptions & {
   /** Defines whether a specific tile should be rendered. */
   shouldRender?: (map: MapArea, xIndex: number, yIndex: number) => boolean;
-  /** Tile size. */
-  size?: number;
-  /**
-   * Margin in pixels, or a tuple of an x- and y-margin, to be tiled
-   * outside the viewport.
-   */
-  margin?: number | [number, number];
   /** Attribution HTML content. */
   attribution?: Dynamic<string>;
   /** Attribution's CSS `inset`. */
@@ -57,7 +49,7 @@ function getTileId(map: MapArea, xIndex: number, yIndex: number) {
  * `(map, xIndex, yIndex) => string`.
  */
 export function addTiles(map: MapArea, options: AddTilesOptions = {}) {
-  let { grid, attribution, attributionInset = "auto 0 0 auto" } = options;
+  let { size = defaultTileSize, shouldRender, attribution, attributionInset = "auto 0 0 auto", grid } = options;
 
   let canvas = options.layer ?? getCanvasLayer(map, { id: "maparea.tiles" });
   let attributionLayer = getLayer(map, {
@@ -138,8 +130,6 @@ export function addTiles(map: MapArea, options: AddTilesOptions = {}) {
       } = map;
 
       let id = getTileId(map, xi, yi);
-      let size = options.size ?? defaultTileSize;
-
       let image = imageCache.get(id);
       let gridLabel = `${xi}, ${yi}, ${z}`;
 
@@ -192,36 +182,16 @@ export function addTiles(map: MapArea, options: AddTilesOptions = {}) {
     setInitialStyle(ctx);
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    let {
-      box: { w, h },
-      centerCoords: [cx, cy],
-    } = map;
-
-    let { margin, shouldRender, size = defaultTileSize } = options;
-
-    if (margin === undefined)
-      margin = (map.features.has("plugin.drag_pan") ? 2 : 1) * size;
-
-    // Viewport margins
-    let dx = Array.isArray(margin) ? margin[0] : margin;
-    let dy = Array.isArray(margin) ? margin[1] : margin;
-
-    // Number of tiles in the viewport along the axes
-    let nx = ceil((w + 2 * dx) / size);
-    let ny = ceil((h + 2 * dy) / size);
-
-    // Center tile indices
-    let xi0 = floor(cx / size);
-    let yi0 = floor(cy / size);
+    let { x: xi0, y: yi0, nx, ny } = getTileIndices(map, options);
 
     renderedIds.clear();
 
     for (let nxi = 0; nxi <= nx; nxi++) {
       // Start from the center tile, then move to the sides alternately
-      let xi = xi0 + (nxi % 2 === 0 ? -1 : 1) * floor(nxi / 2);
+      let xi = xi0 + (nxi % 2 === 0 ? -1 : 1) * Math.floor(nxi / 2);
 
       for (let nyi = 0; nyi <= ny; nyi++) {
-        let yi = yi0 + (nyi % 2 === 0 ? -1 : 1) * floor(nyi / 2);
+        let yi = yi0 + (nyi % 2 === 0 ? -1 : 1) * Math.floor(nyi / 2);
         let ok = shouldRender?.(map, xi, yi) ?? true;
 
         if (ok) renderTile(ctx, xi, yi);
