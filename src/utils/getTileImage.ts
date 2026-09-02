@@ -30,7 +30,13 @@ export function getTileImage(
   options: GetTileImageOptions,
 ): HTMLImageElement {
   let resolvedURL = getTileURL(map, xIndex, yIndex, options);
-  let { retries = 5, retryDelay = expBackoff(), onLoad, onError, error } = options;
+  let {
+    retries = 5,
+    retryDelay = expBackoff(),
+    onLoad,
+    onError,
+    error,
+  } = options;
 
   let image = new Image();
   let errorCount = 0;
