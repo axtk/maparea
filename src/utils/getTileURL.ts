@@ -7,6 +7,8 @@ export type GetTileURLOptions = {
    * or a function of `(map, x, y) => string` returning a fixed string URL.
    */
   url?: string | ((map: MapArea, xIndex: number, yIndex: number) => string);
+  /** Returns the signature URL parameter value for the given tile. */
+  signature?: (map: MapArea, xIndex: number, yIndex: number) => string;
   /** Values of the `{s}` placeholder of the tile URLs. */
   subdomains?: string[];
 };
@@ -15,7 +17,7 @@ export function getTileURL(
   map: MapArea,
   xIndex: number,
   yIndex: number,
-  { url, subdomains }: GetTileURLOptions,
+  { url, signature, subdomains }: GetTileURLOptions,
 ) {
   if (!url) return "";
 
@@ -32,6 +34,11 @@ export function getTileURL(
       "{s}",
       subdomains[Math.floor(subdomains.length * Math.random())],
     );
+
+  if (typeof signature === "function") {
+    let s = encodeURIComponent(signature(map, xIndex, yIndex));
+    resolvedURL += `${resolvedURL.includes("?") ? "&" : "?"}signature=${s}`;
+  }
 
   return resolvedURL;
 }
