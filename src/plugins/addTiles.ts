@@ -14,6 +14,7 @@ import {
   getTileIndices,
 } from "../utils/getTileIndices.ts";
 import { resolveDynamic } from "../utils/resolveDynamic.ts";
+import { SignatureFactory } from "../utils/SignatureFactory.ts";
 
 export type AddTilesOptions = GetTileImageOptions &
   GetTileIndicesOptions & {
@@ -59,6 +60,7 @@ export function addTiles(map: MapArea, options: AddTilesOptions = {}) {
     size = defaultTileSize,
     shouldRender,
     prerender,
+    signature,
     attribution,
     attributionInset = "auto 0 0 auto",
     grid,
@@ -237,6 +239,10 @@ export function addTiles(map: MapArea, options: AddTilesOptions = {}) {
   if (prerender)
     map.onRender(() => {
       prerender(map, options).then(renderTiles);
+    });
+  else if (signature instanceof SignatureFactory)
+    map.onRender(() => {
+      signature.prerender(map, options).then(renderTiles);
     });
   else map.onRender(renderTiles);
 

@@ -38,4 +38,5 @@ export * from "./src/utils/getVicinity.ts";
 export * from "./src/utils/getZoomControl.ts";
 export * from "./src/utils/isCoordsArray.ts";
 export * from "./src/utils/resolveDynamic.ts";
+export * from "./src/utils/SignatureFactory.ts";
 export * from "./src/utils/toGeoBounds.ts";
