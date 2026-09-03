@@ -31,6 +31,8 @@ export type AddTilesOptions = GetTileImageOptions &
       xIndex: number,
       yIndex: number,
     ) => void;
+    /** What should be done before each render. */
+    prerender?: (map: MapArea, options?: AddTilesOptions) => Promise<void>;
     /** Whether to show the grid with the tiles' indices. */
     grid?:
       | boolean
@@ -56,6 +58,7 @@ export function addTiles(map: MapArea, options: AddTilesOptions = {}) {
   let {
     size = defaultTileSize,
     shouldRender,
+    prerender,
     attribution,
     attributionInset = "auto 0 0 auto",
     grid,
@@ -218,7 +221,11 @@ export function addTiles(map: MapArea, options: AddTilesOptions = {}) {
     renderAttributionContent();
   };
 
-  map.onRender(renderTiles);
+  if (prerender)
+    map.onRender(() => {
+      prerender(map, options).then(renderTiles);
+    });
+  else map.onRender(renderTiles);
 
   return {
     container: canvas,
