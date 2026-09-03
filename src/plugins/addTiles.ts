@@ -175,6 +175,19 @@ export function addTiles(map: MapArea, options: AddTilesOptions = {}) {
 
             options.onLoad?.(image);
           },
+          onError(image) {
+            if (grid) {
+              let [cx2, cy2] = map.centerCoords;
+
+              // The map might have been moved away while the tile was loading
+              x += cx - cx2;
+              y += cy - cy2;
+
+              setInitialStyle(ctx);
+              renderGridBox(x, y, size, size, gridLabel);
+            }
+            options.onError?.(image);
+          },
         });
         imageCache.set(id, image);
       } else if (image.complete) {
