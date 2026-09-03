@@ -1,9 +1,11 @@
 import type { MapArea } from "../MapArea/index.ts";
-import { AddTilesOptions } from "../plugins/addTiles.ts";
+import type { AddTilesOptions } from "../plugins/addTiles.ts";
 import { getTileIndices } from "./getTileIndices.ts";
 import { getTileURL } from "./getTileURL.ts";
 
-export type FetchSignatureMap = (urls: string[]) => Promise<Record<string, string>>;
+export type FetchSignatureMap = (
+  urls: string[],
+) => Promise<Record<string, string>>;
 
 export class SignatureFactory {
   /** Endpoint URL or async function serving signatures. */

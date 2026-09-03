@@ -9,7 +9,9 @@ export type GetTileURLOptions = {
    */
   url?: string | ((map: MapArea, xIndex: number, yIndex: number) => string);
   /** Returns the signature URL parameter value for the given tile. */
-  signature?: ((map: MapArea, xIndex: number, yIndex: number) => string) | SignatureFactory;
+  signature?:
+    | ((map: MapArea, xIndex: number, yIndex: number) => string)
+    | SignatureFactory;
   /** Values of the `{s}` placeholder of the tile URLs. */
   subdomains?: string[];
 };
@@ -44,7 +46,8 @@ export function getTileURL(
     else if (typeof signature === "function")
       s = signature(map, xIndex, yIndex);
 
-    if (s) resolvedURL += `${resolvedURL.includes("?") ? "&" : "?"}signature=${encodeURIComponent(s)}`;
+    if (s)
+      resolvedURL += `${resolvedURL.includes("?") ? "&" : "?"}signature=${encodeURIComponent(s)}`;
   }
 
   return resolvedURL;
