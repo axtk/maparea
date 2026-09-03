@@ -119,6 +119,18 @@ export class MapArea {
 
     this.render();
   }
+  resize(): BoxDimensions {
+    let box = this.container.getBoundingClientRect();
+
+    this._b = {
+      x: box.left,
+      y: box.top,
+      w: box.width,
+      h: box.height,
+    };
+
+    return this._b;
+  }
   get container(): HTMLElement {
     if (!this._c) {
       let { container } = this._p;
@@ -135,18 +147,7 @@ export class MapArea {
     return this._c;
   }
   get box(): BoxDimensions {
-    if (!this._b) {
-      let box = this.container.getBoundingClientRect();
-
-      this._b = {
-        x: box.left,
-        y: box.top,
-        w: box.width,
-        h: box.height,
-      };
-    }
-
-    return this._b;
+    return this._b ?? this.resize();
   }
   get bounds(): GeoBounds {
     let value = this._p.bounds;
