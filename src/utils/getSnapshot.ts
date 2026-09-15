@@ -12,14 +12,14 @@ function toSet(x: string[] | undefined, fallback?: string[]) {
 
 const defaultExcludes = ["maparea.controls"];
 
-export type GetCompositeImageOptions = BlobOptions & {
+export type GetSnapshotOptions = BlobOptions & {
   /** List of map layer IDs (`data-id` values) to be included into the image. */
   include?: string[];
   /** List of map layer IDs (`data-id` values) to be excluded from the image. */
   exclude?: string[];
 };
 
-export async function getCompositeImage(map: MapArea, options: GetCompositeImageOptions = {}): Promise<Blob | null> {
+export async function getSnapshot(map: MapArea, options: GetSnapshotOptions = {}): Promise<Blob | null> {
   let canvas = document.createElement("canvas");
   setSize(canvas, map.box);
 

@@ -29,7 +29,7 @@ export * from "./src/utils/expBackoff.ts";
 export * from "./src/utils/exportImage.ts";
 export * from "./src/utils/fitGeoBounds.ts";
 export * from "./src/utils/getCenter.ts";
-export * from "./src/utils/getCompositeImage.ts";
+export * from "./src/utils/getSnapshot.ts";
 export * from "./src/utils/getDefaultExportName.ts";
 export * from "./src/utils/getExportControl.ts";
 export * from "./src/utils/getGeoBounds.ts";
