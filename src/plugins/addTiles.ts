@@ -148,8 +148,8 @@ export function addTiles(map: MapArea, options: AddTilesOptions = {}) {
       let image = imageCache.get(id);
       let gridLabel = `${xi}, ${yi}, ${z}`;
 
-      let x = 0.5 * w + xi * size - cx;
-      let y = 0.5 * h + yi * size - cy;
+      let x = Math.floor(0.5 * w - cx) + xi * size;
+      let y = Math.floor(0.5 * h - cy) + yi * size;
 
       if (!image) {
         image = getTileImage(map, xi, yi, {
@@ -158,8 +158,8 @@ export function addTiles(map: MapArea, options: AddTilesOptions = {}) {
             let [cx2, cy2] = map.centerCoords;
 
             // The map might have been moved away while the tile was loading
-            x += cx - cx2;
-            y += cy - cy2;
+            x += Math.round(cx - cx2);
+            y += Math.round(cy - cy2);
 
             setInitialStyle(ctx);
 
@@ -182,8 +182,8 @@ export function addTiles(map: MapArea, options: AddTilesOptions = {}) {
               let [cx2, cy2] = map.centerCoords;
 
               // The map might have been moved away while the tile was loading
-              x += cx - cx2;
-              y += cy - cy2;
+              x += Math.round(cx - cx2);
+              y += Math.round(cy - cy2);
 
               setInitialStyle(ctx);
               renderGridBox(x, y, size, size, gridLabel);
