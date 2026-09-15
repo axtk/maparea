@@ -1,6 +1,6 @@
 export function getDefaultExportName() {
   let d = new Date();
-  
+
   let Y = d.getFullYear();
   let M = d.getMonth() + 1;
   let D = d.getDate();

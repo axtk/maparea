@@ -15,7 +15,9 @@ export async function getCompositeImage(
 
   setInitialStyle(ctx);
 
-  for (let layer of map.container.querySelectorAll<HTMLCanvasElement>("canvas.layer"))
+  for (let layer of map.container.querySelectorAll<HTMLCanvasElement>(
+    "canvas.layer",
+  ))
     ctx.drawImage(layer, 0, 0, canvas.width, canvas.height);
 
   return new Promise<Blob | null>((resolve) => {

@@ -1,5 +1,8 @@
 import type { MapArea } from "../MapArea/index.ts";
-import { ExportControlOptions, getExportControl } from "../utils/getExportControl.ts";
+import {
+  type ExportControlOptions,
+  getExportControl,
+} from "../utils/getExportControl.ts";
 import { getLayer } from "../utils/getLayer.ts";
 import {
   getZoomControl,
@@ -30,8 +33,7 @@ export function addControls(
     inset: options.inset ?? "0 0 auto auto",
   });
 
-  if (typeSet.has("zoom"))
-    layer.append(getZoomControl(map, options.zoom));
+  if (typeSet.has("zoom")) layer.append(getZoomControl(map, options.zoom));
   if (typeSet.has("export"))
     layer.append(getExportControl(map, options.export));
 
