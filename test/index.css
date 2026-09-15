@@ -58,6 +58,9 @@ body {
   stroke-linecap: round;
   stroke-linejoin: round;
 }
+.layer[data-id="maparea.controls"] button[data-role="export-image"] svg {
+  stroke-width: 0.75;
+}
 .layer[data-id="maparea.controls"] fieldset button:first-child {
   border-radius: var(--border-radius) var(--border-radius) 0 0;
 }
