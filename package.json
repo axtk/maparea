@@ -17,7 +17,6 @@
   "author": "axtk",
   "license": "MIT",
   "dependencies": {
-    "dragpan": "^0.1.2",
-    "html2canvas": "^1.4.1"
+    "dragpan": "^0.1.2"
   }
 }
