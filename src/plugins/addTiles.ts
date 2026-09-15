@@ -34,6 +34,7 @@ export type AddTilesOptions = GetTileImageOptions &
     ) => void;
     /** What should be done before each render. */
     prerender?: (map: MapArea, options?: AddTilesOptions) => Promise<void>;
+    onReady?: () => void;
     /** Whether to show the grid with the tiles' indices. */
     grid?:
       | boolean
@@ -63,6 +64,7 @@ export function addTiles(map: MapArea, options: AddTilesOptions = {}) {
     signature,
     attribution,
     attributionInset = "auto 0 0 auto",
+    onReady,
     grid,
   } = options;
 
@@ -135,6 +137,9 @@ export function addTiles(map: MapArea, options: AddTilesOptions = {}) {
   let imageCache = new Map<string, HTMLImageElement>();
   let renderedIds = new Set<string>();
 
+  let loadedCount = 0;
+  let totalCount = 0;
+
   let getTileCoords = (xi: number, yi: number) => {
     let {
       box: { w, h },
@@ -161,6 +166,7 @@ export function addTiles(map: MapArea, options: AddTilesOptions = {}) {
             ctx.drawImage(image, x, y, size, size);
           } catch {}
           loaded = true;
+          if (++loadedCount === totalCount) onReady?.();
         }
         renderGridBox(x, y, size, size, gridLabel);
       } else {
@@ -183,6 +189,7 @@ export function addTiles(map: MapArea, options: AddTilesOptions = {}) {
             }
 
             options.onLoad?.(image);
+            if (++loadedCount === totalCount) onReady?.();
           },
           onError(image) {
             if (grid) {
@@ -209,6 +216,9 @@ export function addTiles(map: MapArea, options: AddTilesOptions = {}) {
     let { x: xi0, y: yi0, nx, ny } = getTileIndices(map, options);
 
     renderedIds.clear();
+
+    totalCount = nx * ny;
+    loadedCount = 0;
 
     for (let nxi = 0; nxi <= nx; nxi++) {
       // Start from the center tile, then move to the sides alternately
