@@ -1,3 +1,5 @@
+let p = (x: number) => String(x).padStart(2, "0");
+
 export function getDefaultExportName() {
   let d = new Date();
 
@@ -9,5 +11,5 @@ export function getDefaultExportName() {
   let m = d.getMinutes();
   let s = d.getSeconds();
 
-  return `${Y}${M}${D}_${h}${m}${s}`;
+  return `${p(Y)}${p(M)}${p(D)}_${p(h)}${p(m)}${p(s)}`;
 }
