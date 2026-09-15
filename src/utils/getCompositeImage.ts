@@ -1,7 +1,11 @@
 import type { MapArea } from "../MapArea/index.ts";
 import { setSize } from "./canvas/setSize.ts";
 
-async function getBlob(canvas: HTMLCanvasElement, type?: string, quality?: number) {
+async function getBlob(
+  canvas: HTMLCanvasElement,
+  type?: string,
+  quality?: number,
+) {
   return new Promise<Blob | null>((resolve) => {
     canvas.toBlob((blob) => resolve(blob), type, quality);
   });
@@ -26,7 +30,9 @@ export async function getCompositeImage(
       await getBlob(layer, type, quality);
       ctx.drawImage(layer, 0, 0);
     } catch (e) {
-      console.warn(`Error occurred while exporting '${layer.dataset.id}' layer.\n${e}`);
+      console.warn(
+        `Error occurred while exporting '${layer.dataset.id}' layer.\n${e}`,
+      );
     }
   }
 
