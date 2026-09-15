@@ -1,5 +1,6 @@
 import "./index.css";
 import {
+  addControls,
   addDragPan,
   addElement,
   addPathEditor,
@@ -9,7 +10,6 @@ import {
   addResizeObserver,
   addShapes,
   addTiles,
-  addZoomControl,
   fitGeoBounds,
   type GeoCoords,
   // getCenter,
@@ -39,7 +39,7 @@ let map = new MapArea({
 fitGeoBounds(map, getVicinity(shape));
 
 addDragPan(map, { ignore: "a, button" });
-addZoomControl(map);
+addControls(map, ["zoom", "export"]);
 
 if (formState.apikey) {
   addTiles(map, {

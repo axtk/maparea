@@ -24,6 +24,12 @@ body {
   display: block;
 }
 .layer[data-id="maparea.controls"] {
+  --gap: 0.75em;
+  --border-radius: 0.3em;
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap);
+  padding: var(--gap);
   z-index: 5000;
 }
 .layer[data-id="maparea.controls"] fieldset {
@@ -31,10 +37,9 @@ body {
   flex-direction: column;
   border: none;
   padding: 0;
-  margin: 0.75em;
+  margin: 0;
 }
 .layer[data-id="maparea.controls"] button {
-  --border-radius: 0.3em;
   flex: none;
   display: flex;
   align-items: center;
@@ -48,13 +53,18 @@ body {
   margin: 0;
   cursor: pointer;
 }
-.layer[data-id="maparea.controls"] button:first-child {
+.layer[data-id="maparea.controls"] button svg {
+  stroke-width: 1;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.layer[data-id="maparea.controls"] fieldset button:first-child {
   border-radius: var(--border-radius) var(--border-radius) 0 0;
 }
-.layer[data-id="maparea.controls"] button:not(:first-child) {
+.layer[data-id="maparea.controls"] fieldset button:not(:first-child) {
   border-top: none;
 }
-.layer[data-id="maparea.controls"] button:last-child {
+.layer[data-id="maparea.controls"] fieldset button:last-child {
   border-radius: 0 0 var(--border-radius) var(--border-radius);
 }
 .layer[data-id="maparea.controls"] button:disabled {
