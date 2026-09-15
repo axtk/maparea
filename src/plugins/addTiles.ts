@@ -135,32 +135,39 @@ export function addTiles(map: MapArea, options: AddTilesOptions = {}) {
   let imageCache = new Map<string, HTMLImageElement>();
   let renderedIds = new Set<string>();
 
+  let getTileCoords = (xi: number, yi: number) => {
+    let {
+      box: { w, h },
+      centerCoords: [cx, cy],
+    } = map;
+
+    return [
+      Math.floor(0.5 * w - cx) + xi * size,
+      Math.floor(0.5 * h - cy) + yi * size,
+    ];
+  };
+
   let renderTile =
     options.render ??
     ((ctx: CanvasRenderingContext2D, xi: number, yi: number) => {
-      let {
-        box: { w, h },
-        centerCoords: [cx, cy],
-        zoom: z,
-      } = map;
-
       let id = getTileId(map, xi, yi);
       let image = imageCache.get(id);
-      let gridLabel = `${xi}, ${yi}, ${z}`;
+      let gridLabel = `${xi}, ${yi}, ${map.zoom}`;
 
-      let x = Math.floor(0.5 * w - cx) + xi * size;
-      let y = Math.floor(0.5 * h - cy) + yi * size;
-
-      if (!image) {
+      if (image) {
+        let [x, y] = getTileCoords(xi, yi);
+        if (image.complete) {
+          try {
+            ctx.drawImage(image, x, y, size, size);
+          } catch {}
+          loaded = true;
+        }
+        renderGridBox(x, y, size, size, gridLabel);
+      } else {
         image = getTileImage(map, xi, yi, {
           ...options,
           onLoad(image) {
-            let [cx2, cy2] = map.centerCoords;
-
-            // The map might have been moved away while the tile was loading
-            x += Math.round(cx - cx2);
-            y += Math.round(cy - cy2);
-
+            let [x, y] = getTileCoords(xi, yi);
             setInitialStyle(ctx);
 
             // Catch the broken image exceptions
@@ -179,12 +186,7 @@ export function addTiles(map: MapArea, options: AddTilesOptions = {}) {
           },
           onError(image) {
             if (grid) {
-              let [cx2, cy2] = map.centerCoords;
-
-              // The map might have been moved away while the tile was loading
-              x += Math.round(cx - cx2);
-              y += Math.round(cy - cy2);
-
+              let [x, y] = getTileCoords(xi, yi);
               setInitialStyle(ctx);
               renderGridBox(x, y, size, size, gridLabel);
             }
@@ -192,15 +194,9 @@ export function addTiles(map: MapArea, options: AddTilesOptions = {}) {
           },
         });
         imageCache.set(id, image);
-      } else if (image.complete) {
-        try {
-          ctx.drawImage(image, x, y, size, size);
-        } catch {}
-        loaded = true;
       }
 
       renderedIds.add(id);
-      renderGridBox(x, y, size, size, gridLabel);
     });
 
   let renderTiles = () => {
