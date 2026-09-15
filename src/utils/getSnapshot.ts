@@ -1,5 +1,5 @@
 import type { MapArea } from "../MapArea/index.ts";
-import { BlobOptions } from "./canvas/BlobOptions.ts";
+import type { BlobOptions } from "./canvas/BlobOptions.ts";
 import { getImageBlob } from "./canvas/getImageBlob.ts";
 import { setSize } from "./canvas/setSize.ts";
 import { toCanvas } from "./canvas/toCanvas.ts";
@@ -19,7 +19,10 @@ export type GetSnapshotOptions = BlobOptions & {
   exclude?: string[];
 };
 
-export async function getSnapshot(map: MapArea, options: GetSnapshotOptions = {}): Promise<Blob | null> {
+export async function getSnapshot(
+  map: MapArea,
+  options: GetSnapshotOptions = {},
+): Promise<Blob | null> {
   let canvas = document.createElement("canvas");
   setSize(canvas, map.box);
 
@@ -29,7 +32,7 @@ export async function getSnapshot(map: MapArea, options: GetSnapshotOptions = {}
   let layers = map.container.querySelectorAll<HTMLElement>(".layer");
   let includes = toSet(options.include);
   let excludes = toSet(options.exclude, defaultExcludes);
-  
+
   for (let layer of layers) {
     let id = layer.dataset.id ?? "";
 
@@ -41,7 +44,9 @@ export async function getSnapshot(map: MapArea, options: GetSnapshotOptions = {}
     if (layer instanceof HTMLCanvasElement) c = layer;
     else {
       // Wrap the HTML layer into a container to preserve its positioning
-      let tmp = getLayer(map, { id: `tmp-${Math.random().toString(36).slice(2)}` });
+      let tmp = getLayer(map, {
+        id: `tmp-${Math.random().toString(36).slice(2)}`,
+      });
       layer.before(tmp);
       tmp.append(layer);
 
