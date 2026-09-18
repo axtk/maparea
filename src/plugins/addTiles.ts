@@ -136,6 +136,7 @@ export function addTiles(map: MapArea, options: AddTilesOptions = {}) {
 
   let imageCache = new Map<string, HTMLImageElement>();
   let renderedIds = new Set<string>();
+  let prerenderPromise = Promise.resolve();
 
   let loadedCount = 0;
   let totalCount = 0;
@@ -170,37 +171,39 @@ export function addTiles(map: MapArea, options: AddTilesOptions = {}) {
         }
         renderGridBox(x, y, size, size, gridLabel);
       } else {
-        image = getTileImage(map, xi, yi, {
-          ...options,
-          onLoad(image) {
-            let [x, y] = getTileCoords(xi, yi);
-            setInitialStyle(ctx);
-
-            // Catch the broken image exceptions
-            try {
-              ctx.drawImage(image, x, y, size, size);
-            } catch {}
-
-            renderGridBox(x, y, size, size, gridLabel);
-
-            if (!loaded) {
-              loaded = true;
-              renderAttributionContent();
-            }
-
-            options.onLoad?.(image);
-            if (++loadedCount === totalCount) onReady?.();
-          },
-          onError(image) {
-            if (grid) {
+        prerenderPromise.then(() => {
+          image = getTileImage(map, xi, yi, {
+            ...options,
+            onLoad(image) {
               let [x, y] = getTileCoords(xi, yi);
               setInitialStyle(ctx);
+
+              // Catch the broken image exceptions
+              try {
+                ctx.drawImage(image, x, y, size, size);
+              } catch {}
+
               renderGridBox(x, y, size, size, gridLabel);
-            }
-            options.onError?.(image);
-          },
+
+              if (!loaded) {
+                loaded = true;
+                renderAttributionContent();
+              }
+
+              options.onLoad?.(image);
+              if (++loadedCount === totalCount) onReady?.();
+            },
+            onError(image) {
+              if (grid) {
+                let [x, y] = getTileCoords(xi, yi);
+                setInitialStyle(ctx);
+                renderGridBox(x, y, size, size, gridLabel);
+              }
+              options.onError?.(image);
+            },
+          });
+          imageCache.set(id, image);
         });
-        imageCache.set(id, image);
       }
 
       renderedIds.add(id);
@@ -244,11 +247,13 @@ export function addTiles(map: MapArea, options: AddTilesOptions = {}) {
 
   if (prerender)
     map.onRender(() => {
-      prerender(map, options).then(renderTiles);
+      prerenderPromise = prerender(map, options);
+      renderTiles();
     });
   else if (signature instanceof SignatureFactory)
     map.onRender(() => {
-      signature.prerender(map, options).then(renderTiles);
+      prerenderPromise = signature.prerender(map, options);
+      renderTiles();
     });
   else map.onRender(renderTiles);
 

@@ -49,8 +49,9 @@ if (formState.apikey) {
         ? `<a href="https://yandex.ru/maps" target="_blank"><img src="/assets/yx_ru.svg" alt="Яндекс Карты"></a>`
         : `<a href="https://yandex.com/maps" target="_blank"><img src="/assets/yx_en.svg" alt="Yandex Maps"></a>`;
     },
-    error: "/assets/blank.png",
+    // error: "/assets/blank.png",
     grid: { lines: "#c71585b0", text: "#fff" },
+    // prerender: () => new Promise((f) => setTimeout(f, 200)),
   });
 }
 
