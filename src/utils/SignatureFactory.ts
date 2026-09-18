@@ -50,7 +50,9 @@ export class SignatureFactory {
 
     let { shouldRender, signature, ...p } = options;
     let { x: xi0, y: yi0, nx, ny } = getTileIndices(map, options);
-    let urls: string[] = [];
+
+    let signedURLs = new Set<string>();
+    let unsignedURLs = new Set<string>();
 
     for (let nxi = 0; nxi <= nx; nxi++) {
       // Start from the center tile, then move to the sides alternately
@@ -62,14 +64,15 @@ export class SignatureFactory {
 
         if (ok) {
           let u = getTileURL(map, xi, yi, p);
-          if (!this._m.has(u)) urls.push(u);
+          if (this._m.has(u)) signedURLs.add(u);
+          else unsignedURLs.add(u);
         }
       }
     }
 
-    if (urls.length === 0) return;
+    if (unsignedURLs.size === 0) return;
 
-    let m = await this.fetch(urls);
+    let m = await this.fetch(Array.from(unsignedURLs));
     let size = Object.keys(m).length;
 
     if (size !== 0) {
@@ -78,8 +81,12 @@ export class SignatureFactory {
         let i = 0;
         for (let k of this._m.keys()) {
           if (i === overflow) break;
-          this._m.delete(k);
-          i++;
+          // Keep the previously signed URLs in the map as long as they are
+          // still required
+          if (!signedURLs.has(k)) {
+            this._m.delete(k);
+            i++;
+          }
         }
       }
       for (let [k, v] of Object.entries(m)) this._m.set(k, v);
