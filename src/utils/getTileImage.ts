@@ -63,7 +63,9 @@ export function getTileImage(
       .catch(() => {
         if (errorCount < retries) {
           let resolvedDelay =
-            typeof retryDelay === "function" ? retryDelay(errorCount) : retryDelay;
+            typeof retryDelay === "function"
+              ? retryDelay(errorCount)
+              : retryDelay;
 
           setTimeout(loadImage, resolvedDelay);
           errorCount++;
