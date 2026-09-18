@@ -41,34 +41,44 @@ export function getTileImage(
   let image = new Image();
   let errorCount = 0;
 
-  if (onLoad)
-    image.addEventListener("load", () => {
-      onLoad(image);
-    });
+  let loadImage = () => {
+    let fetchOptions: RequestInit = {};
+    if (errorCount !== 0) fetchOptions.cache = "reload";
 
-  image.addEventListener("error", () => {
-    if (errorCount < retries) {
-      let resolvedDelay =
-        typeof retryDelay === "function" ? retryDelay(errorCount) : retryDelay;
+    // Loading tile images via fetch allows for retries without modifying the URL,
+    // which is crucial for signed URLs
+    fetch(resolvedURL, fetchOptions)
+      .then((res) => res.blob())
+      .then((blob) => {
+        let url = URL.createObjectURL(blob);
+        image.addEventListener("load", () => {
+          onLoad?.(image);
+          URL.revokeObjectURL(url);
+        });
+        image.addEventListener("error", () => {
+          onError?.(image);
+        });
+        image.src = url;
+      })
+      .catch(() => {
+        if (errorCount < retries) {
+          let resolvedDelay =
+            typeof retryDelay === "function" ? retryDelay(errorCount) : retryDelay;
 
-      setTimeout(() => {
-        let u = new URL(image.src);
-        u.searchParams.set("_t", String(Date.now()));
-        u.searchParams.set("_r", String(errorCount));
-        image.src = u.href;
-      }, resolvedDelay);
+          setTimeout(loadImage, resolvedDelay);
+          errorCount++;
+        } else {
+          let errorSrc = resolveDynamic(map, error);
+          if (errorSrc) {
+            image.dataset.src = image.src;
+            image.src = errorSrc;
+          }
+          onError?.(image);
+        }
+      });
+  };
 
-      errorCount++;
-    } else {
-      let errorSrc = resolveDynamic(map, error);
-      if (errorSrc) {
-        image.dataset.src = image.src;
-        image.src = errorSrc;
-      }
-      if (onError) onError(image);
-    }
-  });
+  loadImage();
 
-  image.src = resolvedURL;
   return image;
 }
