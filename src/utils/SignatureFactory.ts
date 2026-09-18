@@ -67,6 +67,8 @@ export class SignatureFactory {
       }
     }
 
+    if (urls.length === 0) return;
+
     let m = await this.fetch(urls);
     let size = Object.keys(m).length;
 
