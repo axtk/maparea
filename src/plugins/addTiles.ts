@@ -134,13 +134,6 @@ export function addTiles(map: MapArea, options: AddTilesOptions = {}) {
     ctx.stroke();
   };
 
-  let imageCache = new Map<string, HTMLImageElement>();
-  let renderedIds = new Set<string>();
-  let prerenderPromise = Promise.resolve();
-
-  let loadedCount = 0;
-  let totalCount = 0;
-
   let getTileCoords = (xi: number, yi: number) => {
     let {
       box: { w, h },
@@ -153,61 +146,7 @@ export function addTiles(map: MapArea, options: AddTilesOptions = {}) {
     ];
   };
 
-  let renderTile =
-    options.render ??
-    ((ctx: CanvasRenderingContext2D, xi: number, yi: number) => {
-      let id = getTileId(map, xi, yi);
-      let image = imageCache.get(id);
-      let gridLabel = `${xi}, ${yi}, ${map.zoom}`;
-
-      if (image) {
-        let [x, y] = getTileCoords(xi, yi);
-        if (image.complete) {
-          try {
-            ctx.drawImage(image, x, y, size, size);
-          } catch {}
-          loaded = true;
-          if (++loadedCount === totalCount) onReady?.();
-        }
-        renderGridBox(x, y, size, size, gridLabel);
-      } else {
-        prerenderPromise.then(() => {
-          image = getTileImage(map, xi, yi, {
-            ...options,
-            onLoad(image) {
-              let [x, y] = getTileCoords(xi, yi);
-              setInitialStyle(ctx);
-
-              // Catch the broken image exceptions
-              try {
-                ctx.drawImage(image, x, y, size, size);
-              } catch {}
-
-              renderGridBox(x, y, size, size, gridLabel);
-
-              if (!loaded) {
-                loaded = true;
-                renderAttributionContent();
-              }
-
-              options.onLoad?.(image);
-              if (++loadedCount === totalCount) onReady?.();
-            },
-            onError(image) {
-              if (grid) {
-                let [x, y] = getTileCoords(xi, yi);
-                setInitialStyle(ctx);
-                renderGridBox(x, y, size, size, gridLabel);
-              }
-              options.onError?.(image);
-            },
-          });
-          imageCache.set(id, image);
-        });
-      }
-
-      renderedIds.add(id);
-    });
+  let imageCache = new Map<string, HTMLImageElement>();
 
   let renderTiles = () => {
     if (!ctx) return;
@@ -217,11 +156,73 @@ export function addTiles(map: MapArea, options: AddTilesOptions = {}) {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     let { x: xi0, y: yi0, nx, ny } = getTileIndices(map, options);
+    
+    let totalCount = nx * ny;
+    let loadedCount = 0;
 
-    renderedIds.clear();
+    let renderedIds = new Set<string>();
+    let prerenderPromise: Promise<void>;
 
-    totalCount = nx * ny;
-    loadedCount = 0;
+    if (prerender) prerenderPromise = prerender(map, options);
+    else if (signature instanceof SignatureFactory)
+      prerenderPromise = signature.prerender(map, options);
+    else prerenderPromise = Promise.resolve();
+
+    let renderTile =
+      options.render ??
+      ((ctx: CanvasRenderingContext2D, xi: number, yi: number) => {
+        let id = getTileId(map, xi, yi);
+        let image = imageCache.get(id);
+        let gridLabel = `${xi}, ${yi}, ${map.zoom}`;
+
+        if (image) {
+          let [x, y] = getTileCoords(xi, yi);
+          if (image.complete) {
+            try {
+              ctx.drawImage(image, x, y, size, size);
+            } catch {}
+            loaded = true;
+            if (++loadedCount === totalCount) onReady?.();
+          }
+          renderGridBox(x, y, size, size, gridLabel);
+        } else {
+          prerenderPromise.then(() => {
+            image = getTileImage(map, xi, yi, {
+              ...options,
+              onLoad(image) {
+                let [x, y] = getTileCoords(xi, yi);
+                setInitialStyle(ctx);
+
+                // Catch the broken image exceptions
+                try {
+                  ctx.drawImage(image, x, y, size, size);
+                } catch {}
+
+                renderGridBox(x, y, size, size, gridLabel);
+
+                if (!loaded) {
+                  loaded = true;
+                  renderAttributionContent();
+                }
+
+                options.onLoad?.(image);
+                if (++loadedCount === totalCount) onReady?.();
+              },
+              onError(image) {
+                if (grid) {
+                  let [x, y] = getTileCoords(xi, yi);
+                  setInitialStyle(ctx);
+                  renderGridBox(x, y, size, size, gridLabel);
+                }
+                options.onError?.(image);
+              },
+            });
+            imageCache.set(id, image);
+          });
+        }
+
+        renderedIds.add(id);
+      });
 
     for (let nxi = 0; nxi <= nx; nxi++) {
       // Start from the center tile, then move to the sides alternately
@@ -245,17 +246,7 @@ export function addTiles(map: MapArea, options: AddTilesOptions = {}) {
     renderAttributionContent();
   };
 
-  if (prerender)
-    map.onRender(() => {
-      prerenderPromise = prerender(map, options);
-      renderTiles();
-    });
-  else if (signature instanceof SignatureFactory)
-    map.onRender(() => {
-      prerenderPromise = signature.prerender(map, options);
-      renderTiles();
-    });
-  else map.onRender(renderTiles);
+  map.onRender(renderTiles);
 
   return {
     container: canvas,
