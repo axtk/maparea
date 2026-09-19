@@ -158,7 +158,7 @@ export function addTiles(map: MapArea, options: AddTilesOptions = {}) {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     let { x: xi0, y: yi0, nx, ny } = getTileIndices(map, options);
-    
+
     let totalCount = nx * ny;
     let loadedCount = 0;
 
