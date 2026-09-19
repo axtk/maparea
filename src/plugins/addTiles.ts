@@ -35,6 +35,7 @@ export type AddTilesOptions = GetTileImageOptions &
     /** What should be done before each render. */
     prerender?: (map: MapArea, options?: AddTilesOptions) => Promise<void>;
     onReady?: () => void;
+    maxCacheSize?: number;
     /** Whether to show the grid with the tiles' indices. */
     grid?:
       | boolean
@@ -65,6 +66,7 @@ export function addTiles(map: MapArea, options: AddTilesOptions = {}) {
     attribution,
     attributionInset = "auto 0 0 auto",
     onReady,
+    maxCacheSize = 200,
     grid,
   } = options;
 
@@ -236,10 +238,16 @@ export function addTiles(map: MapArea, options: AddTilesOptions = {}) {
       }
     }
 
-    if (imageCache.size !== 0) {
+    let overflow = imageCache.size - maxCacheSize;
+    if (overflow > 0) {
+      let i = 0;
       // Remove unused tiles from the cache
       for (let id of imageCache.keys()) {
-        if (!renderedIds.has(id)) imageCache.delete(id);
+        if (i === overflow) break;
+        if (!renderedIds.has(id)) {
+          imageCache.delete(id);
+          i++;
+        }
       }
     }
 
