@@ -52,6 +52,7 @@ if (formState.apikey) {
     // error: "/assets/blank.png",
     grid: { lines: "#c71585b0", text: "#fff" },
     // prerender: () => new Promise((f) => setTimeout(f, 200)),
+    // retries: 0,
   });
 }
 

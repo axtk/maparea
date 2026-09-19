@@ -2,7 +2,7 @@ import type { MapArea } from "../MapArea/index.ts";
 import { expBackoff } from "./expBackoff.ts";
 import { type GetTileURLOptions, getTileURL } from "./getTileURL.ts";
 
-export type GetTileBlobURLOptions = GetTileURLOptions & {
+export type GetTileBlobOptions = GetTileURLOptions & {
   /**
    * Maximum retry count per tile.
    * @default 5
@@ -15,19 +15,19 @@ export type GetTileBlobURLOptions = GetTileURLOptions & {
   retryDelay?: number | ((iteration: number) => number);
 };
 
-export async function getTileBlobURL(
+export async function getTileBlob(
   map: MapArea,
   xIndex: number,
   yIndex: number,
-  options: GetTileBlobURLOptions,
-): Promise<string | null> {
+  options: GetTileBlobOptions,
+): Promise<Blob | null> {
   let resolvedURL = getTileURL(map, xIndex, yIndex, options);
   let {
     retries = 5,
     retryDelay = expBackoff(),
   } = options;
 
-  return new Promise<string | null>((resolve) => {
+  return new Promise<Blob | null>((resolve) => {
     let errorCount = 0;
 
     let load = async () => {
@@ -41,8 +41,7 @@ export async function getTileBlobURL(
 
         if (!res.ok) throw new Error("Failed to fetch tile");
 
-        let blob = await res.blob();
-        resolve(URL.createObjectURL(blob));
+        resolve(await res.blob());
       } catch {
         if (errorCount < retries) {
           let resolvedDelay =

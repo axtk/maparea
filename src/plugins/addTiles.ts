@@ -5,10 +5,7 @@ import { setInitialStyle } from "../utils/canvas/setInitialStyle.ts";
 import { setSize } from "../utils/canvas/setSize.ts";
 import { getCanvasLayer } from "../utils/getCanvasLayer.ts";
 import { getLayer } from "../utils/getLayer.ts";
-import {
-  type GetTileImageOptions,
-  getTileImage,
-} from "../utils/getTileImage.ts";
+import { getTileBlob, GetTileBlobOptions } from "../utils/getTileBlob.ts";
 import {
   type GetTileIndicesOptions,
   getTileIndices,
@@ -16,7 +13,7 @@ import {
 import { resolveDynamic } from "../utils/resolveDynamic.ts";
 import { SignatureFactory } from "../utils/SignatureFactory.ts";
 
-export type AddTilesOptions = GetTileImageOptions &
+export type AddTilesOptions = GetTileBlobOptions &
   GetTileIndicesOptions & {
     /** Defines whether a specific tile should be rendered. */
     shouldRender?: (map: MapArea, xIndex: number, yIndex: number) => boolean;
@@ -26,6 +23,8 @@ export type AddTilesOptions = GetTileImageOptions &
     attributionInset?: string;
     /** Custom target map layer. */
     layer?: HTMLCanvasElement;
+    /** URL to be used instead of a tile that failed to load. */
+    error?: Dynamic<string>;
     /** Custom tile rendering. */
     render?: (
       ctx: CanvasRenderingContext2D,
@@ -35,7 +34,6 @@ export type AddTilesOptions = GetTileImageOptions &
     /** What should be done before each render. */
     prerender?: (map: MapArea, options?: AddTilesOptions) => Promise<void>;
     onReady?: () => void;
-    maxCacheSize?: number;
     /** Whether to show the grid with the tiles' indices. */
     grid?:
       | boolean
@@ -62,11 +60,12 @@ export function addTiles(map: MapArea, options: AddTilesOptions = {}) {
     size = defaultTileSize,
     shouldRender,
     prerender,
+    render,
+    error,
     signature,
     attribution,
     attributionInset = "auto 0 0 auto",
     onReady,
-    maxCacheSize = 200,
     grid,
   } = options;
 
@@ -91,13 +90,13 @@ export function addTiles(map: MapArea, options: AddTilesOptions = {}) {
   };
 
   let renderGridBox = (
-    x: number,
-    y: number,
-    w: number,
-    h: number,
-    label: string,
+    xi: number,
+    yi: number,
   ) => {
     if (!grid || !ctx) return;
+
+    let [x, y] = getTileCoords(xi, yi);
+    let label = `${xi}, ${yi}, ${map.zoom}`;
 
     ctx.font = "normal 12px/1 sans-serif";
 
@@ -132,7 +131,7 @@ export function addTiles(map: MapArea, options: AddTilesOptions = {}) {
 
     ctx.strokeStyle = lineColor;
     ctx.lineWidth = 0.6;
-    ctx.rect(x, y, w, h);
+    ctx.rect(x, y, size, size);
     ctx.stroke();
   };
 
@@ -148,6 +147,7 @@ export function addTiles(map: MapArea, options: AddTilesOptions = {}) {
     ];
   };
 
+  /** Maps tile IDs to images. */
   let imageCache = new Map<string, HTMLImageElement>();
 
   let renderTiles = () => {
@@ -158,6 +158,7 @@ export function addTiles(map: MapArea, options: AddTilesOptions = {}) {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     let { x: xi0, y: yi0, nx, ny } = getTileIndices(map, options);
+    let errorSrc = resolveDynamic(map, error);
 
     let totalCount = nx * ny;
     let loadedCount = 0;
@@ -170,61 +171,73 @@ export function addTiles(map: MapArea, options: AddTilesOptions = {}) {
       prerenderPromise = signature.prerender(map, options);
     else prerenderPromise = Promise.resolve();
 
-    let renderTile =
-      options.render ??
-      ((ctx: CanvasRenderingContext2D, xi: number, yi: number) => {
-        let id = getTileId(map, xi, yi);
-        let image = imageCache.get(id);
-        let gridLabel = `${xi}, ${yi}, ${map.zoom}`;
+    let renderFailedTile = (xi: number, yi: number) => {
+      if (!errorSrc) return;
 
-        if (image) {
-          let [x, y] = getTileCoords(xi, yi);
-          if (image.complete) {
-            try {
-              ctx.drawImage(image, x, y, size, size);
-            } catch {}
-            loaded = true;
-            if (++loadedCount === totalCount) onReady?.();
-          }
-          renderGridBox(x, y, size, size, gridLabel);
-        } else {
-          prerenderPromise.then(() => {
-            image = getTileImage(map, xi, yi, {
-              ...options,
-              onLoad(image) {
-                let [x, y] = getTileCoords(xi, yi);
-                setInitialStyle(ctx);
+      let image = new Image();
+      image.onload = () => {
+        let [x, y] = getTileCoords(xi, yi);
+        try {
+          ctx.drawImage(image, x, y, size, size);
+        } catch {}
+      };
+      image.src = errorSrc;
+    };
 
-                // Catch the broken image exceptions
-                try {
-                  ctx.drawImage(image, x, y, size, size);
-                } catch {}
+    let renderLoadedTile = (image: HTMLImageElement, xi: number, yi: number) => {
+      let [x, y] = getTileCoords(xi, yi);
 
-                renderGridBox(x, y, size, size, gridLabel);
+      try {
+        ctx.drawImage(image, x, y, size, size);
+      } catch {}
 
-                if (!loaded) {
-                  loaded = true;
-                  renderAttributionContent();
-                }
+      if (!loaded) {
+        loaded = true;
+        renderAttributionContent();
+      }
 
-                options.onLoad?.(image);
-                if (++loadedCount === totalCount) onReady?.();
-              },
-              onError(image) {
-                if (grid) {
-                  let [x, y] = getTileCoords(xi, yi);
-                  setInitialStyle(ctx);
-                  renderGridBox(x, y, size, size, gridLabel);
-                }
-                options.onError?.(image);
-              },
-            });
-            imageCache.set(id, image);
-          });
+      if (++loadedCount === totalCount) onReady?.();
+    };
+
+    let renderTile = async (xi: number, yi: number) => {
+      if (render) {
+        render(ctx, xi, yi);
+        return;
+      }
+
+      let id = getTileId(map, xi, yi);
+      let cachedImage = imageCache.get(id);
+
+      renderGridBox(xi, yi);
+      // The tile ID should be stored before async fetches
+      renderedIds.add(id);
+
+      if (!cachedImage) {
+        let image = new Image();
+        imageCache.set(id, image);
+
+        await prerenderPromise;
+
+        let blob = await getTileBlob(map, xi, yi, options);
+
+        if (blob) {
+          image.onload = () => {
+            setInitialStyle(ctx);
+            renderLoadedTile(image, xi, yi);
+            renderGridBox(xi, yi);
+          };
+          image.onerror = () => {
+            setInitialStyle(ctx);
+            renderFailedTile(xi, yi);
+            renderGridBox(xi, yi);
+          };
+          image.src = URL.createObjectURL(blob);
         }
-
-        renderedIds.add(id);
-      });
+      } else if (cachedImage.complete) {
+        renderLoadedTile(cachedImage, xi, yi);
+        renderGridBox(xi, yi);
+      }
+    };
 
     for (let nxi = 0; nxi <= nx; nxi++) {
       // Start from the center tile, then move to the sides alternately
@@ -234,20 +247,16 @@ export function addTiles(map: MapArea, options: AddTilesOptions = {}) {
         let yi = yi0 + (nyi % 2 === 0 ? -1 : 1) * Math.floor(nyi / 2);
         let ok = shouldRender?.(map, xi, yi) ?? true;
 
-        if (ok) renderTile(ctx, xi, yi);
+        if (ok) renderTile(xi, yi);
       }
     }
 
-    let overflow = imageCache.size - maxCacheSize;
-    if (overflow > 0) {
-      let i = 0;
-      // Remove unused tiles from the cache
-      for (let id of imageCache.keys()) {
-        if (i === overflow) break;
-        if (!renderedIds.has(id)) {
-          imageCache.delete(id);
-          i++;
-        }
+    // Remove unused tiles from the cache
+    for (let [id, image] of imageCache.entries()) {
+      if (!renderedIds.has(id)) {
+        let blobURL = image.src;
+        if (blobURL) URL.revokeObjectURL(blobURL);
+        imageCache.delete(id);
       }
     }
 

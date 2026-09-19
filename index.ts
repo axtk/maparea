@@ -32,7 +32,7 @@ export * from "./src/utils/getDefaultExportName.ts";
 export * from "./src/utils/getGeoBounds.ts";
 export * from "./src/utils/getId.ts";
 export * from "./src/utils/getLayer.ts";
-export * from "./src/utils/getTileBlobURL.ts";
+export * from "./src/utils/getTileBlob.ts";
 export * from "./src/utils/getTileImage.ts";
 export * from "./src/utils/getTileIndices.ts";
 export * from "./src/utils/getTileURL.ts";
