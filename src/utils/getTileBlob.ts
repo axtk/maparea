@@ -22,10 +22,7 @@ export async function getTileBlob(
   options: GetTileBlobOptions,
 ): Promise<Blob | null> {
   let resolvedURL = getTileURL(map, xIndex, yIndex, options);
-  let {
-    retries = 5,
-    retryDelay = expBackoff(),
-  } = options;
+  let { retries = 5, retryDelay = expBackoff() } = options;
 
   return new Promise<Blob | null>((resolve) => {
     let errorCount = 0;

@@ -5,7 +5,7 @@ import { setInitialStyle } from "../utils/canvas/setInitialStyle.ts";
 import { setSize } from "../utils/canvas/setSize.ts";
 import { getCanvasLayer } from "../utils/getCanvasLayer.ts";
 import { getLayer } from "../utils/getLayer.ts";
-import { getTileBlob, GetTileBlobOptions } from "../utils/getTileBlob.ts";
+import { type GetTileBlobOptions, getTileBlob } from "../utils/getTileBlob.ts";
 import {
   type GetTileIndicesOptions,
   getTileIndices,
@@ -89,10 +89,7 @@ export function addTiles(map: MapArea, options: AddTilesOptions = {}) {
       attributionLayer.innerHTML = attributionContent;
   };
 
-  let renderGridBox = (
-    xi: number,
-    yi: number,
-  ) => {
+  let renderGridBox = (xi: number, yi: number) => {
     if (!grid || !ctx) return;
 
     let [x, y] = getTileCoords(xi, yi);
@@ -184,7 +181,11 @@ export function addTiles(map: MapArea, options: AddTilesOptions = {}) {
       image.src = errorSrc;
     };
 
-    let renderLoadedTile = (image: HTMLImageElement, xi: number, yi: number) => {
+    let renderLoadedTile = (
+      image: HTMLImageElement,
+      xi: number,
+      yi: number,
+    ) => {
       let [x, y] = getTileCoords(xi, yi);
 
       try {
