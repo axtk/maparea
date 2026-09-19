@@ -16,7 +16,7 @@ export class SignatureFactory {
   _p = new Set<string>();
   /**
    * Maximum signature map size.
-   * @default 150
+   * @default 300
    */
   maxSize: number;
   /**
@@ -25,7 +25,7 @@ export class SignatureFactory {
    * The endpoint URL should accept a POST request with a JSON array of URLs to sign
    * and return a JSON mapping the URLs to their signatures `{ "<url>": "<signature>" }`.
    */
-  constructor(url: string | FetchSignatureMap, maxSize = 150) {
+  constructor(url: string | FetchSignatureMap, maxSize = 300) {
     this._u = url;
     this._m = new Map();
     this.maxSize = maxSize;
