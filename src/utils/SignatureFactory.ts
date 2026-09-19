@@ -12,6 +12,8 @@ export class SignatureFactory {
   _u: string | FetchSignatureMap;
   /** Signature map indexed by URLs without origins. */
   _m: Map<string, string>;
+  /** Pending URLs. */
+  _p = new Set<string>();
   /**
    * Maximum signature map size.
    * @default 150
@@ -65,12 +67,14 @@ export class SignatureFactory {
         if (ok) {
           let u = getTileURL(map, xi, yi, p);
           if (this._m.has(u)) signedURLs.add(u);
-          else unsignedURLs.add(u);
+          else if (!this._p.has(u)) unsignedURLs.add(u);
         }
       }
     }
 
     if (unsignedURLs.size === 0) return;
+
+    for (let u of unsignedURLs) this._p.add(u);
 
     let m = await this.fetch(Array.from(unsignedURLs));
     let size = Object.keys(m).length;
@@ -91,6 +95,8 @@ export class SignatureFactory {
       }
       for (let [k, v] of Object.entries(m)) this._m.set(k, v);
     }
+
+    for (let u of unsignedURLs) this._p.delete(u);
   }
   getValue(url: string) {
     return this._m.get(url);
