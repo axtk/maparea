@@ -209,7 +209,6 @@ export function addTiles(map: MapArea, options: AddTilesOptions = {}) {
       let id = getTileId(map, xi, yi);
       let cachedImage = imageCache.get(id);
 
-      renderGridBox(xi, yi);
       // The tile ID should be stored before async fetches
       renderedIds.add(id);
 
@@ -234,18 +233,17 @@ export function addTiles(map: MapArea, options: AddTilesOptions = {}) {
           };
           image.src = URL.createObjectURL(blob);
         }
-      } else if (cachedImage.complete) {
-        renderLoadedTile(cachedImage, xi, yi);
-        renderGridBox(xi, yi);
-      }
+      } else if (cachedImage.complete) renderLoadedTile(cachedImage, xi, yi);
+
+      renderGridBox(xi, yi);
     };
 
     for (let nxi = 0; nxi <= nx; nxi++) {
       // Start from the center tile, then move to the sides alternately
-      let xi = xi0 + (nxi % 2 === 0 ? -1 : 1) * Math.floor(nxi / 2);
+      let xi = xi0 + (nxi % 2 === 0 ? -1 : 1) * Math.ceil(nxi / 2);
 
       for (let nyi = 0; nyi <= ny; nyi++) {
-        let yi = yi0 + (nyi % 2 === 0 ? -1 : 1) * Math.floor(nyi / 2);
+        let yi = yi0 + (nyi % 2 === 0 ? -1 : 1) * Math.ceil(nyi / 2);
         let ok = shouldRender?.(map, xi, yi) ?? true;
 
         if (ok) renderTile(xi, yi);
