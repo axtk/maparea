@@ -221,20 +221,17 @@ export function addTiles(map: MapArea, options: AddTilesOptions = {}) {
         let blob = await getTileBlob(map, xi, yi, options);
 
         if (blob) {
-          let blobURL = URL.createObjectURL(blob);
           image.onload = () => {
             setInitialStyle(ctx);
             renderLoadedTile(image, xi, yi);
             renderGridBox(xi, yi);
-            URL.revokeObjectURL(blobURL);
           };
           image.onerror = () => {
             setInitialStyle(ctx);
             renderFailedTile(xi, yi);
             renderGridBox(xi, yi);
-            URL.revokeObjectURL(blobURL);
           };
-          image.src = blobURL;
+          image.src = URL.createObjectURL(blob);
         }
       } else if (cachedImage.complete) renderLoadedTile(cachedImage, xi, yi);
 
@@ -254,8 +251,16 @@ export function addTiles(map: MapArea, options: AddTilesOptions = {}) {
     }
 
     // Remove unused tiles from the cache
-    for (let id of imageCache.keys()) {
-      if (!renderedIds.has(id)) imageCache.delete(id);
+    for (let [id, image] of imageCache.entries()) {
+      if (!renderedIds.has(id)) {
+        // The blob URLs shouldn't be revoked immediately after the tiles have
+        // loaded. A tile can be loaded when it's offscreen without being
+        // actually rendered to the canvas, and, with the URL revoked, it won't
+        // be rendered once the this tile gets into the viewport.
+        let blobURL = image.src;
+        if (blobURL) URL.revokeObjectURL(blobURL);
+        imageCache.delete(id);
+      }
     }
 
     renderAttributionContent();
