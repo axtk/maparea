@@ -58,10 +58,10 @@ export class SignatureFactory {
 
     for (let nxi = 0; nxi <= nx; nxi++) {
       // Start from the center tile, then move to the sides alternately
-      let xi = xi0 + (nxi % 2 === 0 ? -1 : 1) * Math.floor(nxi / 2);
+      let xi = xi0 + (nxi % 2 === 0 ? -1 : 1) * Math.ceil(nxi / 2);
 
       for (let nyi = 0; nyi <= ny; nyi++) {
-        let yi = yi0 + (nyi % 2 === 0 ? -1 : 1) * Math.floor(nyi / 2);
+        let yi = yi0 + (nyi % 2 === 0 ? -1 : 1) * Math.ceil(nyi / 2);
         let ok = shouldRender?.(map, xi, yi) ?? true;
 
         if (ok) {
