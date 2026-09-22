@@ -21,7 +21,7 @@ export type SignatureMapEntry = {
 
 export class SignatureFactory {
   /** Endpoint URL or async function serving signatures. */
-  _u: string | FetchSignatureMap;
+  _src: string | FetchSignatureMap;
   /** Signature map indexed by URLs without origins. */
   _m: Map<string, SignatureMapEntry>;
   /**
@@ -35,22 +35,22 @@ export class SignatureFactory {
    */
   ttl: number;
   /**
-   * @param url - Endpoint URL or async function serving signatures.
+   * @param source - Endpoint URL or async function serving signatures.
    *
    * The endpoint URL should accept a POST request with a JSON array of URLs to sign
    * and return a JSON mapping the URLs to their signatures `{ "<url>": "<signature>" }`.
    */
-  constructor(url: string | FetchSignatureMap, options: SignatureFactoryOptions = {}) {
-    this._u = url;
+  constructor(source: string | FetchSignatureMap, options: SignatureFactoryOptions = {}) {
+    this._src = source;
     this._m = new Map();
     this.maxSize = options.maxSize ?? 300;
     this.ttl = options.ttl ?? 1800000;
   }
   async fetch(urls: string[]): Promise<Record<string, string>> {
-    if (typeof this._u === "function") return this._u(urls);
+    if (typeof this._src === "function") return this._src(urls);
 
     try {
-      let res = await fetch(this._u, {
+      let res = await fetch(this._src, {
         method: "POST",
         body: JSON.stringify(urls),
       });
@@ -64,7 +64,7 @@ export class SignatureFactory {
     return {};
   }
   async prerender(map: MapArea, options: AddTilesOptions = {}) {
-    if (!this._u) return;
+    if (!this._src) return;
 
     let { shouldRender, signature, ...p } = options;
     let { x: xi0, y: yi0, nx, ny } = getTileIndices(map, options);
