@@ -7,28 +7,44 @@ export type FetchSignatureMap = (
   urls: string[],
 ) => Promise<Record<string, string>>;
 
+export type SignatureFactoryOptions = {
+  maxSize?: number;
+  ttl?: number;
+};
+
+export type SignatureMapEntry = {
+  /** Signature value. */
+  v: string;
+  /** Time the signature value was received. */
+  t: number;
+};
+
 export class SignatureFactory {
   /** Endpoint URL or async function serving signatures. */
   _u: string | FetchSignatureMap;
   /** Signature map indexed by URLs without origins. */
-  _m: Map<string, string>;
-  /** Pending URLs. */
-  _p = new Set<string>();
+  _m: Map<string, SignatureMapEntry>;
   /**
    * Maximum signature map size.
    * @default 300
    */
   maxSize: number;
   /**
+   * Signature time-to-live.
+   * @default 1800000
+   */
+  ttl: number;
+  /**
    * @param url - Endpoint URL or async function serving signatures.
    *
    * The endpoint URL should accept a POST request with a JSON array of URLs to sign
    * and return a JSON mapping the URLs to their signatures `{ "<url>": "<signature>" }`.
    */
-  constructor(url: string | FetchSignatureMap, maxSize = 300) {
+  constructor(url: string | FetchSignatureMap, options: SignatureFactoryOptions = {}) {
     this._u = url;
     this._m = new Map();
-    this.maxSize = maxSize;
+    this.maxSize = options.maxSize ?? 300;
+    this.ttl = options.ttl ?? 1800000;
   }
   async fetch(urls: string[]): Promise<Record<string, string>> {
     if (typeof this._u === "function") return this._u(urls);
@@ -55,6 +71,7 @@ export class SignatureFactory {
 
     let signedURLs = new Set<string>();
     let unsignedURLs = new Set<string>();
+    let t = Date.now();
 
     for (let nxi = 0; nxi <= nx; nxi++) {
       // Start from the center tile, then move to the sides alternately
@@ -66,15 +83,14 @@ export class SignatureFactory {
 
         if (ok) {
           let u = getTileURL(map, xi, yi, p);
-          if (this._m.has(u)) signedURLs.add(u);
-          else if (!this._p.has(u)) unsignedURLs.add(u);
+          let vPrev = this._m.get(u);
+          if (vPrev === undefined || t - vPrev.t > this.ttl) unsignedURLs.add(u);
+          else signedURLs.add(u);
         }
       }
     }
 
     if (unsignedURLs.size === 0) return;
-
-    for (let u of unsignedURLs) this._p.add(u);
 
     let m = await this.fetch(Array.from(unsignedURLs));
     let size = Object.keys(m).length;
@@ -93,12 +109,14 @@ export class SignatureFactory {
           }
         }
       }
-      for (let [k, v] of Object.entries(m)) this._m.set(k, v);
+      for (let [k, v] of Object.entries(m)) {
+        let vPrev = this._m.get(k);
+        if (vPrev === undefined || t - vPrev.t > this.ttl)
+          this._m.set(k, { v, t });
+      }
     }
-
-    for (let u of unsignedURLs) this._p.delete(u);
   }
-  getValue(url: string) {
-    return this._m.get(url);
+  getValue(url: string): string | undefined {
+    return this._m.get(url)?.v;
   }
 }
