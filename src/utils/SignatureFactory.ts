@@ -40,7 +40,10 @@ export class SignatureFactory {
    * The endpoint URL should accept a POST request with a JSON array of URLs to sign
    * and return a JSON mapping the URLs to their signatures `{ "<url>": "<signature>" }`.
    */
-  constructor(source: string | FetchSignatureMap, options: SignatureFactoryOptions = {}) {
+  constructor(
+    source: string | FetchSignatureMap,
+    options: SignatureFactoryOptions = {},
+  ) {
     this._src = source;
     this._m = new Map();
     this.maxSize = options.maxSize ?? 300;
@@ -84,7 +87,8 @@ export class SignatureFactory {
         if (ok) {
           let u = getTileURL(map, xi, yi, p);
           let vPrev = this._m.get(u);
-          if (vPrev === undefined || t - vPrev.t > this.ttl) unsignedURLs.add(u);
+          if (vPrev === undefined || t - vPrev.t > this.ttl)
+            unsignedURLs.add(u);
           else signedURLs.add(u);
         }
       }
