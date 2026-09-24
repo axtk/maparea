@@ -7,28 +7,10 @@
   <link rel="stylesheet" href="dist/index.css">
 </head>
 <body>
-  <form>
-    <label>
-      <span>
-        YM Tiles API key
-        <sup>[<a href="https://yandex.com/maps-api/docs/tiles-api/index.html" target="_blank">?</a>]</sup>
-      </span>
-      <input name="apikey">
-    </label>
-    <label>
-      <span>
-        Language
-        <sup>[<a href="https://yandex.com/maps-api/docs/tiles-api/request.html#lang" target="_blank">?</a>]</sup>
-      </span>
-      <input name="lang">
-    </label>
-    <span>
-      <button type="submit">Use locally</button>
-      <button type="button" class="clear">Clear form</button>
-      <button type="button" class="reset">Reset map</button>
-    </span>
-  </form>
-  <div id="map"></div>
+  <div id="map">
+    <div class="warning" hidden>Pass a Yandex Tiles API key<sup>&thinsp;[<a href="https://yandex.com/maps-api/docs/tiles-api/index.html" target="_blank">?</a>]</sup> as the <strong><code>apikey</code></strong> URL parameter.<br> Optionally, add a <strong><code>lang</code></strong>&thinsp;<sup>[<a href="https://yandex.com/maps-api/docs/tiles-api/request.html#lang" target="_blank">?</a>]</sup> URL parameter.</div>
+  </div>
+  <p><button id="reset-map">Reset map</button></p>
   <pre></pre>
   <script src="dist/index.js" type="module"></script>
 </body>

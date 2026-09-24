@@ -19,112 +19,145 @@ import {
 import { Circle } from "../src/utils/canvas/Circle.ts";
 import { Path } from "../src/utils/canvas/Path.ts";
 import { toPrecision } from "../src/utils/toPrecision.ts";
-import { initTestForm, initTestFormReset } from "./form.ts";
 import { shape } from "./shape.ts";
 
-let formState = initTestForm();
-let lang = formState.lang || "en_US";
+const lsKey = "maparea-test.";
 
-let map = new MapArea({
-  container: "#map",
-  center: [59.94607, 30.33476],
-  projection: "ellipsoidal",
-  zoom: 10,
-  lang,
-});
+type InputState = {
+  apikey: string;
+  lang: string;
+};
 
-// map.center = getCenter(shape);
-// map.bounds = getVicinity(shape);
+function getInputState(): InputState {
+  let { searchParams } = new URL(window.location.href);
+  let urlState = {
+    apikey: searchParams.get("apikey"),
+    lang: searchParams.get("lang"),
+  };
+  let lsState = {
+    apikey: localStorage.getItem(`${lsKey}apikey`),
+    lang: localStorage.getItem(`${lsKey}lang`),
+  };
 
-fitGeoBounds(map, getVicinity(shape));
+  if (urlState.apikey && lsState.apikey !== urlState.apikey)
+    localStorage.setItem(`${lsKey}apikey`, urlState.apikey);
+  if (urlState.lang && lsState.lang !== urlState.lang)
+    localStorage.setItem(`${lsKey}lang`, urlState.lang);
 
-addDragPan(map, { ignore: "a, button" });
-addZoomControl(map);
+  return {
+    apikey: lsState.apikey || urlState.apikey || "",
+    lang: lsState.lang || urlState.lang || "en_US",
+  };
+}
 
-if (formState.apikey) {
-  addTiles(map, {
-    url: `https://tiles.api-maps.yandex.ru/v1/tiles/?x={x}&y={y}&z={z}&lang={lang}&l=map&scale=${window.devicePixelRatio ?? 1}&maptype=future_map&apikey=${formState.apikey}`,
-    attribution: ({ lang }) => {
-      return lang.split("_")[0] === "ru"
-        ? `<a href="https://yandex.ru/maps" target="_blank"><img src="/assets/yx_ru.svg" alt="Яндекс Карты"></a>`
-        : `<a href="https://yandex.com/maps" target="_blank"><img src="/assets/yx_en.svg" alt="Yandex Maps"></a>`;
+function initMap({ apikey, lang }: InputState) {
+  let map = new MapArea({
+    container: "#map",
+    center: [59.94607, 30.33476],
+    projection: "ellipsoidal",
+    zoom: 10,
+    lang,
+  });
+
+  // map.center = getCenter(shape);
+  // map.bounds = getVicinity(shape);
+
+  fitGeoBounds(map, getVicinity(shape));
+
+  addDragPan(map, { ignore: "a, button" });
+  addZoomControl(map);
+
+  if (apikey) {
+    addTiles(map, {
+      url: `https://tiles.api-maps.yandex.ru/v1/tiles/?x={x}&y={y}&z={z}&lang={lang}&l=map&scale=${window.devicePixelRatio ?? 1}&maptype=future_map&apikey=${apikey}`,
+      attribution: ({ lang }) => {
+        return lang.split("_")[0] === "ru"
+          ? `<a href="https://yandex.ru/maps" target="_blank"><img src="/assets/yx_ru.svg" alt="Яндекс Карты"></a>`
+          : `<a href="https://yandex.com/maps" target="_blank"><img src="/assets/yx_en.svg" alt="Yandex Maps"></a>`;
+      },
+      // error: "/assets/blank.png",
+      grid: { lines: "#c71585b0", text: "#fff" },
+      // prerender: () => new Promise((f) => setTimeout(f, 200)),
+      // retries: 0,
+    });
+  }
+
+  let marker = document.createElement("div");
+  marker.className = "marker";
+  marker.innerHTML = `<span>${lang.split("_")[0] === "ru" ? "Летний сад" : "Letní sad"}</span>`;
+
+  addElement(map, marker, {
+    position: [59.94589, 30.33479],
+  });
+
+  let markers: GeoCoords[] = [];
+  while (markers.length < 3)
+    markers.push(shape[Math.floor(shape.length * Math.random())]);
+
+  addShapes(map, [
+    new Path(shape, {
+      strokeStyle: "#c71585b0",
+      lineWidth: 5,
+    }),
+    ...markers.map(
+      (c) =>
+        new Circle(c, 5, {
+          strokeStyle: "#c71585b0",
+          fillStyle: "#fff",
+          lineWidth: 2,
+        }),
+    ),
+  ]);
+
+  let pathEditorOutput = document.querySelector("pre")!;
+
+  let { clear: clearPathEditor } = addPathEditor(map, {
+    onUpdate: (points) => {
+      let lines = points.map(([lat, lon]) => {
+        return `  [${toPrecision(lat, 8)}, ${toPrecision(lon, 8)}],`;
+      });
+
+      let content =
+        points.length === 0
+          ? "points: [/* From clicks on the map */];"
+          : `points: [\n${lines.join("\n")}\n];`;
+
+      if (pathEditorOutput.textContent !== content)
+        pathEditorOutput.textContent = content;
     },
-    // error: "/assets/blank.png",
-    grid: { lines: "#c71585b0", text: "#fff" },
-    // prerender: () => new Promise((f) => setTimeout(f, 200)),
-    // retries: 0,
+    path: {
+      strokeStyle: "#c71585b0",
+      lineWidth: 5,
+    },
+    markers: {
+      r: 5,
+      strokeStyle: "#c71585b0",
+      fillStyle: "#fff",
+      lineWidth: 2,
+    },
+    ignore: "a, button",
+  });
+
+  addPointerListener(map, ({ x, y, lat, lon }) => {
+    console.log({ x, y, lat, lon });
+  });
+
+  addPinchToZoom(map);
+
+  addResizeObserver(map, console.log);
+
+  let { clear: clearMapState } = addPersistence(map, { lang });
+
+  document.querySelector("#reset-map")?.addEventListener("click", () => {
+    clearMapState();
+    clearPathEditor();
   });
 }
 
-let marker = document.createElement("div");
-marker.className = "marker";
-marker.innerHTML = `<span>${lang.split("_")[0] === "ru" ? "Летний сад" : "Letní sad"}</span>`;
+function init() {
+  let inputState = getInputState();
+  if (inputState.apikey) initMap(inputState);
+  else document.querySelector("#map .warning")?.removeAttribute("hidden");
+}
 
-addElement(map, marker, {
-  position: [59.94589, 30.33479],
-});
-
-let markers: GeoCoords[] = [];
-while (markers.length < 3)
-  markers.push(shape[Math.floor(shape.length * Math.random())]);
-
-addShapes(map, [
-  new Path(shape, {
-    strokeStyle: "#c71585b0",
-    lineWidth: 5,
-  }),
-  ...markers.map(
-    (c) =>
-      new Circle(c, 5, {
-        strokeStyle: "#c71585b0",
-        fillStyle: "#fff",
-        lineWidth: 2,
-      }),
-  ),
-]);
-
-let pathEditorOutput = document.querySelector("pre")!;
-
-let { clear: clearPathEditor } = addPathEditor(map, {
-  onUpdate: (points) => {
-    let lines = points.map(([lat, lon]) => {
-      return `  [${toPrecision(lat, 8)}, ${toPrecision(lon, 8)}],`;
-    });
-
-    let content =
-      points.length === 0
-        ? "points: [/* From clicks on the map */];"
-        : `points: [\n${lines.join("\n")}\n];`;
-
-    if (pathEditorOutput.textContent !== content)
-      pathEditorOutput.textContent = content;
-  },
-  path: {
-    strokeStyle: "#c71585b0",
-    lineWidth: 5,
-  },
-  markers: {
-    r: 5,
-    strokeStyle: "#c71585b0",
-    fillStyle: "#fff",
-    lineWidth: 2,
-  },
-  ignore: "a, button",
-});
-
-addPointerListener(map, ({ x, y, lat, lon }) => {
-  console.log({ x, y, lat, lon });
-});
-
-addPinchToZoom(map);
-
-addResizeObserver(map, console.log);
-
-let { clear: clearMapState } = addPersistence(map, {
-  lang: formState.lang,
-});
-
-initTestFormReset(() => {
-  clearMapState();
-  clearPathEditor();
-});
+init();
